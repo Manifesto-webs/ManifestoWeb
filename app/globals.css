@@ -1,0 +1,186 @@
+@import "tailwindcss";
+
+/* =========================================================
+   Fuentes locales
+   ========================================================= */
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Extralight.otf") format("opentype");
+  font-weight: 200;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Light.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Semibold.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Clash Display";
+  src: url("/fonts/clash/ClashDisplay-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Calibre";
+  src: url("/fonts/calibre/Calibre-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Calibre";
+  src: url("/fonts/calibre/Calibre-LightItalic.otf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Calibre";
+  src: url("/fonts/calibre/Calibre-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Calibre";
+  src: url("/fonts/calibre/Calibre-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Calibre";
+  src: url("/fonts/calibre/Calibre-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Courier Mono";
+  src: url("/fonts/courier/Courier New.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* =========================================================
+   Design tokens — Tailwind 4 @theme block
+   Cualquier token declarado acá está disponible como clase Tailwind
+   (ej. bg-paper-bone, text-ink-900, font-display, rounded-tile, etc.)
+   ========================================================= */
+@theme {
+  /* Ink */
+  --color-ink-900: #2D3436;
+  --color-ink-700: #4A5054;
+  --color-ink-500: #757A7D;
+  --color-ink-300: #C2C5C7;
+  --color-ink-pure: #000000;
+
+  /* Paper */
+  --color-paper-bone: #FFFFFF;
+  --color-paper-sage: #DDD8C4;
+  --color-paper-ice:  #DAE1E7;
+
+  /* Accent */
+  --color-accent-clay: #4A0010;
+
+  /* Font families */
+  --font-display: "Clash Display", "GT Super Display", serif;
+  --font-body:    "Calibre", "Söhne", system-ui, -apple-system, sans-serif;
+  --font-mono:    "Courier Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* Radius (custom, replace defaults) */
+  --radius-none: 0;
+  --radius-pill: 9999px;
+  --radius-card: 24px;
+  --radius-tile: 32px;
+  --radius-hero: 48px;
+
+  /* Motion */
+  --ease-out-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================================
+   Base reset — mínimo necesario más allá de Tailwind Preflight
+   ========================================================= */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink-900);
+  background: var(--color-paper-bone);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+::selection {
+  background: var(--color-ink-900);
+  color: var(--color-paper-bone);
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent-clay);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   Utility classes complementarias
+   ========================================================= */
+@utility container-manifesto {
+  width: min(1680px, 100% - 2 * clamp(1rem, 3vw, 3rem));
+  margin-inline: auto;
+}
+
+/* Kicker — label en Courier mono uppercase, usado en secciones */
+@utility kicker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink-500);
+}
+
+/* =========================================================
+   Animaciones custom (Tailwind no las trae built-in)
+   ========================================================= */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes spin-slow {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes tile-reveal {
+  from { clip-path: inset(0 0 100% 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0% 0); opacity: 1; }
+}
+
+.animate-marquee { animation: marquee 60s linear infinite; }
+.animate-spin-slow { animation: spin-slow 80s linear infinite; }
+.animate-tile-reveal { animation: tile-reveal 700ms var(--ease-out-spring) forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-spin-slow,
+  .animate-tile-reveal {
+    animation: none !important;
+  }
+}

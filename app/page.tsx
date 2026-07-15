@@ -1,0 +1,26 @@
+import { Hero } from "@/components/landing/Hero";
+import { Bento } from "@/components/landing/Bento";
+// import { Marquee } from "@/components/landing/Marquee"; // desactivado: no va en la web por ahora
+import { About } from "@/components/landing/About";
+import { Lines } from "@/components/landing/Lines";
+import { Process } from "@/components/landing/Process";
+import { Quote } from "@/components/landing/Quote";
+import { Clients } from "@/components/landing/Clients";
+import { Contact } from "@/components/landing/Contact";
+
+export default function HomePage() {
+  return (
+    <>
+      <Hero />
+      <Bento />
+      {/* el marquee queda desactivado a pedido; lo dejo comentado por si se retoma */}
+      {/* <Marquee /> */}
+      <About />
+      <Lines />
+      <Process />
+      <Quote />
+      <Clients />
+      <Contact />
+    </>
+  );
+}
