@@ -102,6 +102,13 @@
   /* Accent */
   --color-accent-clay: #4A0010;
 
+  /* Espacio / astral (Hero de inicio) */
+  --color-space-slate:  #282e32;
+  --color-space-black:  #000000;
+  --color-space-star:   #d6e2ed;
+  --color-space-sand:   #dcddca;
+  --color-space-maroon: #5f0000;
+
   /* Font families */
   --font-display: "Clash Display", "GT Super Display", serif;
   --font-body:    "Calibre", "Söhne", system-ui, -apple-system, sans-serif;
@@ -173,14 +180,30 @@ body {
   to   { clip-path: inset(0 0 0% 0); opacity: 1; }
 }
 
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.15); }
+}
+@keyframes drift-up {
+  from { transform: translateY(14px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes star-trace {
+  to { stroke-dashoffset: 0; }
+}
+
 .animate-marquee { animation: marquee 60s linear infinite; }
 .animate-spin-slow { animation: spin-slow 80s linear infinite; }
 .animate-tile-reveal { animation: tile-reveal 700ms var(--ease-out-spring) forwards; }
+.animate-twinkle { animation: twinkle 4s ease-in-out infinite; }
+.animate-drift-up { animation: drift-up 900ms var(--ease-out-spring) both; }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee,
   .animate-spin-slow,
-  .animate-tile-reveal {
+  .animate-tile-reveal,
+  .animate-twinkle,
+  .animate-drift-up {
     animation: none !important;
   }
 }
