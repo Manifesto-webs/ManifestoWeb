@@ -10,28 +10,11 @@ import { useEffect, useRef, useState } from "react";
 const clamp = (v: number, min: number, max: number) =>
   Math.min(max, Math.max(min, v));
 
-/** Interpola dos colores hex (#rrggbb) → rgb() según t ∈ [0,1]. */
-function lerpHex(a: string, b: string, t: number): string {
-  const pa = [
-    parseInt(a.slice(1, 3), 16),
-    parseInt(a.slice(3, 5), 16),
-    parseInt(a.slice(5, 7), 16),
-  ];
-  const pb = [
-    parseInt(b.slice(1, 3), 16),
-    parseInt(b.slice(3, 5), 16),
-    parseInt(b.slice(5, 7), 16),
-  ];
-  const c = pa.map((x, i) => Math.round(x + (pb[i] - x) * t));
-  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-}
-
 /* Paleta astral (definida por el cliente) */
 const SPACE = "#282e32";
 const BONE = "#ffffff";
 const STAR = "#d6e2ed";
 const MAROON = "#5f0000";
-const INK = "#2D3436";
 
 /* -------------------------------------------------------------------------- */
 /*  Starfield en canvas — con efecto de "warp" al hacer scroll                 */
@@ -177,11 +160,12 @@ export function HeroAstral() {
 
   useStarfield(canvasRef, progressRef);
 
-  // Colores + parallax por capas, todo dependiente del progreso.
-  const bg = lerpHex(SPACE, BONE, clamp(progress * 1.1, 0, 1));
-  const heading = lerpHex(BONE, INK, clamp(progress * 1.25, 0, 1));
-  const body = lerpHex(STAR, INK, clamp(progress * 1.2, 0, 1));
-  const contentOpacity = 1 - clamp((progress - 0.68) / 0.32, 0, 1);
+  // El fondo se mantiene OSCURO todo el scroll (no se aclara). El progreso
+  // solo mueve las capas (warp + parallax) y desvanece el contenido al final.
+  const bg = SPACE;
+  const heading = BONE;
+  const body = STAR;
+  const contentOpacity = 1 - clamp((progress - 0.7) / 0.3, 0, 1);
 
   return (
     <section
@@ -235,8 +219,8 @@ export function HeroAstral() {
             Las marcas se construyen.
             <br />
             Los valores se{" "}
-            <span style={{ color: progress < 0.5 ? STAR : MAROON }}>revelan</span>
-            <span style={{ color: MAROON }}>.</span>
+            <span style={{ color: STAR }}>revelan</span>
+            <span style={{ color: STAR }}>.</span>
           </h1>
 
           <p
@@ -256,7 +240,7 @@ export function HeroAstral() {
             className="group mt-2 inline-flex items-center gap-2 rounded-pill border px-6 py-3 text-base transition-colors duration-300 animate-drift-up"
             style={{
               color: heading,
-              borderColor: lerpHex(STAR, INK, progress),
+              borderColor: `${STAR}66`,
               animationDelay: "360ms",
               transform: `translateY(${progress * -18}px)`,
             }}

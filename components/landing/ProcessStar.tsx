@@ -5,124 +5,149 @@ import { processStages } from "@/data/process";
 import { StarburstImg } from "@/components/icons/StarburstImg";
 
 /* -------------------------------------------------------------------------- */
-/*  Geometría: 5 piezas en anillo + líneas que las conectan                    */
+/*  Paleta (sección oscura, estilo evaluación 360°)                            */
 /* -------------------------------------------------------------------------- */
 
-const R = 33; // radio del anillo (en %)
-const CENTER = 50;
+const BRIGHT = "#f2f5f8";
+const FAINT = "rgba(214,226,237,0.28)";
+const LINE = "rgba(214,226,237,0.14)";
+const CREAM = "#dcddca";
+const GUIDE = "rgba(214,226,237,0.10)";
+const SPOKE_ON = "rgba(214,226,237,0.55)";
+const SPOKE_OFF = "rgba(214,226,237,0.10)";
 
-/** Posición (en %) de cada pieza alrededor del centro. */
-const POINTS = Array.from({ length: 5 }, (_, i) => {
+/* -------------------------------------------------------------------------- */
+/*  Geometría radial                                                           */
+/* -------------------------------------------------------------------------- */
+
+const VB = 300; // viewBox
+const Cx = 150;
+const Cy = 150;
+const R_TIP = 116; // radio donde vive cada gráfico/punta
+
+/** Punta i en coordenadas del viewBox (0° arriba). */
+function tip(i: number) {
   const a = ((-90 + i * 72) * Math.PI) / 180;
-  return {
-    x: CENTER + R * Math.cos(a),
-    y: CENTER + R * Math.sin(a),
-  };
-});
-
-/** Aristas del pentágono en orden de etapa (se van uniendo una a una). */
-const EDGES = POINTS.map((_, i) => [i, (i + 1) % 5] as const);
-
-/* -------------------------------------------------------------------------- */
-/*  Figura compuesta por los SVG de las etapas                                 */
-/* -------------------------------------------------------------------------- */
-
-interface CompositeFigureProps {
-  /** Cuántas piezas están activas (0–5). */
-  lit: number;
-  label: string;
+  return { x: Cx + R_TIP * Math.cos(a), y: Cy + R_TIP * Math.sin(a) };
 }
+const TIPS = processStages.map((_, i) => tip(i));
 
-function CompositeFigure({ lit, label }: CompositeFigureProps) {
+/** Mismo punto en % (para posicionar los gráficos HTML encima del SVG). */
+const TIPS_PCT = TIPS.map((t) => ({
+  x: (t.x / VB) * 100,
+  y: (t.y / VB) * 100,
+}));
+
+/* -------------------------------------------------------------------------- */
+/*  Figura compuesta por los gráficos de las etapas                            */
+/* -------------------------------------------------------------------------- */
+
+function CompositeFigure({ lit, active }: { lit: number; active: number }) {
+  // Polígono que une las puntas ya encendidas (se va dibujando la figura).
+  const chain = TIPS.slice(0, Math.max(lit, 0))
+    .map((t) => `${t.x.toFixed(1)},${t.y.toFixed(1)}`)
+    .join(" ");
+
   return (
     <div className="relative aspect-square w-full">
-      {/* Líneas que conectan las piezas conforme se van sumando */}
       <svg
-        viewBox="0 0 100 100"
+        viewBox={`0 0 ${VB} ${VB}`}
         className="absolute inset-0 h-full w-full overflow-visible"
         aria-hidden="true"
       >
-        {EDGES.map(([a, b], j) => {
-          const on = a < lit && b < lit;
-          return (
-            <line
-              key={j}
-              x1={POINTS[a].x}
-              y1={POINTS[a].y}
-              x2={POINTS[b].x}
-              y2={POINTS[b].y}
-              className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-              style={{
-                stroke: "#5f0000",
-                strokeWidth: 0.6,
-                opacity: on ? 0.55 : 0,
-              }}
-            />
-          );
-        })}
-        {/* Núcleo que se enciende cuando la figura toma forma */}
+        {/* Círculos guía */}
+        <circle cx={Cx} cy={Cy} r={132} fill="none" stroke={GUIDE} strokeWidth={1} />
+        <circle cx={Cx} cy={Cy} r={88} fill="none" stroke={GUIDE} strokeWidth={1} />
+        <circle cx={Cx} cy={Cy} r={44} fill="none" stroke={GUIDE} strokeWidth={1} />
+
+        {/* Radios: se encienden acumulativamente */}
+        {TIPS.map((t, i) => (
+          <line
+            key={i}
+            x1={Cx}
+            y1={Cy}
+            x2={t.x}
+            y2={t.y}
+            className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              stroke: i < lit ? SPOKE_ON : SPOKE_OFF,
+              strokeWidth: i === active ? 1.6 : 1,
+            }}
+          />
+        ))}
+
+        {/* Polígono que dibuja la figura al complementarse las etapas */}
+        {lit >= 2 && (
+          <polyline
+            points={lit >= 5 ? `${chain} ${TIPS[0].x},${TIPS[0].y}` : chain}
+            fill={lit >= 5 ? "rgba(214,226,237,0.05)" : "none"}
+            stroke={SPOKE_ON}
+            strokeWidth={1.2}
+            className="transition-all duration-700"
+          />
+        )}
+
+        {/* Núcleo */}
         <circle
-          cx={CENTER}
-          cy={CENTER}
-          r={lit >= 5 ? 4.5 : 2.5}
+          cx={Cx}
+          cy={Cy}
+          r={lit >= 5 ? 6 : 3.5}
           className="transition-all duration-700"
-          style={{
-            fill: "#5f0000",
-            opacity: lit > 0 ? 0.15 + lit * 0.12 : 0,
-          }}
+          style={{ fill: CREAM, opacity: lit > 0 ? 0.2 + lit * 0.12 : 0.1 }}
         />
       </svg>
 
-      {/* Las 5 piezas: cada etapa aporta su propio gráfico */}
+      {/* Los 5 gráficos, uno por punta (en blanco sobre el fondo oscuro) */}
       {processStages.map((stage, i) => {
         const on = i < lit;
-        const p = POINTS[i];
+        const isActive = i === active;
+        const p = TIPS_PCT[i];
         return (
           <div
             key={stage.id}
-            className="absolute aspect-square w-[42%] transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            className="absolute aspect-square w-[26%] transition-all duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
               left: `${p.x}%`,
               top: `${p.y}%`,
               transform: on
-                ? "translate(-50%, -50%) scale(1) rotate(0deg)"
-                : "translate(-50%, -50%) scale(0.45) rotate(-35deg)",
-              opacity: on ? 1 : 0,
-              filter: on ? "none" : "grayscale(1)",
+                ? `translate(-50%, -50%) scale(${isActive ? 1.15 : 1}) rotate(0deg)`
+                : "translate(-50%, -50%) scale(0.4) rotate(-40deg)",
+              opacity: on ? (isActive ? 1 : 0.55) : 0,
+              filter: isActive
+                ? "brightness(0) invert(1) drop-shadow(0 0 10px rgba(214,226,237,0.5))"
+                : "brightness(0) invert(1)",
             }}
           >
-            <StarburstImg
-              id={stage.id}
-              className="h-full w-full object-contain mix-blend-multiply"
-            />
+            <StarburstImg id={stage.id} className="h-full w-full object-contain" />
           </div>
         );
       })}
 
       {/* Contador central */}
-      <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-[0.2em] text-ink-500">
-        {label}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-[0.2em]"
+        style={{ color: FAINT }}
+      >
+        {lit > 0 ? `${lit}/5` : ""}
       </div>
     </div>
   );
 }
 
 /* -------------------------------------------------------------------------- */
-/*  Sección                                                                    */
+/*  Sección "método"                                                           */
 /* -------------------------------------------------------------------------- */
 
 export function ProcessStar() {
-  const [active, setActive] = useState(-1);
+  const [active, setActive] = useState(0);
   const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // El scroll arma la figura: la etapa que cruza el centro del viewport se
-  // activa sola (en cualquier pantalla). El hover en desktop permite saltar.
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const idx = Number((entry.target as HTMLElement).dataset.index ?? -1);
+            const idx = Number((entry.target as HTMLElement).dataset.index ?? 0);
             setActive(idx);
           }
         }
@@ -135,37 +160,46 @@ export function ProcessStar() {
   }, []);
 
   const litCount = active + 1;
-  const centerLabel = active >= 0 ? `${litCount}/5` : "";
 
   return (
     <section
       id="proceso"
-      className="bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
+      className="px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
+      style={{ backgroundColor: "#282e32" }}
     >
       <div className="mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <span className="kicker">El método</span>
-        <h2 className="m-0 font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.92] tracking-[-0.035em] text-ink-900">
+        <span
+          className="font-mono text-xs uppercase tracking-[0.28em]"
+          style={{ color: FAINT }}
+        >
+          El método
+        </span>
+        <h2
+          className="m-0 max-w-[16ch] font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.95] tracking-[-0.035em]"
+          style={{ color: BRIGHT }}
+        >
           Cinco etapas, un mismo motivo.
         </h2>
       </div>
 
-      <div className="grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-10 lg:grid-cols-[1fr_minmax(280px,40%)]">
+      <div className="grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-12 lg:grid-cols-[1fr_minmax(300px,42%)]">
         {/* Figura (arriba en móvil, sticky a la derecha en desktop) */}
         <div className="order-1 lg:order-2">
-          <div className="sticky top-24 flex flex-col items-center gap-4">
-            <div className="w-[clamp(200px,44vw,380px)]">
-              <CompositeFigure lit={litCount} label={centerLabel} />
+          <div className="sticky top-24 flex flex-col items-center gap-5">
+            <div className="w-[clamp(220px,46vw,420px)]">
+              <CompositeFigure lit={litCount} active={active} />
             </div>
-            <p className="text-center font-mono text-xs uppercase tracking-[0.2em] text-ink-500">
-              {litCount > 0
-                ? `${litCount} / 5 · la marca toma forma`
-                : "pasá o bajá para armar la figura"}
+            <p
+              className="text-center font-mono text-xs uppercase tracking-[0.2em]"
+              style={{ color: FAINT }}
+            >
+              {litCount} / 5 · la marca toma forma
             </p>
           </div>
         </div>
 
-        {/* Lista de etapas */}
-        <div className="order-2 flex flex-col border-t border-ink-900 lg:order-1">
+        {/* Lista de etapas — patrón "dim": tenue por defecto, se ilumina la activa */}
+        <div className="order-2 flex flex-col lg:order-1">
           {processStages.map((stage, i) => {
             const isActive = i === active;
             return (
@@ -178,53 +212,53 @@ export function ProcessStar() {
                 tabIndex={0}
                 onMouseEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}
-                className="group relative isolate cursor-default overflow-hidden border-b border-ink-900/20 py-[clamp(1.3rem,2.4vw,2rem)] outline-none transition-[padding] duration-300"
+                className="group cursor-default border-t py-[clamp(1.2rem,2.2vw,1.9rem)] outline-none last:border-b"
+                style={{ borderColor: LINE }}
               >
-                <div
-                  className="absolute inset-0 -z-10 bg-paper-sage transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{
-                    transform: isActive ? "translateX(0)" : "translateX(-101%)",
-                  }}
-                />
-
-                <div className="flex items-center gap-4 px-[clamp(0.5rem,1.5vw,1.5rem)]">
+                <div className="flex items-center gap-[clamp(0.75rem,2vw,1.5rem)]">
                   <span
-                    className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-300"
-                    style={{ color: isActive ? "#5f0000" : "#757A7D" }}
+                    className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
+                    style={{ color: isActive ? CREAM : FAINT }}
                   >
                     {stage.id}
                   </span>
 
-                  <span className="flex-1 font-display text-[clamp(1.6rem,4vw,3.6rem)] font-normal leading-[1] tracking-[-0.03em] text-ink-900">
+                  <span
+                    className="flex-1 font-display text-[clamp(1.6rem,4vw,3.4rem)] font-normal leading-[1.02] tracking-[-0.03em] transition-colors duration-500"
+                    style={{ color: isActive ? BRIGHT : FAINT }}
+                  >
                     {stage.name}
                   </span>
 
-                  {/* El gráfico de la etapa aparece al lado al activarse */}
+                  {/* Gráfico de la etapa al lado, aparece al iluminarse */}
                   <div
-                    className="aspect-square w-[clamp(44px,5vw,80px)] shrink-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                    className="aspect-square w-[clamp(40px,4.5vw,68px)] shrink-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                     style={{
                       opacity: isActive ? 1 : 0,
                       transform: isActive
                         ? "scale(1) rotate(0deg)"
-                        : "scale(0.6) rotate(-25deg)",
+                        : "scale(0.5) rotate(-25deg)",
+                      filter:
+                        "brightness(0) invert(1) drop-shadow(0 0 8px rgba(214,226,237,0.4))",
                     }}
                     aria-hidden={!isActive}
                   >
-                    <StarburstImg
-                      id={stage.id}
-                      className="h-full w-full object-contain mix-blend-multiply"
-                    />
+                    <StarburstImg id={stage.id} className="h-full w-full object-contain" />
                   </div>
                 </div>
 
+                {/* Descripción: se despliega y aclara al activarse */}
                 <div
-                  className="grid px-[clamp(0.5rem,1.5vw,1.5rem)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  className="grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   style={{
                     gridTemplateRows: isActive ? "1fr" : "0fr",
                     opacity: isActive ? 1 : 0,
                   }}
                 >
-                  <p className="overflow-hidden pl-[calc(2ch+1rem)] pt-3 text-[clamp(0.95rem,1.1vw,1.15rem)] leading-[1.5] text-ink-700">
+                  <p
+                    className="overflow-hidden pl-[calc(2ch+clamp(0.75rem,2vw,1.5rem))] pt-3 text-[clamp(0.95rem,1.1vw,1.15rem)] leading-[1.55]"
+                    style={{ color: "rgba(214,226,237,0.7)" }}
+                  >
                     {stage.description}
                   </p>
                 </div>
