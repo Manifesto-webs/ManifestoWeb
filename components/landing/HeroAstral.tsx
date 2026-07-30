@@ -15,6 +15,8 @@ const SPACE = "#282e32";
 const BONE = "#ffffff";
 const STAR = "#d6e2ed";
 const MAROON = "#5f0000";
+/** Corinto/rojo de marca, aclarado lo justo para que se lea sobre el oscuro. */
+const CORINTO = "#b3243b";
 
 /* -------------------------------------------------------------------------- */
 /*  Starfield en canvas — con efecto de "warp" al hacer scroll                 */
@@ -165,13 +167,23 @@ export function HeroAstral() {
   const bg = SPACE;
   const heading = BONE;
   const body = STAR;
-  const contentOpacity = 1 - clamp((progress - 0.7) / 0.3, 0, 1);
+  // El texto NO desaparece: se mantiene visible y solo se reduce (escala) al bajar.
+  const contentScale = 1 - clamp(progress, 0, 1) * 0.42;
+  const contentShift = clamp(progress, 0, 1) * -30;
+
+  // "Conoce el método": salta directo a la sección método con scroll suave.
+  const goToMetodo = (e: React.MouseEvent) => {
+    e.preventDefault();
+    document
+      .getElementById("proceso")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <section
       ref={sectionRef}
       id="top"
-      className="relative h-[200vh]"
+      className="relative h-[150vh]"
       style={{ backgroundColor: bg }}
     >
       <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden">
@@ -192,44 +204,35 @@ export function HeroAstral() {
           aria-hidden="true"
         />
 
-        {/* Contenido — cada capa se mueve a distinta velocidad (parallax) */}
+        {/* Contenido — se reduce al hacer scroll pero NO desaparece */}
         <div
           className="relative z-10 flex max-w-[min(1100px,92vw)] flex-col items-center gap-[clamp(1.5rem,3vh,2.5rem)] px-[clamp(1rem,3vw,3rem)] text-center"
-          style={{ opacity: contentOpacity }}
+          style={{
+            transform: `translateY(${contentShift}px) scale(${contentScale})`,
+            transformOrigin: "center top",
+          }}
         >
           <span
             className="font-mono text-xs uppercase tracking-[0.28em] animate-drift-up"
-            style={{
-              color: body,
-              animationDelay: "80ms",
-              transform: `translateY(${progress * -20}px)`,
-            }}
+            style={{ color: body, animationDelay: "80ms" }}
           >
             Estudio de branding · Guatemala
           </span>
 
           <h1
             className="m-0 max-w-[20ch] font-display text-[clamp(2.25rem,6.5vw,6.5rem)] font-medium leading-[0.98] tracking-[-0.03em] animate-drift-up text-balance"
-            style={{
-              color: heading,
-              animationDelay: "160ms",
-              transform: `translateY(${progress * -60}px)`,
-            }}
+            style={{ color: heading, animationDelay: "160ms" }}
           >
             Las marcas se construyen.
             <br />
             Los valores se{" "}
-            <span style={{ color: STAR }}>revelan</span>
-            <span style={{ color: STAR }}>.</span>
+            <span style={{ color: CORINTO }}>revelan</span>
+            <span style={{ color: CORINTO }}>.</span>
           </h1>
 
           <p
             className="max-w-[62ch] text-[clamp(1rem,1.4vw,1.35rem)] leading-[1.6] animate-drift-up text-pretty"
-            style={{
-              color: body,
-              animationDelay: "260ms",
-              transform: `translateY(${progress * -34}px)`,
-            }}
+            style={{ color: body, animationDelay: "260ms" }}
           >
             Estudio de branding y comunicación estratégica. Convertimos lo que
             una empresa <em>es</em> en decisiones que el mercado entiende.
@@ -237,12 +240,12 @@ export function HeroAstral() {
 
           <Link
             href="/#proceso"
-            className="group mt-2 inline-flex items-center gap-2 rounded-pill border px-6 py-3 text-base transition-colors duration-300 animate-drift-up"
+            onClick={goToMetodo}
+            className="group mt-2 inline-flex items-center gap-2 rounded-pill border px-6 py-3 text-base transition-colors duration-300 animate-drift-up hover:bg-white/5"
             style={{
               color: heading,
               borderColor: `${STAR}66`,
               animationDelay: "360ms",
-              transform: `translateY(${progress * -18}px)`,
             }}
           >
             Conoce el método

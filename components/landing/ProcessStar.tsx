@@ -182,11 +182,11 @@ export function ProcessStar() {
         </h2>
       </div>
 
-      <div className="grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-12 lg:grid-cols-[1fr_minmax(300px,42%)]">
+      <div className="grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-10 lg:grid-cols-[1fr_minmax(300px,42%)]">
         {/* Figura (arriba en móvil, sticky a la derecha en desktop) */}
         <div className="order-1 lg:order-2">
-          <div className="sticky top-24 flex flex-col items-center gap-5">
-            <div className="w-[clamp(220px,46vw,420px)]">
+          <div className="sticky top-20 flex flex-col items-center gap-5 lg:top-24">
+            <div className="w-[clamp(180px,42vw,420px)]">
               <CompositeFigure lit={litCount} active={active} />
             </div>
             <p
@@ -212,8 +212,11 @@ export function ProcessStar() {
                 tabIndex={0}
                 onMouseEnter={() => setActive(i)}
                 onFocus={() => setActive(i)}
-                className="group cursor-default border-t py-[clamp(1.2rem,2.2vw,1.9rem)] outline-none last:border-b"
-                style={{ borderColor: LINE }}
+                className="group cursor-default border-t px-[clamp(0.5rem,1.5vw,1rem)] py-[clamp(1.2rem,2.2vw,1.9rem)] outline-none transition-colors duration-500 last:border-b"
+                style={{
+                  borderColor: LINE,
+                  backgroundColor: isActive ? "rgba(214,226,237,0.035)" : "transparent",
+                }}
               >
                 <div className="flex items-center gap-[clamp(0.75rem,2vw,1.5rem)]">
                   <span
@@ -229,22 +232,6 @@ export function ProcessStar() {
                   >
                     {stage.name}
                   </span>
-
-                  {/* Gráfico de la etapa al lado, aparece al iluminarse */}
-                  <div
-                    className="aspect-square w-[clamp(40px,4.5vw,68px)] shrink-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                    style={{
-                      opacity: isActive ? 1 : 0,
-                      transform: isActive
-                        ? "scale(1) rotate(0deg)"
-                        : "scale(0.5) rotate(-25deg)",
-                      filter:
-                        "brightness(0) invert(1) drop-shadow(0 0 8px rgba(214,226,237,0.4))",
-                    }}
-                    aria-hidden={!isActive}
-                  >
-                    <StarburstImg id={stage.id} className="h-full w-full object-contain" />
-                  </div>
                 </div>
 
                 {/* Descripción: se despliega y aclara al activarse */}
