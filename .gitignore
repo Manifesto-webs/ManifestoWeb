@@ -35,3 +35,6 @@ next-env.d.ts
 # ide
 .vscode/
 .idea/
+
+# material de trabajo (copy fuente, docs de cliente) — no va al repo
+ignore_content/

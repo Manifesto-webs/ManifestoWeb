@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Favicon: el símbolo de Manifesto sobre ink-900. Lleva fondo propio para
+       que se lea igual en pestañas claras y oscuras. -->
+  <rect width="128" height="128" rx="26" fill="#2D3436"/>
+  <g transform="translate(25.6 43.6) scale(0.8)" fill="#FFFFFF">
+    <path d="M0.64 51V36.1118C3.09333 36.1118 8 38.3292 8 43.3975C8 48.4658 3.09333 50.8944 0.64 51Z"/>
+    <path d="M16 0H0L24.64 50.3665H40.96L16 0Z"/>
+    <path d="M77.44 0H48.96V50.3665H64V13.3043H77.44V0Z"/>
+    <path d="M96 40.5466C96 35.1615 91.2 31.677 87.36 31.677C82.88 31.677 78.08 35.1615 78.08 40.5466C78.08 45.9317 82.56 49.7329 87.36 49.7329C91.84 49.7329 96 45.9317 96 40.5466Z"/>
+  </g>
+</svg>
