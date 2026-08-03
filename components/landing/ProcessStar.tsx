@@ -9,7 +9,13 @@ import { StarburstImg } from "@/components/icons/StarburstImg";
 /* -------------------------------------------------------------------------- */
 
 const BRIGHT = "#f2f5f8";
-const FAINT = "rgba(214,226,237,0.28)";
+/* El patrón "dim" necesita dos niveles, no uno: sobre #282e32 un 0.28 daba
+   2.15:1 y las etapas inactivas prácticamente desaparecían.
+   MUTED es para las etiquetas mono chicas (piden 4.5:1) y DIM para los
+   nombres de etapa a 54px (texto grande, piden 3:1). La activa sigue a
+   opacidad plena, así que la jerarquía se mantiene. */
+const MUTED = "rgba(214,226,237,0.62)";
+const DIM = "rgba(214,226,237,0.46)";
 const LINE = "rgba(214,226,237,0.14)";
 const CREAM = "#dcddca";
 const GUIDE = "rgba(214,226,237,0.10)";
@@ -125,8 +131,8 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
 
       {/* Contador central */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-[0.2em]"
-        style={{ color: FAINT }}
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-kicker"
+        style={{ color: MUTED }}
       >
         {lit > 0 ? `${lit}/5` : ""}
       </div>
@@ -169,13 +175,13 @@ export function ProcessStar() {
     >
       <div className="mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
         <span
-          className="font-mono text-xs uppercase tracking-[0.28em]"
-          style={{ color: FAINT }}
+          className="font-mono text-xs uppercase tracking-kicker"
+          style={{ color: MUTED }}
         >
           El método
         </span>
         <h2
-          className="m-0 max-w-[16ch] font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.95] tracking-[-0.035em]"
+          className="m-0 max-w-[16ch] font-display text-display-2xl font-normal"
           style={{ color: BRIGHT }}
         >
           Cinco etapas, un mismo motivo.
@@ -190,8 +196,8 @@ export function ProcessStar() {
               <CompositeFigure lit={litCount} active={active} />
             </div>
             <p
-              className="text-center font-mono text-xs uppercase tracking-[0.2em]"
-              style={{ color: FAINT }}
+              className="text-center font-mono text-xs uppercase tracking-kicker"
+              style={{ color: MUTED }}
             >
               {litCount} / 5 · la marca toma forma
             </p>
@@ -220,15 +226,15 @@ export function ProcessStar() {
               >
                 <div className="flex items-center gap-[clamp(0.75rem,2vw,1.5rem)]">
                   <span
-                    className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
-                    style={{ color: isActive ? CREAM : FAINT }}
+                    className="font-mono text-xs tabular-nums tracking-kicker transition-colors duration-500"
+                    style={{ color: isActive ? CREAM : MUTED }}
                   >
                     {stage.id}
                   </span>
 
                   <span
-                    className="flex-1 font-display text-[clamp(1.6rem,4vw,3.4rem)] font-normal leading-[1.02] tracking-[-0.03em] transition-colors duration-500"
-                    style={{ color: isActive ? BRIGHT : FAINT }}
+                    className="flex-1 font-display text-display-xl font-normal transition-colors duration-500"
+                    style={{ color: isActive ? BRIGHT : DIM }}
                   >
                     {stage.name}
                   </span>
@@ -236,14 +242,14 @@ export function ProcessStar() {
 
                 {/* Descripción: se despliega y aclara al activarse */}
                 <div
-                  className="grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  className="grid transition-[grid-template-rows,opacity] duration-500 ease-out-spring"
                   style={{
                     gridTemplateRows: isActive ? "1fr" : "0fr",
                     opacity: isActive ? 1 : 0,
                   }}
                 >
                   <p
-                    className="overflow-hidden pl-[calc(2ch+clamp(0.75rem,2vw,1.5rem))] pt-3 text-[clamp(0.95rem,1.1vw,1.15rem)] leading-[1.55]"
+                    className="overflow-hidden pl-[calc(2ch+clamp(0.75rem,2vw,1.5rem))] pt-3 text-body-sm"
                     style={{ color: "rgba(214,226,237,0.7)" }}
                   >
                     {stage.description}

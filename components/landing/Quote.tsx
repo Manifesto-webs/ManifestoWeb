@@ -13,7 +13,7 @@ export function Quote() {
         unoptimized
       />
      
-      <p className="max-w-[24ch] text-balance m-0 font-display text-[clamp(2rem,5vw,5.2rem)] font-normal leading-[1.05] tracking-[-0.03em]">
+      <p className="max-w-[24ch] text-balance m-0 font-display text-display-2xl font-normal">
         La diferencia entre comunicación y comunicación consciente es el compromiso basado en el autodescubrimiento y la definición de objetivos.
       </p>
     </section>

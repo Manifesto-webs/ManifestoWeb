@@ -24,10 +24,10 @@ export function Contact() {
     >
       <div className="mx-auto grid max-w-[980px] gap-12 max-sm:gap-8">
         <div className="grid gap-4">
-          <h2 className="m-0 font-display text-[clamp(2.5rem,6vw,6rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 max-sm:text-[clamp(2rem,8vw,3rem)]">
+          <h2 className="m-0 font-display text-display-2xl font-normal text-ink-900 max-sm:text-[clamp(2rem,8vw,3rem)]">
             Cuéntanos de qué se trata.
           </h2>
-          <p className="m-0 max-w-[56ch] text-[clamp(0.95rem,1.05vw,1.1rem)] text-ink-700">
+          <p className="m-0 max-w-[56ch] text-body-sm text-ink-700">
             Si tienes una marca que quiere ordenarse, evolucionar o nacer con criterio, escríbenos.
             Respondemos en menos de 48 horas hábiles, en castellano o inglés.
           </p>
@@ -43,7 +43,7 @@ export function Contact() {
             <Field id="budget" label="Presupuesto estimado" type="text" placeholder="USD — orientativo" />
           </div>
           <div className="grid gap-2">
-            <label htmlFor="msg" className="font-mono text-xs uppercase tracking-[0.22em] text-ink-700">
+            <label htmlFor="msg" className="font-mono text-xs uppercase tracking-kicker text-ink-700">
               El motivo
             </label>
             <textarea
@@ -54,12 +54,19 @@ export function Contact() {
 
             />
           </div>
+          {/* justify-self-start, no self-start: el form es grid, así que
+              self-* cae en el eje vertical y el botón se estiraba a todo el
+              ancho pese al inline-flex. */}
           <button
             type="submit"
-            className="mt-2 inline-flex items-center gap-3 self-start rounded-2xl bg-ink-900 px-8 py-4 font-body text-base font-medium text-paper-bone transition-[gap,background] duration-300 hover:gap-4 hover:bg-accent-clay max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
+            className="group mt-2 inline-flex items-center gap-3 justify-self-start rounded-2xl bg-ink-900 px-8 py-4 font-body text-base font-medium text-paper-bone transition-colors duration-200 ease-out hover:bg-accent-clay active:scale-[0.98] max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
           >
             {submitted ? "Recibido " : "Enviar manifiesto"}
-            <span className="font-mono">→</span>
+            {/* La flecha se desplaza con transform; antes se animaba el gap
+                del flex, que obliga a recalcular layout en cada frame. */}
+            <span className="font-mono transition-transform duration-200 ease-out group-hover:translate-x-1">
+              →
+            </span>
           </button>
         </form>
       </div>
@@ -78,7 +85,7 @@ interface FieldProps {
 function Field({ id, label, type, placeholder, required }: FieldProps) {
   return (
     <div className="grid gap-2">
-      <label htmlFor={id} className="font-mono text-xs uppercase tracking-[0.22em] text-ink-700">
+      <label htmlFor={id} className="font-mono text-xs uppercase tracking-kicker text-ink-700">
         {label}
       </label>
       <input

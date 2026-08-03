@@ -11,7 +11,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
       <div className="mx-auto grid max-w-[1280px] gap-[clamp(1.5rem,3vw,3rem)]">
         <Link
           href="/#trabajo"
-          className="group inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-[0.22em] text-ink-700 transition-colors hover:text-ink-900"
+          className="group inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-kicker text-ink-700 transition-colors hover:text-ink-900"
         >
           <span className="transition-transform group-hover:-translate-x-1">←</span>
           proyectos
@@ -19,13 +19,13 @@ export function ProjectHero({ project }: ProjectHeroProps) {
 
         <div className="grid grid-cols-1 items-end gap-[clamp(1.5rem,3vw,3rem)] md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <div className="flex flex-col gap-4">
-            <span className="font-mono text-xs uppercase tracking-[0.22em] text-ink-500">
+            <span className="font-mono text-xs uppercase tracking-kicker text-ink-500">
               {project.meta.services}
             </span>
-            <h1 className="m-0 font-display text-[clamp(2.5rem,7vw,7rem)] font-normal leading-[0.92] tracking-[-0.04em] text-ink-900">
+            <h1 className="m-0 font-display text-display-3xl font-normal text-ink-900">
               {project.name}<span className="text-accent-clay">.</span>
             </h1>
-            <p className="max-w-[52ch] text-[clamp(1rem,1.2vw,1.2rem)] leading-[1.55] text-ink-700">
+            <p className="max-w-[52ch] text-lead text-ink-700">
               {project.lead}
             </p>
           </div>
@@ -44,7 +44,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <dt className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ink-700">
+      <dt className="font-mono text-[0.7rem] uppercase tracking-kicker text-ink-700">
         {label}
       </dt>
       <dd className="m-0 font-display text-base font-medium text-ink-900">{value}</dd>

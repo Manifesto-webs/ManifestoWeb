@@ -6,7 +6,7 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[clamp(640px,100vh,960px)] flex-col justify-center gap-[clamp(2.5rem,5vh,5rem)] overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] pt-[clamp(8rem,16vh,12rem)] pb-[clamp(3rem,5vh,5rem)]"
     >
-      <h1 className="relative z-10 max-w-[18ch] font-display text-[clamp(2.25rem,8vw,9rem)] font-medium leading-[0.9] tracking-[-0.045em] text-ink-900">
+      <h1 className="relative z-10 max-w-[18ch] font-display text-display-3xl font-medium text-ink-900">
         Nuestro valor
         <br />
         está en lo que

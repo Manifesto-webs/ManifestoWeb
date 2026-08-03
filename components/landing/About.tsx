@@ -6,21 +6,21 @@ export function About() {
     >
       <div className="grid grid-cols-1 items-start gap-[clamp(2rem,6vw,6rem)] md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
-          <h2 className="m-0 font-display text-[clamp(1.75rem,3.4vw,3.4rem)] font-normal leading-[1.05] tracking-[-0.025em] text-ink-900 text-pretty">
+          <h2 className="m-0 font-display text-display-xl font-normal text-ink-900 text-pretty">
             Tratamos a la marca como activo estratégico, no como un entregable estético.
           </h2>
-          <p className="max-w-[56ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.65] text-ink-700">
+          <p className="max-w-[56ch] text-body-sm text-ink-700">
             Manifesto es un estudio de consultoría en estrategia y branding con sede en Guatemala.
             Trabajamos con organizaciones que entienden que una marca bien gestionada se convierte
             en el diferenciador clave a mediano y largo plazo — el lugar donde la promesa, la cultura
             y el producto convergen.
           </p>
-          <p className="max-w-[56ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.65] text-ink-700">
+          <p className="max-w-[56ch] text-body-sm text-ink-700">
             Nuestro proceso no empieza en el logotipo. Empieza en la conversación que nadie tuvo:
             por qué existen, para quién, en qué se diferencian. Lo demás es consecuencia disciplinada
             de esa respuesta.
           </p>
-          <blockquote className="mt-4 border-l-[3px] border-accent-clay pl-5 font-display text-[clamp(1.15rem,1.7vw,1.6rem)] font-normal leading-[1.3] text-ink-900 before:content-['“'] before:opacity-40 after:content-['”'] after:opacity-40">
+          <blockquote className="mt-4 border-l-[3px] border-accent-clay pl-5 font-display text-display-md font-normal text-ink-900 before:content-['“'] before:opacity-40 after:content-['”'] after:opacity-40">
             De dónde venimos, por qué y a dónde vamos: creemos firmemente que las historias
             marcan vidas.
           </blockquote>
@@ -50,11 +50,11 @@ function StatCard({ label, period, num, desc, variant }: StatCardProps) {
   const bg = variant === "sage" ? "bg-paper-sage" : "bg-paper-ice";
   return (
     <div className={`flex flex-col gap-3 rounded-tile p-6 ${bg}`}>
-      <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.2em] text-ink-700">
+      <div className="flex items-baseline justify-between font-mono text-xs uppercase tracking-kicker text-ink-700">
         <span>{label}</span>
         {period && <span>{period}</span>}
       </div>
-      <div className="font-display text-[clamp(4.5rem,7.5vw,8rem)] font-bold leading-[0.9] tracking-[-0.055em] text-ink-900">
+      <div className="font-display text-stat font-bold text-ink-900">
         {num}
       </div>
       <p className="text-base leading-[1.5] text-ink-700">{desc}</p>

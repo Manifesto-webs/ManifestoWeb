@@ -20,7 +20,7 @@ export function Marquee() {
       aria-hidden="true"
       className="overflow-hidden border-y border-ink-900/10 bg-paper-bone py-[clamp(1.1rem,1.8vw,1.8rem)]"
     >
-      <div className="animate-marquee inline-flex items-center gap-10 whitespace-nowrap font-display text-[clamp(2.5rem,6vw,6rem)] font-medium leading-none tracking-[-0.03em] text-ink-900 [will-change:transform]">
+      <div className="animate-marquee inline-flex items-center gap-10 whitespace-nowrap font-display text-display-2xl font-medium leading-none text-ink-900 [will-change:transform]">
         {loop.map((word, i) => (
           <span key={i} className="inline-flex items-center gap-10">
             <span>{word}</span>

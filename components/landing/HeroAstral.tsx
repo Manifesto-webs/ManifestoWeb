@@ -15,8 +15,9 @@ const SPACE = "#282e32";
 const BONE = "#ffffff";
 const STAR = "#d6e2ed";
 const MAROON = "#5f0000";
-/** Corinto/rojo de marca, aclarado lo justo para que se lea sobre el oscuro. */
-const CORINTO = "#b3243b";
+/** Corinto/rojo de marca, aclarado lo justo para que se lea sobre el oscuro.
+ *  El #b3243b de marca daba 2.12:1 acá — no llegaba al 3:1 del texto grande. */
+const CORINTO = "#d94358";
 
 /* -------------------------------------------------------------------------- */
 /*  Starfield en canvas — con efecto de "warp" al hacer scroll                 */
@@ -186,7 +187,9 @@ export function HeroAstral() {
       className="relative h-[150vh]"
       style={{ backgroundColor: bg }}
     >
-      <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden">
+      {/* h-dvh y no h-screen: en móvil la barra del navegador se retrae y
+          100vh deja un salto de layout que h-dvh no tiene. */}
+      <div className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden">
         <canvas
           ref={canvasRef}
           className="pointer-events-none absolute inset-0 h-full w-full"
@@ -213,14 +216,14 @@ export function HeroAstral() {
           }}
         >
           <span
-            className="font-mono text-xs uppercase tracking-[0.28em] animate-drift-up"
+            className="font-mono text-xs uppercase tracking-kicker animate-drift-up"
             style={{ color: body, animationDelay: "80ms" }}
           >
             Estudio de branding · Guatemala
           </span>
 
           <h1
-            className="m-0 max-w-[20ch] font-display text-[clamp(2.25rem,6.5vw,6.5rem)] font-medium leading-[0.98] tracking-[-0.03em] animate-drift-up text-balance"
+            className="m-0 max-w-[20ch] font-display text-display-3xl font-medium animate-drift-up text-balance"
             style={{ color: heading, animationDelay: "160ms" }}
           >
             Las marcas se construyen.
@@ -231,7 +234,7 @@ export function HeroAstral() {
           </h1>
 
           <p
-            className="max-w-[62ch] text-[clamp(1rem,1.4vw,1.35rem)] leading-[1.6] animate-drift-up text-pretty"
+            className="max-w-[62ch] text-lead animate-drift-up text-pretty"
             style={{ color: body, animationDelay: "260ms" }}
           >
             Estudio de branding y comunicación estratégica. Convertimos lo que
@@ -262,7 +265,7 @@ export function HeroAstral() {
           aria-hidden="true"
         >
           <span
-            className="font-mono text-[0.65rem] uppercase tracking-[0.25em]"
+            className="font-mono text-[0.65rem] uppercase tracking-kicker"
             style={{ color: STAR }}
           >
             scroll

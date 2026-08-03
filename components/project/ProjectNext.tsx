@@ -27,10 +27,10 @@ export function ProjectNext({ project }: ProjectNextProps) {
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="relative z-10 flex w-full flex-col gap-3 p-[clamp(1.5rem,3vw,3rem)] text-paper-bone">
-            <span className="font-mono text-xs uppercase tracking-[0.22em] opacity-80">
+            <span className="font-mono text-xs uppercase tracking-kicker opacity-80">
               siguiente · {next.meta.year}
             </span>
-            <h3 className="m-0 font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em]">
+            <h3 className="m-0 font-display text-display-2xl font-normal">
               {next.name}
               <span className="text-accent-clay">.</span>
             </h3>

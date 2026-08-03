@@ -40,37 +40,24 @@
   font-display: swap;
 }
 
+/* Satoshi (Fontshare / Indian Type Foundry, EULA de uso comercial libre —
+   ver /fonts/satoshi/LICENSE.txt).
+   Reemplaza a Calibre, cuyos archivos traían solo 66 glifos: sin á é í ó ú ñ
+   ¿ ¡ — ni ·, así que cada acento del copy en español caía a la fuente del
+   sistema y el texto se veía distinto en cada plataforma.
+   Un solo archivo variable cubre todo el rango de pesos 300–900. */
 @font-face {
-  font-family: "Calibre";
-  src: url("/fonts/calibre/Calibre-Light.otf") format("opentype");
-  font-weight: 300;
+  font-family: "Satoshi";
+  src: url("/fonts/satoshi/Satoshi-Variable.woff2") format("woff2-variations");
+  font-weight: 300 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "Calibre";
-  src: url("/fonts/calibre/Calibre-LightItalic.otf") format("opentype");
-  font-weight: 300;
+  font-family: "Satoshi";
+  src: url("/fonts/satoshi/Satoshi-VariableItalic.woff2") format("woff2-variations");
+  font-weight: 300 900;
   font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Calibre";
-  src: url("/fonts/calibre/Calibre-Regular.otf") format("opentype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Calibre";
-  src: url("/fonts/calibre/Calibre-Medium.otf") format("opentype");
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Calibre";
-  src: url("/fonts/calibre/Calibre-Bold.otf") format("opentype");
-  font-weight: 700;
   font-display: swap;
 }
 
@@ -101,6 +88,12 @@
 
   /* Accent */
   --color-accent-clay: #4A0010;
+  --color-accent-corinto: #b3243b;
+  /* El corinto de marca sobre el hero oscuro daba 2.12:1 — por debajo del 3:1
+     que pide el texto grande, justo en la palabra más importante del sitio.
+     Esta variante aclarada conserva el tono y llega a ~3.2:1. Se usa solo
+     sobre fondo oscuro; en fondo claro sigue el corinto original. */
+  --color-accent-corinto-on-dark: #d94358;
 
   /* Espacio / astral (Hero de inicio) */
   --color-space-slate:  #282e32;
@@ -111,8 +104,61 @@
 
   /* Font families */
   --font-display: "Clash Display", "GT Super Display", serif;
-  --font-body:    "Calibre", "Söhne", system-ui, -apple-system, sans-serif;
+  --font-body:    "Satoshi", system-ui, -apple-system, sans-serif;
   --font-mono:    "Courier Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* =======================================================
+     Escala tipográfica
+     Antes había 28 clamp() distintos escritos a mano, uno por
+     componente. Estos 8 pasos los cubren todos. Cada paso trae su
+     line-height y su tracking: a mayor tamaño, leading más corto y
+     tracking más cerrado (compensación óptica). Los componentes solo
+     eligen el paso — no vuelven a declarar tamaños sueltos.
+     ======================================================= */
+
+  /* h1 — solo uno por página */
+  --text-display-3xl: clamp(2.5rem, 7vw, 7.5rem);
+  --text-display-3xl--line-height: 0.92;
+  --text-display-3xl--letter-spacing: -0.04em;
+
+  /* Títulos de sección */
+  --text-display-2xl: clamp(2rem, 5.5vw, 6rem);
+  --text-display-2xl--line-height: 0.95;
+  --text-display-2xl--letter-spacing: -0.035em;
+
+  /* Subtítulos y declaraciones dentro de una sección */
+  --text-display-xl: clamp(1.75rem, 3.6vw, 3.6rem);
+  --text-display-xl--line-height: 1.05;
+  --text-display-xl--letter-spacing: -0.025em;
+
+  /* Citas y bloques destacados */
+  --text-display-lg: clamp(1.5rem, 2.6vw, 2.6rem);
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+
+  /* Títulos de tarjeta / tile */
+  --text-display-md: clamp(1.15rem, 1.7vw, 1.7rem);
+  --text-display-md--line-height: 1.25;
+  --text-display-md--letter-spacing: -0.015em;
+
+  /* Cifras grandes (los stats de Nosotros) — rol propio, no es un título.
+     El mínimo de 4.5rem es intencional: en móvil la cifra tiene que seguir
+     pesando más que el texto que la acompaña. */
+  --text-stat: clamp(4.5rem, 7.5vw, 8rem);
+  --text-stat--line-height: 0.85;
+  --text-stat--letter-spacing: -0.05em;
+
+  /* Bajadas / entradillas */
+  --text-lead: clamp(1rem, 1.3vw, 1.35rem);
+  --text-lead--line-height: 1.5;
+
+  /* Cuerpo largo */
+  --text-body-sm: clamp(0.95rem, 1.05vw, 1.1rem);
+  --text-body-sm--line-height: 1.6;
+
+  /* Tracking del kicker — un solo valor para todo el sitio.
+     Antes convivían 0.12, 0.18, 0.2, 0.22, 0.25 y 0.28em. */
+  --tracking-kicker: 0.22em;
 
   /* Radius (custom, replace defaults) */
   --radius-none: 0;
@@ -156,11 +202,12 @@ body {
   margin-inline: auto;
 }
 
-/* Kicker — label en Courier mono uppercase, usado en secciones */
+/* Kicker — label en Courier mono uppercase, usado en secciones.
+   El tracking sale del token para que no vuelva a divergir por componente. */
 @utility kicker {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.22em;
+  letter-spacing: var(--tracking-kicker);
   text-transform: uppercase;
   color: var(--color-ink-500);
 }

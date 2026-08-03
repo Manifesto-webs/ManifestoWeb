@@ -13,10 +13,10 @@ export function Lines() {
             id={anchor}
             className={`relative flex flex-col gap-6 px-[clamp(1.5rem,4vw,4rem)] py-[clamp(3rem,7vw,6rem)] ${bg} ${i > 0 ? "max-md:border-t md:border-l border-ink-900" : ""} min-h-[clamp(560px,70vh,760px)]`}
           >
-            <h3 className="m-0 font-display text-[clamp(2.5rem,5.5vw,5.5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
+            <h3 className="m-0 font-display text-display-2xl font-normal text-ink-900">
               {line.title}
             </h3>
-            <p className="max-w-[46ch] text-[clamp(0.95rem,1.05vw,1.1rem)] text-ink-700">
+            <p className="max-w-[46ch] text-body-sm text-ink-700">
               {line.bodyText}
             </p>
             <ul className="flex flex-col border-t border-ink-900/20">
@@ -34,10 +34,12 @@ export function Lines() {
             </ul>
             <Link
               href={line.ctaHref}
-              className="group mt-auto inline-flex items-center gap-2 self-start border-b border-ink-900 pb-1 text-base text-ink-900 transition-[gap] duration-300 hover:gap-3"
+              className="group mt-auto inline-flex items-center gap-2 self-start border-b border-ink-900 pb-1 text-base text-ink-900"
             >
               {line.ctaLabel}
-              <span className="font-mono">→</span>
+              <span className="font-mono transition-transform duration-200 ease-out group-hover:translate-x-1">
+                →
+              </span>
             </Link>
           </div>
         );

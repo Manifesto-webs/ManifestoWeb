@@ -54,7 +54,7 @@ export function Bento() {
       className="bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)] pb-[clamp(2.5rem,5vw,6rem)]"
     >
       <div className="mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <h2 className="m-0 font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.92] tracking-[-0.035em] text-ink-900">
+        <h2 className="m-0 font-display text-display-2xl font-normal text-ink-900">
           Trabajo seleccionado.
         </h2>
       </div>
@@ -79,16 +79,18 @@ export function Bento() {
               />
               <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/45 via-black/10 to-transparent" />
 
-              <div className="absolute right-4 top-4 z-[3] grid h-[68px] w-[68px] place-items-center rounded-full bg-ink-900 font-mono text-xs uppercase tracking-[0.12em] text-paper-bone transition-[width,height,background] duration-300 group-hover:h-[82px] group-hover:w-[82px] group-hover:bg-accent-clay">
+              {/* Crece con scale (68→82px = 1.21) en vez de animar width/height:
+                  el compositor lo resuelve sin recalcular layout en cada frame. */}
+              <div className="absolute right-4 top-4 z-[3] grid size-[68px] place-items-center rounded-full bg-ink-900 font-mono text-xs uppercase tracking-kicker text-paper-bone transition-[transform,background-color] duration-200 ease-out group-hover:scale-[1.21] group-hover:bg-accent-clay">
                 <span className="flex flex-col items-center gap-0.5 leading-none">
                   ver
                   <span className="text-base tracking-normal">→</span>
                 </span>
               </div>
 
-              <div className="absolute inset-x-4 bottom-4 z-[2] font-mono text-xs uppercase tracking-[0.18em] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)] max-sm:inset-x-[1.1rem] max-sm:bottom-4">
+              <div className="absolute inset-x-4 bottom-4 z-[2] font-mono text-xs uppercase tracking-kicker text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)] max-sm:inset-x-[1.1rem] max-sm:bottom-4">
                 {tile.category}
-                <strong className="mt-1 block font-display text-[clamp(1.25rem,2vw,1.8rem)] font-medium tracking-[-0.025em] normal-case text-white max-sm:text-[1.25rem]">
+                <strong className="mt-1 block font-display text-display-md font-medium normal-case text-white max-sm:text-[1.25rem]">
                   {project.name}
                 </strong>
               </div>

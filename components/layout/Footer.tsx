@@ -10,18 +10,18 @@ export function Footer() {
         <div className="flex flex-col gap-4">
           <ManifestoLogo size={40} className="text-paper-bone" />
           
-          <p className="max-w-[22ch] font-display text-[clamp(1.25rem,2.4vw,2.4rem)] font-normal leading-[1.1] tracking-[-0.02em]">
+          <p className="max-w-[22ch] font-display text-display-lg font-normal">
     Marcas con propósito, diseñadas para evolucionar.
   </p>
         </div>
 
         <div className="flex flex-col gap-2">
-          <h5 className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-paper-bone/60">
+          <h5 className="mb-3 font-mono text-xs uppercase tracking-kicker text-paper-bone/60">
             Contacto
           </h5>
           <a
             href={`mailto:${SITE.email}`}
-            className="font-display text-[clamp(1.05rem,1.25vw,1.35rem)] font-normal leading-[1.25] transition-colors hover:text-accent-clay"
+            className="font-display text-lead font-normal transition-colors hover:text-accent-clay"
           >
             {SITE.email}
           </a>
@@ -30,7 +30,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <h5 className="mb-3 font-mono text-xs uppercase tracking-[0.22em] text-paper-bone/60">
+          <h5 className="mb-3 font-mono text-xs uppercase tracking-kicker text-paper-bone/60">
             Síguenos
           </h5>
           {Object.entries(SITE.socials).map(([name, url]) => (
@@ -48,7 +48,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-[clamp(2.5rem,5vw,4rem)] flex items-center justify-center border-t border-paper-bone/[0.14] py-6 font-mono text-xs uppercase tracking-[0.18em] text-paper-bone/55">
+      <div className="relative z-10 mt-[clamp(2.5rem,5vw,4rem)] flex items-center justify-center border-t border-paper-bone/[0.14] py-6 font-mono text-xs uppercase tracking-kicker text-paper-bone/55">
         © 2026 manifesto
       </div>
 
