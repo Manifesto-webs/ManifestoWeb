@@ -1,4 +1,5 @@
 import { SITE } from "@/lib/constants";
+import { contactEmailHtml, contactEmailText } from "@/lib/contact-email";
 
 /**
  * POST /api/contact — envía el formulario de contacto por Mailtrap.
@@ -99,15 +100,7 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "Ese correo no parece válido." }, { status: 400 });
   }
 
-  const lines = [
-    `Nombre:       ${name}`,
-    `Correo:       ${email}`,
-    org && `Organización: ${org}`,
-    budget && `Presupuesto:  ${budget}`,
-    "",
-    "El motivo:",
-    msg,
-  ].filter(Boolean);
+  const payload = { name, email, org, budget, msg };
 
   const res = await fetch("https://send.api.mailtrap.io/api/send", {
     method: "POST",
@@ -118,7 +111,8 @@ export async function POST(request: Request) {
       // Responder al correo va directo a quien escribió, sin copiar la dirección.
       reply_to: { email, name },
       subject: `Nuevo mensaje del sitio — ${name}${org ? ` (${org})` : ""}`,
-      text: lines.join("\n"),
+      text: contactEmailText(payload),
+      html: contactEmailHtml(payload),
       category: "formulario-contacto",
     }),
   });
