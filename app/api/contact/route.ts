@@ -15,10 +15,20 @@ export const dynamic = "force-dynamic";
 const FROM = { email: "web@manifesto.gt", name: "Manifesto — web" };
 
 /**
- * Destinatario. Por defecto la casilla del sitio; CONTACT_TO permite
- * redirigirlo (pruebas, o si mañana entra a un CRM) sin tocar código.
+ * Destinatarios. Salen de CONTACT_TO, que acepta varios separados por coma
+ * o punto y coma. Vive en la variable de entorno y no en el código a
+ * propósito: sumar o quitar a alguien del equipo es cambiar la variable en
+ * Railway, sin tocar el repo ni esperar un deploy.
+ *
+ * Si CONTACT_TO no está, cae a la casilla del sitio para que el formulario
+ * nunca quede enviando al vacío.
  */
-const recipient = () => process.env.CONTACT_TO || SITE.email;
+function recipients(): string[] {
+  const raw = process.env.CONTACT_TO?.split(/[,;]/) ?? [];
+  const list = raw.map((s) => s.trim()).filter((s) => s && looksLikeEmail(s));
+  // Set para que un duplicado en la variable no mande el correo dos veces.
+  return list.length ? [...new Set(list)] : [SITE.email];
+}
 
 const MAX = { name: 120, org: 160, email: 200, budget: 80, msg: 4000 } as const;
 
@@ -107,7 +117,9 @@ export async function POST(request: Request) {
     headers: { "Api-Token": token, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: FROM,
-      to: [{ email: recipient() }],
+      // `addr` y no `email`: ese nombre ya es el del visitante y confundirlo
+      // acá mandaría el aviso a quien escribió en vez de al equipo.
+      to: recipients().map((addr) => ({ email: addr })),
       // Responder al correo va directo a quien escribió, sin copiar la dirección.
       reply_to: { email, name },
       subject: `Nuevo mensaje del sitio — ${name}${org ? ` (${org})` : ""}`,
