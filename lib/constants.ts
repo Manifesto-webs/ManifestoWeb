@@ -82,6 +82,7 @@ export const NAV_LINKS = [
   { href: "/#about", label: "about" },
   { href: "/#adn", label: "adn" },
   { href: "/#digital", label: "digital" },
+  { href: "/#universo", label: "universo" },
   { href: "/#proceso", label: "proceso" },
   { href: "/#trabajo", label: "trabajo" },
 ] as const;

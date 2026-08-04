@@ -3,6 +3,7 @@ import { Bento } from "@/components/landing/Bento";
 // import { Marquee } from "@/components/landing/Marquee"; // desactivado: no va en la web por ahora
 import { About } from "@/components/landing/About";
 import { Lines } from "@/components/landing/Lines";
+import { Universe } from "@/components/landing/Universe";
 import { ProcessStar } from "@/components/landing/ProcessStar";
 import { Quote } from "@/components/landing/Quote";
 import { Clients } from "@/components/landing/Clients";
@@ -17,6 +18,9 @@ export default function HomePage() {
       {/* <Marquee /> */}
       <About />
       <Lines />
+      {/* Bloque 3 del doc de textos. Va en paper-ice: corta la corrida de
+          cuatro secciones claras y hace de transición al método oscuro. */}
+      <Universe />
       <ProcessStar />
       <Quote />
       <Clients />
