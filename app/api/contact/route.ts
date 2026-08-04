@@ -1,5 +1,6 @@
 import { SITE } from "@/lib/constants";
 import { contactEmailHtml, contactEmailText } from "@/lib/contact-email";
+import { validateContact } from "@/lib/contact-validation";
 
 /**
  * POST /api/contact — envía el formulario de contacto por Mailtrap.
@@ -30,15 +31,14 @@ function recipients(): string[] {
   return list.length ? [...new Set(list)] : [SITE.email];
 }
 
-const MAX = { name: 120, org: 160, email: 200, budget: 80, msg: 4000 } as const;
-
 /**
  * Límite por IP. En memoria a propósito: con una réplica alcanza y evita
  * meter una dependencia. Se reinicia en cada deploy, que para este caso es
  * aceptable.
  */
 const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 5;
+/** Ajustable con CONTACT_RATE_LIMIT por si hace falta afinarlo sin deploy. */
+const MAX_PER_WINDOW = Number(process.env.CONTACT_RATE_LIMIT) || 5;
 const hits = new Map<string, number[]>();
 
 function rateLimited(ip: string) {
@@ -53,6 +53,7 @@ function rateLimited(ip: string) {
   return recent.length > MAX_PER_WINDOW;
 }
 
+/** Sólo se usa para el honeypot; el resto lo valida validateContact. */
 const clean = (v: unknown, max: number) =>
   typeof v === "string" ? v.trim().slice(0, max) : "";
 
@@ -94,23 +95,18 @@ export async function POST(request: Request) {
     return Response.json({ ok: true });
   }
 
-  const name = clean(body.name, MAX.name);
-  const org = clean(body.org, MAX.org);
-  const email = clean(body.email, MAX.email);
-  const budget = clean(body.budget, MAX.budget);
-  const msg = clean(body.msg, MAX.msg);
-
-  if (!name || !email || !msg) {
-    return Response.json(
-      { ok: false, error: "Faltan nombre, correo o mensaje." },
-      { status: 400 },
-    );
-  }
-  if (!looksLikeEmail(email)) {
-    return Response.json({ ok: false, error: "Ese correo no parece válido." }, { status: 400 });
+  // Formato, dominios de ejemplo, desechables, patrones de spam y existencia
+  // real del dominio. Ver lib/contact-validation.ts.
+  const verdict = await validateContact(body);
+  if (!verdict.ok) {
+    // El motivo queda en el log para poder afinar las reglas; al visitante
+    // se le devuelve sólo el mensaje.
+    console.warn(`[contact] rechazado (${verdict.reason}) desde ${ip}`);
+    return Response.json({ ok: false, error: verdict.error }, { status: verdict.status });
   }
 
-  const payload = { name, email, org, budget, msg };
+  const payload = verdict.data;
+  const { name, email, org } = payload;
 
   const res = await fetch("https://send.api.mailtrap.io/api/send", {
     method: "POST",

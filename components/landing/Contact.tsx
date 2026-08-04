@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { SITE } from "@/lib/constants";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -8,13 +8,22 @@ type Status = "idle" | "sending" | "sent" | "error";
 export function Contact() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
+  /**
+   * Momento en que se montó el formulario. Se manda el tiempo transcurrido
+   * para descartar envíos instantáneos: una persona no escribe una consulta
+   * en menos de tres segundos, un bot sí.
+   */
+  const mountedAt = useRef(Date.now());
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (status === "sending") return;
 
     const form = e.currentTarget;
-    const data = Object.fromEntries(new FormData(form));
+    const data = {
+      ...Object.fromEntries(new FormData(form)),
+      elapsed: Date.now() - mountedAt.current,
+    };
 
     setStatus("sending");
     setError("");
