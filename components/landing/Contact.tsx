@@ -1,20 +1,45 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { SITE } from "@/lib/constants";
+
+type Status = "idle" | "sending" | "sent" | "error";
 
 export function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState("");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (status === "sending") return;
 
-    // TODO: reemplazar con endpoint real. Ver docs/04-DEPLOY.md.
-    // Opciones sugeridas:
-    //   - Formspree:      const res = await fetch('https://formspree.io/f/YOUR_ID', { ... })
-    //   - Netlify Forms:  <form data-netlify="true"> + <input name="bot-field" type="hidden">
-    //   - API propia:     const res = await fetch('/api/contact', { method: 'POST', body: formData })
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2400);
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new FormData(form));
+
+    setStatus("sending");
+    setError("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({}));
+
+      if (!res.ok || !json.ok) {
+        setError(json.error ?? `No pudimos enviarlo. Escríbenos a ${SITE.email}`);
+        setStatus("error");
+        return;
+      }
+      form.reset();
+      setStatus("sent");
+    } catch {
+      // Falla de red: el mensaje no se perdió por culpa del visitante, así
+      // que se le da la vía alterna en lugar de un error técnico.
+      setError(`No pudimos enviarlo. Escríbenos a ${SITE.email}`);
+      setStatus("error");
+    }
   }
 
   return (
@@ -54,20 +79,42 @@ export function Contact() {
 
             />
           </div>
+          {/* Honeypot: invisible para personas, tentador para bots. Si viene
+              relleno, el servidor descarta el envío. aria-hidden + tabIndex
+              para que ningún lector de pantalla ni el teclado lo encuentren. */}
+          <div aria-hidden="true" className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+            <label htmlFor="website">No llenar</label>
+            <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+          </div>
+
           {/* justify-self-start, no self-start: el form es grid, así que
               self-* cae en el eje vertical y el botón se estiraba a todo el
               ancho pese al inline-flex. */}
-          <button
-            type="submit"
-            className="group mt-2 inline-flex items-center gap-3 justify-self-start rounded-2xl bg-ink-900 px-8 py-4 font-body text-base font-medium text-paper-bone transition-colors duration-200 ease-out hover:bg-accent-clay active:scale-[0.98] max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
-          >
-            {submitted ? "Recibido " : "Enviar manifiesto"}
-            {/* La flecha se desplaza con transform; antes se animaba el gap
-                del flex, que obliga a recalcular layout en cada frame. */}
-            <span className="font-mono transition-transform duration-200 ease-out group-hover:translate-x-1">
-              →
-            </span>
-          </button>
+          <div className="mt-2 flex flex-wrap items-center gap-4">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="group inline-flex items-center gap-3 rounded-2xl bg-ink-900 px-8 py-4 font-body text-base font-medium text-paper-bone transition-colors duration-200 ease-out hover:bg-accent-clay active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
+            >
+              {status === "sending" ? "Enviando…" : status === "sent" ? "Recibido" : "Enviar manifiesto"}
+              {/* La flecha se desplaza con transform; antes se animaba el gap
+                  del flex, que obliga a recalcular layout en cada frame. */}
+              <span className="font-mono transition-transform duration-200 ease-out group-hover:translate-x-1">
+                →
+              </span>
+            </button>
+
+            {/* El resultado se anuncia junto al botón, que es donde ocurrió
+                la acción. aria-live para que también se escuche. */}
+            <p aria-live="polite" className="m-0 text-base">
+              {status === "sent" && (
+                <span className="text-ink-700">
+                  Gracias. Te respondemos al correo que dejaste.
+                </span>
+              )}
+              {status === "error" && <span className="text-accent-corinto">{error}</span>}
+            </p>
+          </div>
         </form>
       </div>
     </section>
