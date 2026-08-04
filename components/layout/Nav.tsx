@@ -41,12 +41,12 @@ export function Nav() {
           href="/"
           aria-label="Manifesto — inicio"
           onClick={() => setOpen(false)}
-          className="inline-flex items-baseline gap-2 font-display text-[1.1rem] font-medium tracking-[-0.015em]"
+          className="inline-flex size-12 items-center justify-center"
         >
-          <ManifestoLogo />
-          <span>
-            manifesto<span className="text-accent-clay">.</span>
-          </span>
+          {/* Solo isotipo, en un área cuadrada de 48×48. El nombre ya lo
+              cubre el aria-label del enlace, así que no hace falta el
+              wordmark para que sea accesible. */}
+          <ManifestoLogo size={48} />
         </Link>
 
         <nav

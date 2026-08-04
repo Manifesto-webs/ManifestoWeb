@@ -25,8 +25,9 @@ export function Footer() {
           >
             {SITE.email}
           </a>
-          <p className="mt-2 text-base opacity-70">{SITE.phone}</p>
-          <p className="text-base opacity-70">{SITE.city}</p>
+          {/* Teléfono y ciudad ocultos a pedido: el teléfono de constants es
+              un placeholder (+502 5000 0000). Cuando esté el número real,
+              devolver estas dos líneas y sumar `telephone` al JSON-LD. */}
         </div>
 
         <div className="flex flex-col gap-2">

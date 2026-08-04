@@ -13,7 +13,9 @@ export const SITE = {
    */
   url: "https://www.manifesto.gt",
   email: "mensaje@manifesto.gt",
-  phone: "+502 5000 0000", // TODO: placeholder — no se publica en JSON-LD hasta tener el real
+  /** TODO: placeholder. No se renderiza en ningún lado ni va al JSON-LD
+   *  hasta tener el número real. Ver comentario en layout/Footer.tsx. */
+  phone: "+502 5000 0000",
   city: "ciudad de guatemala",
 
   /** Año de fundación del estudio. */

@@ -9,16 +9,16 @@ export function About() {
           <h2 className="m-0 font-display text-display-xl font-normal text-ink-900 text-pretty">
             Tratamos a la marca como activo estratégico, no como un entregable estético.
           </h2>
+          {/* Copy de "Textos web v2" (julio 2026) — bloque Nosotros.
+              Párrafo 1 = "Quiénes somos"; párrafo 2 = "Qué creemos". */}
           <p className="max-w-[56ch] text-body-sm text-ink-700">
-            Manifesto es un estudio de consultoría en estrategia y branding con sede en Guatemala.
-            Trabajamos con organizaciones que entienden que una marca bien gestionada se convierte
-            en el diferenciador clave a mediano y largo plazo — el lugar donde la promesa, la cultura
-            y el producto convergen.
+            Manifesto nació en 2019, pero el equipo lleva más de quince años construyendo
+            marcas junto a empresas que necesitan claridad y quieren capitalizar su identidad.
           </p>
           <p className="max-w-[56ch] text-body-sm text-ink-700">
-            Nuestro proceso no empieza en el logotipo. Empieza en la conversación que nadie tuvo:
-            por qué existen, para quién, en qué se diferencian. Lo demás es consecuencia disciplinada
-            de esa respuesta.
+            El diseño es una herramienta para pensar, ordenar y solucionar. Una marca es un
+            sistema vivo: viene de algún lugar, existe por una razón y va hacia algo. Todo
+            empieza en la cultura: lo que no es cierto adentro no se sostiene afuera.
           </p>
           <blockquote className="mt-4 border-l-[3px] border-accent-clay pl-5 font-display text-display-md font-normal text-ink-900 before:content-['“'] before:opacity-40 after:content-['”'] after:opacity-40">
             De dónde venimos, por qué y a dónde vamos: creemos firmemente que las historias

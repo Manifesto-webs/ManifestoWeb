@@ -24,12 +24,12 @@ export function Contact() {
     >
       <div className="mx-auto grid max-w-[980px] gap-12 max-sm:gap-8">
         <div className="grid gap-4">
+          {/* Copy de "Textos web v2" (julio 2026) — bloque Contacto. */}
           <h2 className="m-0 font-display text-display-2xl font-normal text-ink-900 max-sm:text-[clamp(2rem,8vw,3rem)]">
-            Cuéntanos de qué se trata.
+            ¿Tienes una marca que necesita dirección?
           </h2>
           <p className="m-0 max-w-[56ch] text-body-sm text-ink-700">
-            Si tienes una marca que quiere ordenarse, evolucionar o nacer con criterio, escríbenos.
-            Respondemos en menos de 48 horas hábiles, en castellano o inglés.
+            Escríbenos. La primera conversación no cuesta nada y casi siempre aclara algo.
           </p>
         </div>
 
