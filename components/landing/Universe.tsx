@@ -6,20 +6,34 @@ import { useEffect, useRef, useState } from "react";
 /*  Bloque 3 — El universo de marca                                            */
 /*                                                                            */
 /*  El copy dice que la marca vive DENTRO de una cultura, un mercado y un      */
-/*  equipo. Eso no es una órbita, es contención: por eso el diagrama son       */
-/*  campos concéntricos y no satélites girando. La marca ocupa el centro y     */
-/*  cada capa la envuelve, de la más cercana (el equipo que la sostiene) a la  */
-/*  más amplia (la cultura donde ocurre).                                      */
+/*  equipo: contención, no jerarquía. La marca ocupa el centro y cada capa la  */
+/*  envuelve, de la más cercana (el equipo que la sostiene) a la más amplia    */
+/*  (la cultura donde ocurre).                                                 */
+/*                                                                            */
+/*  Nota: el diagrama nació como campos concéntricos quietos, a propósito.     */
+/*  A pedido del cliente cada capa ahora recorre su propio anillo, como un     */
+/*  planeta en su órbita — la contención se mantiene (nadie cambia de anillo   */
+/*  ni cruza al de al lado), pero el sistema se lee vivo. Si se quiere volver  */
+/*  al estado quieto basta con sacar los dos <g className="orbit*"> de abajo.  */
 /* -------------------------------------------------------------------------- */
 
-const VB = 460; // 460 y no 420: deja margen para que las etiquetas no se corten
+// 570 y no 460: al girar, la etiqueta del anillo externo recorre todo el
+// contorno y necesita margen en los cuatro lados para no cortarse. El sobrante
+// da para que "Cultura" pase entera aunque la mono caiga en una fuente más
+// ancha. El ancho en CSS sube casi en la misma proporción, así que el diagrama
+// se ve prácticamente del mismo tamaño que antes.
+const VB = 570;
 const C = VB / 2;
 
-/** De adentro hacia afuera. El ángulo separa las etiquetas para que no choquen. */
+/**
+ * De adentro hacia afuera. El ángulo es la posición de arranque — separa las
+ * etiquetas para que no salgan juntas. `orbit` son los segundos que tarda en
+ * dar la vuelta: mientras más afuera, más lento, como en un sistema solar.
+ */
 const FIELDS = [
-  { label: "Equipo", r: 74, angle: -90 },
-  { label: "Mercado", r: 130, angle: -32 },
-  { label: "Cultura", r: 186, angle: -140 },
+  { label: "Equipo", r: 74, angle: -90, orbit: 32 },
+  { label: "Mercado", r: 130, angle: -32, orbit: 48 },
+  { label: "Cultura", r: 186, angle: -140, orbit: 66 },
 ] as const;
 
 const pointAt = (r: number, deg: number) => {
@@ -119,7 +133,7 @@ export function Universe() {
         <figure className="m-0 justify-self-center lg:justify-self-end">
           <svg
             viewBox={`0 0 ${VB} ${VB}`}
-            className="w-[clamp(260px,72vw,460px)]"
+            className="w-[clamp(300px,85vw,560px)]"
             role="img"
             aria-label="Diagrama: la marca en el centro, envuelta por tres capas — equipo, mercado y cultura."
           >
@@ -172,40 +186,63 @@ export function Universe() {
                     }`}
                   />
 
-                  {/* Radio marca→capa: aparece sólo en la activa. Es la
-                      "lectura" del sistema hecha explícita. */}
-                  <line
-                    x1={C}
-                    y1={C}
-                    x2={edge.x}
-                    y2={edge.y}
-                    strokeWidth={1}
-                    className={`stroke-accent-corinto transition-opacity duration-300 ease-out ${
-                      on ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                  <circle cx={edge.x} cy={edge.y} r={3} className="fill-ink-900/30" />
-                  <circle
-                    cx={edge.x}
-                    cy={edge.y}
-                    r={3}
-                    className={`fill-accent-corinto transition-opacity duration-300 ease-out ${
-                      on ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-
-                  <text
-                    x={label.x}
-                    y={label.y}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className={`font-mono text-[13px] uppercase transition-colors duration-300 ease-out ${
-                      on ? "fill-ink-900" : "fill-ink-700"
-                    }`}
-                    style={{ letterSpacing: "0.18em" }}
+                  {/* Órbita: el punto y la etiqueta recorren el anillo. Gira
+                      el grupo entero alrededor del centro, así el radio sigue
+                      apuntando siempre a la capa. */}
+                  <g
+                    className="orbit"
+                    style={{
+                      transformOrigin: `${C}px ${C}px`,
+                      transformBox: "view-box",
+                      animationDuration: `${field.orbit}s`,
+                    }}
                   >
-                    {field.label}
-                  </text>
+                    {/* Radio marca→capa: aparece sólo en la activa. Es la
+                        "lectura" del sistema hecha explícita. */}
+                    <line
+                      x1={C}
+                      y1={C}
+                      x2={edge.x}
+                      y2={edge.y}
+                      strokeWidth={1}
+                      className={`stroke-accent-corinto transition-opacity duration-300 ease-out ${
+                        on ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+                    <circle cx={edge.x} cy={edge.y} r={3} className="fill-ink-900/30" />
+                    <circle
+                      cx={edge.x}
+                      cy={edge.y}
+                      r={3}
+                      className={`fill-accent-corinto transition-opacity duration-300 ease-out ${
+                        on ? "opacity-100" : "opacity-0"
+                      }`}
+                    />
+
+                    {/* Contra-giro a la misma velocidad: la etiqueta viaja por
+                        el anillo pero nunca se pone de cabeza. */}
+                    <g
+                      className="orbit-counter"
+                      style={{
+                        transformOrigin: `${label.x}px ${label.y}px`,
+                        transformBox: "view-box",
+                        animationDuration: `${field.orbit}s`,
+                      }}
+                    >
+                      <text
+                        x={label.x}
+                        y={label.y}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className={`font-mono text-[13px] uppercase transition-colors duration-300 ease-out ${
+                          on ? "fill-ink-900" : "fill-ink-700"
+                        }`}
+                        style={{ letterSpacing: "0.18em" }}
+                      >
+                        {field.label}
+                      </text>
+                    </g>
+                  </g>
                 </g>
               );
             })}

@@ -255,6 +255,18 @@ body {
   }
 }
 
+/* Universo de marca: cada capa recorre su propio anillo. El contra-giro va a
+   la misma velocidad y en sentido opuesto para que la etiqueta viaje sin
+   ponerse de cabeza. La duración la pone cada capa en línea. */
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+@keyframes orbit-counter {
+  to { transform: rotate(-360deg); }
+}
+.orbit { animation: orbit linear infinite; }
+.orbit-counter { animation: orbit-counter linear infinite; }
+
 /* Cursor de la máquina de escribir en "Qué creemos" (/nosotros). */
 @keyframes caret-blink {
   0%, 100% { opacity: 1; }
@@ -305,7 +317,9 @@ body {
   .animate-tile-reveal,
   .animate-twinkle,
   .animate-drift-up,
-  .magic-ring {
+  .magic-ring,
+  .orbit,
+  .orbit-counter {
     animation: none !important;
   }
   /* Sin movimiento: deja los anillos visibles y quietos en tamaños escalonados */
