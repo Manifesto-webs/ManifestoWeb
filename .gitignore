@@ -38,3 +38,24 @@ next-env.d.ts
 
 # material de trabajo (copy fuente, docs de cliente) — no va al repo
 ignore_content/
+
+# recursos de marca: kit, logos y fuentes con licencia. Pesa ~9 MB y las
+# fuentes son de pago, no se versionan.
+/MANIFESTO - GRAFICA/
+
+# notas locales de trabajo (traspaso, estado y comandos) — no van al repo
+/CONTEXTO-PROYECTO.md
+/ESTADO-DOCUMENTO.md
+/tareasManifestoWeb.md
+/COMANDOS-GIT.md
+
+# ajustes locales del editor. launch.json sí se versiona, esto no.
+.claude/settings.local.json
+
+# secretos: amplía lo de arriba para cubrir .env.production, .env.development
+# y cualquier otra variante. Si algún día hace falta un ejemplo, va sin ignorar.
+.env*
+!.env.example
+
+# basura de OneDrive / Windows
+desktop.ini
