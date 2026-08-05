@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { QueHacemos } from "@/components/landing/QueHacemos";
 import { Lines } from "@/components/landing/Lines";
 import { Servicios } from "@/components/landing/Servicios";
+import { Preguntas } from "@/components/landing/Preguntas";
 
 const TITLE = "Servicios";
 const DESCRIPTION =
@@ -29,6 +30,7 @@ export default function ServiciosPage() {
       </div>
       <Lines />
       <Servicios />
+      <Preguntas />
     </>
   );
 }
