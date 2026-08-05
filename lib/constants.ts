@@ -78,10 +78,15 @@ export const SERVICE_AREAS = [
   },
 ] as const;
 
+/**
+ * Nav principal. `nosotros` y `servicios` son páginas propias; `universo`,
+ * `proceso` y `trabajo` son anclas dentro de la landing.
+ * ADN y Universo digital salieron del menú pero siguen accesibles como anclas
+ * dentro de servicios: /servicios#adn y /servicios#digital.
+ */
 export const NAV_LINKS = [
-  { href: "/#about", label: "about" },
-  { href: "/#adn", label: "adn" },
-  { href: "/#digital", label: "digital" },
+  { href: "/nosotros", label: "nosotros" },
+  { href: "/servicios", label: "servicios" },
   { href: "/#universo", label: "universo" },
   { href: "/#proceso", label: "proceso" },
   { href: "/#trabajo", label: "trabajo" },

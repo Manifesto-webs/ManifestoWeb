@@ -14,7 +14,7 @@ export const serviceLines: ServiceLine[] = [
       "Comunicación y comercialización",
     ],
     ctaLabel: "Ver casos de ADN",
-    ctaHref: "#trabajo",
+    ctaHref: "/#trabajo",
     variant: "bone",
   },
   {
@@ -30,7 +30,7 @@ export const serviceLines: ServiceLine[] = [
       "Medición y reporte de marca",
     ],
     ctaLabel: "Ver casos digitales",
-    ctaHref: "#trabajo",
+    ctaHref: "/#trabajo",
     variant: "ice",
   },
 ];
