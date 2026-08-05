@@ -15,7 +15,7 @@ export const clients: Client[] = [
   { name: "McDonald's" },
   { name: "Grupo Macro" },
   { name: "Inara" },
-  { name: "Rofoc" },
+  { name: "Rocof" },
   { name: "Solucredit" },
   { name: "Zima" },
   { name: "UWC Guatemala" },
