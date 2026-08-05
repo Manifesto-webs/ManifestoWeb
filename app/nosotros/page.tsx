@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { About } from "@/components/landing/About";
+import { PorQue } from "@/components/landing/PorQue";
 
 const TITLE = "Nosotros";
 const DESCRIPTION =
@@ -19,6 +20,7 @@ export default function NosotrosPage() {
       style={{ backgroundColor: "#282e32" }}
     >
       <About />
+      <PorQue />
     </div>
   );
 }
