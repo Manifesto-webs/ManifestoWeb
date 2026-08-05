@@ -53,7 +53,7 @@ function useStarfield(
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const count = clamp(Math.round((w * h) / 6500), 60, 280);
+      const count = clamp(Math.round((w * h) / 1000), 60, 280);
       stars = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
@@ -91,7 +91,7 @@ function useStarfield(
         const dy = s.y - cy + idle;
         const x = cx + dx * warp;
         const y = cy + dy * warp;
-        const color = s.z > 0.9 ? MAROON : STAR;
+        const color = s.z > 0.9 ? STAR : STAR;
         const size = s.r * (0.6 + s.z);
 
         ctx.globalAlpha = alpha;
@@ -216,7 +216,7 @@ export function HeroAstral() {
           }}
         >
           <span
-            className="font-mono text-xs uppercase tracking-kicker animate-drift-up"
+            className="font-mono text-xs uppercase tracking-kicker animate-drift-up mt-22"
             style={{ color: body, animationDelay: "80ms" }}
           >
             Estudio de branding · Guatemala
@@ -226,19 +226,19 @@ export function HeroAstral() {
             className="m-0 max-w-[20ch] font-display text-display-3xl font-medium animate-drift-up text-balance"
             style={{ color: heading, animationDelay: "160ms" }}
           >
-            Las marcas se construyen.
+            La marca es el único
             <br />
-            Los valores se{" "}
-            <span style={{ color: CORINTO }}>revelan</span>
-            <span style={{ color: CORINTO }}>.</span>
+            activo que crece{" "}
+            <span style={{ color: STAR }}> cuando se usa</span>
+            <span style={{ color: STAR }}>.</span>
           </h1>
 
           <p
             className="max-w-[62ch] text-lead animate-drift-up text-pretty"
             style={{ color: body, animationDelay: "260ms" }}
           >
-            Estudio de branding y comunicación estratégica. Convertimos lo que
-            una empresa <em>es</em> en decisiones que el mercado entiende.
+             construimos marcas para empresas que quieren liderar su categoria y definen las reglas del mercado.
+            Acompañamos <em>la</em> dirección de marca mientras el negocio evoluciona
           </p>
 
           <Link
@@ -256,24 +256,6 @@ export function HeroAstral() {
               →
             </span>
           </Link>
-        </div>
-
-        {/* Indicador de scroll */}
-        <div
-          className="pointer-events-none absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
-          style={{ opacity: 1 - progress * 3 }}
-          aria-hidden="true"
-        >
-          <span
-            className="font-mono text-[0.65rem] uppercase tracking-kicker"
-            style={{ color: STAR }}
-          >
-            scroll
-          </span>
-          <span
-            className="block h-8 w-[1px]"
-            style={{ background: `linear-gradient(${STAR}, transparent)` }}
-          />
         </div>
       </div>
     </section>
