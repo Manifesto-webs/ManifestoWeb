@@ -7,27 +7,34 @@ import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
 interface Frente {
   id: string;
   name: string;
+  /** A quién le sirve el frente. Va visible en cerrado: ayuda a reconocerse
+   *  sin tener que abrir los cuatro. */
+  para: string;
   desc: string;
   items: string[];
 }
 
+/* Copy de "Textos web v3". Las lineas "para" de Cultura y Experiencia venian
+   a medio redactar en el documento; se dejaron en el mismo registro
+   diagnostico que las otras dos. */
 const FRENTES: Frente[] = [
   {
     id: "01",
     name: "Universo de marca",
+    para: "Para empresas que necesitan definir o redefinir quiénes son",
     desc: "Definimos qué es la marca y cómo se ve, se escucha y se comporta.",
     items: [
       "Dirección estratégica de marca",
       "Arquitectura de portafolio",
-      "Narrativa",
-      "Naming",
+      "Narrativa y naming",
       "Identidad visual",
-      "Activación",
+      "Activación de marca",
     ],
   },
   {
     id: "02",
     name: "Cultura y talento",
+    para: "Para organizaciones donde la marca todavía no llegó al equipo",
     desc: "La marca empieza adentro. Si el equipo no la entiende, el mercado tampoco.",
     items: [
       "Propuesta de valor para el talento (EVP)",
@@ -38,6 +45,7 @@ const FRENTES: Frente[] = [
   {
     id: "03",
     name: "Experiencia de cliente",
+    para: "Para empresas donde lo que se promete y lo que se vive no coinciden",
     desc: "Alineamos cada punto de contacto con lo que la marca dice ser.",
     items: [
       "Estrategia de experiencia B2B y B2C",
@@ -48,12 +56,15 @@ const FRENTES: Frente[] = [
   },
   {
     id: "04",
-    name: "Crecimiento y visibilidad",
-    desc: "Campañas y activos digitales que abren demanda sin diluir la marca.",
+    name: "Universo digital",
+    para: "Para marcas que necesitan operar en digital bajo un sistema sostenible y que la inversión no se pierda",
+    desc: "Diseñamos y construimos los productos digitales donde la marca vive.",
     items: [
-      "Estrategia de lanzamientos y eventos",
-      "Diseño y gestión de activos digitales",
-      "Planificación de visibilidad en entornos digitales",
+      "Auditoría, estrategia digital y arquitectura de información",
+      "Diseño UX/UI y sistemas de diseño",
+      "Sitios, CMS y aplicaciones a medida",
+      "Integración de backend, APIs y MarTech",
+      "Optimización continua y gestión del rendimiento",
     ],
   },
 ];
@@ -71,7 +82,7 @@ export function Servicios() {
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
         <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
-          Servicios
+          Cómo trabajamos juntos
         </span>
         <h2 className="mt-3 max-w-[16ch] font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.92] tracking-[-0.035em] text-white">
           Cuatro frentes. <br /> Una sola marca.
@@ -96,16 +107,32 @@ export function Servicios() {
                   >
                     {f.id}
                   </span>
-                  <h3
-                    className="flex-1 font-display text-[clamp(1.6rem,4vw,3.6rem)] font-normal leading-[1] tracking-[-0.03em] transition-all duration-500"
-                    style={{
-                      color: active ? "#ffffff" : "rgba(255,255,255,0.5)",
-                      transform: active ? "translateX(8px)" : "translateX(0)",
-                      textShadow: active ? "0 0 26px rgba(214,226,237,0.35)" : "none",
-                    }}
+                  <div
+                    /* pr-3 reserva el desplazamiento de la fila activa: sin eso,
+                       en mobile el texto se mete debajo del signo +. */
+                    className="flex flex-1 flex-col gap-2 pr-3 transition-transform duration-500"
+                    style={{ transform: active ? "translateX(8px)" : "translateX(0)" }}
                   >
-                    {f.name}
-                  </h3>
+                    <h3
+                      className="m-0 font-display text-[clamp(1.6rem,4vw,3.6rem)] font-normal leading-[1] tracking-[-0.03em] transition-all duration-500"
+                      style={{
+                        color: active ? "#ffffff" : "rgba(255,255,255,0.5)",
+                        textShadow: active ? "0 0 26px rgba(214,226,237,0.35)" : "none",
+                      }}
+                    >
+                      {f.name}
+                    </h3>
+                    <span
+                      className="max-w-[54ch] text-[clamp(0.8rem,0.95vw,0.95rem)] leading-[1.45] transition-colors duration-500"
+                      style={{
+                        color: active
+                          ? "rgba(214,226,237,0.85)"
+                          : "rgba(214,226,237,0.45)",
+                      }}
+                    >
+                      {f.para}
+                    </span>
+                  </div>
                   <span
                     className="font-mono text-2xl transition-all duration-500"
                     style={{
