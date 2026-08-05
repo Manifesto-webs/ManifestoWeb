@@ -45,6 +45,7 @@ ignore_content/
 
 # notas locales de trabajo (traspaso, estado y comandos) — no van al repo
 /CONTEXTO-PROYECTO.md
+/CONTEXTOHOY.md
 /ESTADO-DOCUMENTO.md
 /tareasManifestoWeb.md
 /COMANDOS-GIT.md
