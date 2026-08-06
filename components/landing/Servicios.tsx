@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
 import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
 
@@ -152,9 +153,26 @@ export function Servicios() {
                 >
                   <div className="overflow-hidden">
                     <div className="grid gap-6 pb-[clamp(1.5rem,3vw,2.5rem)] pl-[calc(2ch+clamp(0.75rem,2.5vw,2rem))] md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-                      <p className="max-w-[36ch] text-[clamp(1rem,1.3vw,1.3rem)] leading-[1.5] text-[rgba(214,226,237,0.72)]">
-                        {f.desc}
-                      </p>
+                      <div className="flex flex-col items-start gap-6">
+                        <p className="max-w-[36ch] text-[clamp(1rem,1.3vw,1.3rem)] leading-[1.5] text-[rgba(214,226,237,0.72)]">
+                          {f.desc}
+                        </p>
+
+                        {/* Lleva al portafolio de la landing. tabIndex -1
+                            cuando el frente está cerrado: el panel sigue en el
+                            DOM aunque no se vea, y si no el tabulador se mete
+                            en los cuatro enlaces invisibles. */}
+                        <Link
+                          href="/#trabajo"
+                          tabIndex={active ? 0 : -1}
+                          className="group/cta inline-flex items-center gap-2 rounded-pill border border-[rgba(214,226,237,0.45)] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:border-white hover:bg-white/10"
+                        >
+                          ver casos
+                          <span className="transition-transform duration-300 group-hover/cta:translate-x-[3px]">
+                            →
+                          </span>
+                        </Link>
+                      </div>
                       <ul className="flex flex-wrap gap-x-3 gap-y-3 self-start">
                         {f.items.map((it, j) => (
                           <li

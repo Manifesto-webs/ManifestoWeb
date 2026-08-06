@@ -89,8 +89,9 @@ export const SERVICE_AREAS = [
  * #trabajo sigue viva —el bento, los CTA de servicios y el "volver" de cada
  * caso apuntan ahí—, solo deja de ocupar un lugar en el menú.
  *
- * ADN y Universo digital salieron del menú pero siguen accesibles como anclas
- * dentro de servicios: /servicios#adn y /servicios#digital.
+ * Las anclas #adn y #digital ya no existen: la sección que las tenía (Lines)
+ * salió de servicios junto con los tres pilares de v2, porque la página decía
+ * tres veces lo mismo con tres taxonomías distintas.
  */
 export const NAV_LINKS = [
   { href: "/", label: "inicio" },
