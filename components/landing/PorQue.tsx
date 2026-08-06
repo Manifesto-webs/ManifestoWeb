@@ -62,18 +62,23 @@ export function PorQue() {
   return (
     <section
       id="por-que"
-      className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      /* ─────────────────────────────────────────────────────────────────
+         FONDO DE ESTA SECCIÓN (Por qué Manifesto)
+         Va en blanco: bg-paper-bone. Para cambiarlo, es esta clase.
+         El fondo de TODA la página está en app/nosotros/page.tsx.
+         ───────────────────────────────────────────────────────────────── */
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
     >
-      <SpaceBackdrop glow="corinto" />
+      {/* Variante clara: sin corinto y con los anillos en ice. */}
+      <SpaceBackdrop variant="paper" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
-        <h2 className="m-0 max-w-[14ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-white">
+        <h2 className="m-0 max-w-[14ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
           Por qué Manifesto.
         </h2>
       </Reveal>
 
-      <ol className="relative z-10 m-0 flex list-none flex-col border-t border-[rgba(214,226,237,0.2)] p-0">
+      <ol className="relative z-10 m-0 flex list-none flex-col border-t border-ink-900/20 p-0">
         {MOTIVOS.map((m, i) => {
           const on = hover === i;
           return (
@@ -81,10 +86,10 @@ export function PorQue() {
               <li
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
-                className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-[clamp(0.9rem,2.5vw,2.5rem)] gap-y-2 border-b border-[rgba(214,226,237,0.14)] py-[clamp(1.3rem,2.6vw,2.2rem)] transition-all duration-500 md:grid-cols-[auto_minmax(0,1fr)_minmax(0,1.1fr)]"
+                className="relative grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-[clamp(0.9rem,2.5vw,2.5rem)] gap-y-2 border-b border-ink-900/12 py-[clamp(1.3rem,2.6vw,2.2rem)] transition-all duration-500 md:grid-cols-[auto_minmax(0,1fr)_minmax(0,1.1fr)]"
                 style={{
                   paddingLeft: on ? "0.6rem" : "0",
-                  backgroundColor: on ? "rgba(255,255,255,0.03)" : "transparent",
+                  backgroundColor: on ? "rgba(45,52,54,0.04)" : "transparent",
                 }}
               >
                 {/* Línea que crece al pasar el puntero, igual que en el resto del sitio. */}
@@ -93,29 +98,29 @@ export function PorQue() {
                   className="absolute left-0 top-0 h-[1px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   style={{
                     width: on ? "100%" : "0%",
-                    background: "linear-gradient(90deg, #5f0000, transparent)",
+                    /* Era corinto. Va en el slate del fondo espacial: el ice
+                       sobre blanco no se ve en una línea de 1px. */
+                    background: "linear-gradient(90deg, #282e32, transparent)",
                   }}
                 />
 
                 <span
                   className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
-                  style={{ color: on ? "#dcddca" : "rgba(214,226,237,0.4)" }}
+                  style={{ color: on ? "#2D3436" : "#4A5054" }}
                 >
                   {m.id}
                 </span>
 
                 <h3
                   className="m-0 max-w-[22ch] font-display text-[clamp(1.2rem,2.2vw,2.1rem)] font-normal leading-[1.12] tracking-[-0.025em] transition-colors duration-500 text-pretty"
-                  style={{ color: on ? "#ffffff" : "rgba(255,255,255,0.82)" }}
+                  style={{ color: on ? "#2D3436" : "rgba(45,52,54,0.88)" }}
                 >
                   {m.title}
                 </h3>
 
                 <p
                   className="col-start-2 m-0 max-w-[52ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] transition-colors duration-500 text-pretty md:col-start-3"
-                  style={{
-                    color: on ? "rgba(214,226,237,0.85)" : "rgba(214,226,237,0.65)",
-                  }}
+                  style={{ color: on ? "#2D3436" : "#4A5054" }}
                 >
                   {m.desc}
                 </p>

@@ -283,6 +283,12 @@ body {
   animation: caret-blink 0.9s step-end infinite;
 }
 
+/* Cursor sobre fondo claro: el ice y su resplandor desaparecen sobre blanco. */
+.typewriter-caret--light {
+  background: #2d3436;
+  box-shadow: none;
+}
+
 /* Anillos concéntricos del fondo de Nosotros (/nosotros). */
 @keyframes magic-ring {
   0%   { transform: scale(0.05); opacity: 0; }

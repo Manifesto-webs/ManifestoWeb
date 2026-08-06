@@ -19,10 +19,25 @@ const STARS: [number, number, number, number][] = [
 interface MagicRingsProps {
   /** Color de los anillos y el glow (cualquier color CSS). */
   color?: string;
+  /**
+   * Sobre qué fondo se dibuja. `dark` (por defecto) mantiene los valores
+   * originales, pensados para el #282e32. `light` sube las opacidades: las
+   * guías van al 6-10%, que sobre oscuro alcanza y sobre blanco desaparece.
+   */
+  tone?: "dark" | "light";
   className?: string;
 }
 
-export function MagicRings({ color = "#5f0000", className = "" }: MagicRingsProps) {
+export function MagicRings({
+  color = "#5f0000",
+  tone = "dark",
+  className = "",
+}: MagicRingsProps) {
+  const light = tone === "light";
+  /** Opacidad de las tres guías estáticas, de adentro hacia afuera. */
+  const guide = light ? [0.55, 0.45, 0.35] : [0.1, 0.08, 0.06];
+  /** Alfa del glow central, en hexadecimal sobre el color. */
+  const glowAlpha = light ? "aa" : "55";
   const rootRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
   const ringsRef = useRef<HTMLDivElement>(null);
@@ -86,7 +101,9 @@ export function MagicRings({ color = "#5f0000", className = "" }: MagicRingsProp
       <div
         ref={glowRef}
         className="absolute left-1/2 top-1/2 h-[46vmin] w-[46vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px] will-change-transform"
-        style={{ background: `radial-gradient(circle, ${color}55 0%, transparent 66%)` }}
+        style={{
+          background: `radial-gradient(circle, ${color}${glowAlpha} 0%, transparent 66%)`,
+        }}
       />
 
       {/* Guías estáticas */}
@@ -95,9 +112,9 @@ export function MagicRings({ color = "#5f0000", className = "" }: MagicRingsProp
         className="absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2 will-change-transform"
       >
         <svg className="h-full w-full" viewBox="0 0 100 100" fill="none">
-          <circle cx="50" cy="50" r="20" stroke={color} strokeOpacity="0.10" strokeWidth="0.12" />
-          <circle cx="50" cy="50" r="34" stroke={color} strokeOpacity="0.08" strokeWidth="0.12" />
-          <circle cx="50" cy="50" r="47" stroke={color} strokeOpacity="0.06" strokeWidth="0.12" />
+          <circle cx="50" cy="50" r="20" stroke={color} strokeOpacity={guide[0]} strokeWidth="0.12" />
+          <circle cx="50" cy="50" r="34" stroke={color} strokeOpacity={guide[1]} strokeWidth="0.12" />
+          <circle cx="50" cy="50" r="47" stroke={color} strokeOpacity={guide[2]} strokeWidth="0.12" />
         </svg>
       </div>
 

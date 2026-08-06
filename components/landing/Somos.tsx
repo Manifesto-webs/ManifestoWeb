@@ -24,13 +24,15 @@ export function Somos() {
   const cardStyle = (i: number) => {
     const on = hover === i;
     return {
-      backgroundColor: on ? "rgba(0,0,0,0.35)" : "rgba(255,255,255,0.03)",
-      borderColor: on ? "rgba(214,226,237,0.45)" : "rgba(214,226,237,0.16)",
+      /* ── FONDO DE CADA TARJETA ── */
+      backgroundColor: on ? "rgba(45,52,54,0.05)" : "rgba(255,255,255,0.7)",
+      borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
       transform: on ? "translateY(-6px)" : "translateY(0)",
       opacity: hover !== null && !on ? 0.6 : 1,
+      /* Las sombras eran corinto. Van en el slate del fondo espacial. */
       boxShadow: on
-        ? "0 40px 80px -40px rgba(95,0,0,0.75), inset 0 0 0 1px rgba(214,226,237,0.06)"
-        : "0 30px 60px -45px rgba(95,0,0,0.6)",
+        ? "0 40px 80px -40px rgba(40,46,50,0.5), inset 0 0 0 1px rgba(45,52,54,0.06)"
+        : "0 30px 60px -45px rgba(40,46,50,0.45)",
     };
   };
 
@@ -40,16 +42,23 @@ export function Somos() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      /* ─────────────────────────────────────────────────────────────────
+         FONDO DE ESTA SECCIÓN (Nosotros / las tres tarjetas)
+         Va en blanco: bg-paper-bone. Para cambiarlo, es esta clase.
+         El fondo de TODA la página está en app/nosotros/page.tsx.
+         ───────────────────────────────────────────────────────────────── */
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
     >
-      <MagicRings color="#5f0000" />
+      {/* Los anillos eran corinto. Van en ice —el azul de la paleta— y en
+          variante clara, porque sobre blanco las opacidades originales no
+          se ven. */}
+      <MagicRings color="#d6e2ed" tone="light" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
+        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
           Nosotros
         </span>
-        <h2 className="m-0 max-w-[22ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-white text-balance">
+        <h2 className="m-0 max-w-[22ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 text-balance">
           Quiénes somos.
         </h2>
       </Reveal>
@@ -67,7 +76,7 @@ export function Somos() {
           >
             <Marca on={hover === 0} />
             <CardKicker id="01" on={hover === 0} label="Quiénes somos" />
-            <p className="m-0 max-w-[36ch] font-display text-[clamp(1.25rem,1.9vw,1.75rem)] font-normal leading-[1.25] tracking-[-0.02em] text-white text-pretty">
+            <p className="m-0 max-w-[36ch] font-display text-[clamp(1.25rem,1.9vw,1.75rem)] font-normal leading-[1.25] tracking-[-0.02em] text-ink-900 text-pretty">
               Manifesto nació en 2019, pero el equipo lleva más de quince años
               construyendo marcas junto a empresas que necesitan claridad y
               quieren capitalizar su identidad.
@@ -85,7 +94,7 @@ export function Somos() {
           >
             <Marca on={hover === 1} />
             <CardKicker id="02" on={hover === 1} label="Qué creemos" />
-            <Creencias compact />
+            <Creencias compact tone="light" />
           </article>
         </Reveal>
 
@@ -99,13 +108,13 @@ export function Somos() {
           >
             <Marca on={hover === 2} />
             <CardKicker id="03" on={hover === 2} label="Nuestro equipo" />
-            <p className="m-0 max-w-[26ch] font-display text-[clamp(1.4rem,2.2vw,2.1rem)] font-normal leading-[1.15] tracking-[-0.025em] text-white text-pretty">
+            <p className="m-0 max-w-[26ch] font-display text-[clamp(1.4rem,2.2vw,2.1rem)] font-normal leading-[1.15] tracking-[-0.025em] text-ink-900 text-pretty">
               Estructura y sensibilidad. Análisis y creatividad.
             </p>
             {/* El documento pide cambiar este cierre para no repetir la frase
                 del punto 05 de "Por qué Manifesto". Queda el del doc hasta
                 que el cliente dé el reemplazo. */}
-            <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-[rgba(214,226,237,0.72)] text-pretty">
+            <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
               Trabajamos como socios, no como proveedores. Las buenas ideas rara
               vez llegan solas.
             </p>
@@ -124,7 +133,9 @@ function Marca({ on }: { on: boolean }) {
       className="absolute left-0 top-0 h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
       style={{
         width: on ? "100%" : "0%",
-        background: "linear-gradient(90deg, #5f0000, transparent)",
+        /* Era corinto. Va en el slate del fondo espacial: el ice sobre
+           blanco no se ve en una línea de 2px. */
+        background: "linear-gradient(90deg, #282e32, transparent)",
       }}
     />
   );
@@ -135,11 +146,11 @@ function CardKicker({ id, label, on }: { id: string; label: string; on: boolean 
     <div className="flex items-baseline gap-3">
       <span
         className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
-        style={{ color: on ? "#dcddca" : "rgba(214,226,237,0.4)" }}
+        style={{ color: on ? "#2D3436" : "#4A5054" }}
       >
         {id}
       </span>
-      <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.6)]">
+      <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
         {label}
       </span>
     </div>

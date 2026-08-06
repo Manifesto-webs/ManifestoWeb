@@ -41,6 +41,12 @@ interface CreenciasProps {
    * Por defecto queda exactamente el diseño original de la sección.
    */
   compact?: boolean;
+  /**
+   * Sobre qué fondo se dibuja. `dark` (por defecto) es el diseño original:
+   * texto blanco con resplandor sobre el #282e32. `light` lo pasa a tinta
+   * sobre blanco y quita el resplandor, que sobre claro solo desenfoca.
+   */
+  tone?: "dark" | "light";
 }
 
 /**
@@ -48,7 +54,12 @@ interface CreenciasProps {
  * y aparece ya alumbrado. Arranca cuando la sección entra en pantalla.
  * El layout es estable (el texto no visible reserva su espacio) para que no salte.
  */
-export function Creencias({ compact = false }: CreenciasProps) {
+export function Creencias({ compact = false, tone = "dark" }: CreenciasProps) {
+  const light = tone === "light";
+  /** Color del número de cada creencia. El sand no se lee sobre blanco. */
+  const numColor = light ? "#2D3436" : "#dcddca";
+  /** Color del texto ya escrito. */
+  const textColor = light ? "#2D3436" : "#ffffff";
   const wrapRef = useRef<HTMLDivElement>(null);
   const [n, setN] = useState(0);
   const [done, setDone] = useState(false);
@@ -140,8 +151,10 @@ export function Creencias({ compact = false }: CreenciasProps) {
             >
               {/* Número */}
               <span className="font-mono text-sm tabular-nums tracking-[0.2em]">
-                <span style={{ color: "#dcddca" }}>{c.id.slice(0, numShown)}</span>
-                {typingNum && <span className="typewriter-caret" aria-hidden="true" />}
+                <span style={{ color: numColor }}>{c.id.slice(0, numShown)}</span>
+                {typingNum && <span className={light ? "typewriter-caret typewriter-caret--light" : "typewriter-caret"}
+                  aria-hidden="true"
+                />}
                 <span style={{ opacity: 0 }}>{c.id.slice(numShown)}</span>
               </span>
 
@@ -153,10 +166,12 @@ export function Creencias({ compact = false }: CreenciasProps) {
                     : "m-0 max-w-[26ch] font-display text-[clamp(2rem,1.5vw,2rem)] font-normal leading-[1.3] tracking-[-0.025em]"
                 }
               >
-                <span style={{ color: "#ffffff", textShadow: GLOW }}>
+                <span style={{ color: textColor, textShadow: light ? "none" : GLOW }}>
                   {c.text.slice(0, bodyShown)}
                 </span>
-                {typingBody && <span className="typewriter-caret" aria-hidden="true" />}
+                {typingBody && <span className={light ? "typewriter-caret typewriter-caret--light" : "typewriter-caret"}
+                  aria-hidden="true"
+                />}
                 {/* reserva el espacio del texto aún no escrito (sin salto de layout) */}
                 <span style={{ opacity: 0 }}>{c.text.slice(bodyShown)}</span>
               </p>
