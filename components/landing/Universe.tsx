@@ -67,7 +67,7 @@ export function Universe() {
     <section
       id="universo"
       ref={ref}
-      className="overflow-x-clip bg-paper-ice px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
+      className="overflow-x-clip bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
     >
       <div className="grid items-center gap-[clamp(2.5rem,6vw,6rem)] lg:grid-cols-[minmax(0,1fr)_minmax(320px,44%)]">
         {/* ---------------------------------------------------------------- */}
