@@ -82,6 +82,9 @@ export interface Client {
 export interface ProcessStage {
   id: StarburstId;
   name: string;
+  /** Subtítulo de la fase ("Entender el terreno"). Opcional: las etapas
+   *  viejas de v2 no lo tenían. */
+  tagline?: string;
   description: string;
   starburstSrc: string;
 }

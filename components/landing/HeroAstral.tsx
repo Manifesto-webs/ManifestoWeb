@@ -168,18 +168,10 @@ export function HeroAstral() {
   // solo mueve las capas (warp + parallax) y desvanece el contenido al final.
   const bg = SPACE;
   const heading = BONE;
-  const body = STAR;
+  const body = BONE;
   // El texto NO desaparece: se mantiene visible y solo se reduce (escala) al bajar.
   const contentScale = 1 - clamp(progress, 0, 1) * 0.42;
   const contentShift = clamp(progress, 0, 1) * -30;
-
-  // "Conoce el método": salta directo a la sección método con scroll suave.
-  const goToMetodo = (e: React.MouseEvent) => {
-    e.preventDefault();
-    document
-      .getElementById("proceso")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
 
   return (
     <section
@@ -201,7 +193,7 @@ export function HeroAstral() {
         <div
           className="pointer-events-none absolute left-1/2 top-1/2 h-[65vmin] w-[65vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
           style={{
-            background: `radial-gradient(circle, ${MAROON}40 0%, transparent 62%)`,
+            background: `radial-gradient(circle, ${SPACE}40 0%, transparent 62%)`,
             opacity: (1 - progress) * 0.9,
             transform: `translate(-50%, -50%) scale(${1 + progress * 1.4})`,
           }}
@@ -244,38 +236,14 @@ export function HeroAstral() {
               <span style={{ color: STAR }}>.</span>
             </h1>
 
-            <p
-              className="m-0 max-w-[46ch] text-body-sm animate-drift-up text-pretty"
-              style={{ color: SAND, animationDelay: "220ms" }}
-            >
-              A diferencia de otros activos, una marca aumenta su valor con el uso.
-            </p>
           </div>
 
-          {/* Líneas de apertura 1 y 2 del doc: son el pitch, van juntas. */}
-          <p
-            className="max-w-[62ch] text-lead animate-drift-up text-pretty"
-            style={{ color: body, animationDelay: "260ms" }}
-          >
-            Construimos marcas para empresas que quieren liderar su categoría y
-            definen las reglas del mercado. Acompañamos la dirección de marca
-            mientras el negocio evoluciona.
-          </p>
+         
 
-          {/* Línea 3: es la credencial, no el pitch. Va en mono y más tenue
-              para que no compita con las dos de arriba. El 60% sobre el fondo
-              espacial da 4.74:1, que es lo que pide un texto de este tamaño. */}
-          <p
-            className="m-0 max-w-[56ch] font-mono text-xs leading-[1.7] animate-drift-up"
-            style={{ color: `${STAR}99`, animationDelay: "320ms" }}
-          >
-            Manifesto nació en 2019, con un equipo que lleva más de quince años
-            construyendo marcas en Guatemala y la región.
-          </p>
-
+          {/* El método dejó de estar en la landing: ahora es su propia
+              página, así que esto pasa de un scroll suave a una navegación. */}
           <Link
-            href="/#proceso"
-            onClick={goToMetodo}
+            href="/metodologia"
             className="group mt-2 inline-flex items-center gap-2 rounded-pill border px-6 py-3 text-base transition-colors duration-300 animate-drift-up hover:bg-white/5"
             style={{
               color: heading,

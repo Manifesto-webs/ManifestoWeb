@@ -31,9 +31,14 @@ const Cx = 150;
 const Cy = 150;
 const R_TIP = 116; // radio donde vive cada gráfico/punta
 
+/** Cuántas fases tiene el método. Sale del data file y no de un número fijo:
+ *  antes eran cinco etapas y el 72° estaba escrito a mano en tres lugares. */
+const N = processStages.length;
+const STEP = 360 / N;
+
 /** Punta i en coordenadas del viewBox (0° arriba). */
 function tip(i: number) {
-  const a = ((-90 + i * 72) * Math.PI) / 180;
+  const a = ((-90 + i * STEP) * Math.PI) / 180;
   return { x: Cx + R_TIP * Math.cos(a), y: Cy + R_TIP * Math.sin(a) };
 }
 const TIPS = processStages.map((_, i) => tip(i));
@@ -85,8 +90,8 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
         {/* Polígono que dibuja la figura al complementarse las etapas */}
         {lit >= 2 && (
           <polyline
-            points={lit >= 5 ? `${chain} ${TIPS[0].x},${TIPS[0].y}` : chain}
-            fill={lit >= 5 ? "rgba(214,226,237,0.05)" : "none"}
+            points={lit >= N ? `${chain} ${TIPS[0].x},${TIPS[0].y}` : chain}
+            fill={lit >= N ? "rgba(214,226,237,0.05)" : "none"}
             stroke={SPOKE_ON}
             strokeWidth={1.2}
             className="transition-all duration-700"
@@ -97,13 +102,13 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
         <circle
           cx={Cx}
           cy={Cy}
-          r={lit >= 5 ? 6 : 3.5}
+          r={lit >= N ? 6 : 3.5}
           className="transition-all duration-700"
-          style={{ fill: CREAM, opacity: lit > 0 ? 0.2 + lit * 0.12 : 0.1 }}
+          style={{ fill: CREAM, opacity: lit > 0 ? 0.2 + lit * (0.6 / N) : 0.1 }}
         />
       </svg>
 
-      {/* Los 5 gráficos, uno por punta (en blanco sobre el fondo oscuro) */}
+      {/* Un gráfico por punta (en blanco sobre el fondo oscuro) */}
       {processStages.map((stage, i) => {
         const on = i < lit;
         const isActive = i === active;
@@ -134,7 +139,7 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-kicker"
         style={{ color: MUTED }}
       >
-        {lit > 0 ? `${lit}/5` : ""}
+        {lit > 0 ? `${lit}/${N}` : ""}
       </div>
     </div>
   );
@@ -184,8 +189,12 @@ export function ProcessStar() {
           className="m-0 max-w-[16ch] font-display text-display-2xl font-normal"
           style={{ color: BRIGHT }}
         >
-          Cinco etapas, un mismo motivo.
+          Un método en cuatro fases.
         </h2>
+        <p className="m-0 max-w-[62ch] text-body-sm" style={{ color: MUTED }}>
+          Cada fase cierra una decisión. Ninguna avanza sin la anterior: así no se
+          repite trabajo ni se discute dos veces lo mismo.
+        </p>
       </div>
 
       <div className="grid gap-x-[clamp(2rem,5vw,5rem)] gap-y-10 lg:grid-cols-[1fr_minmax(300px,42%)]">
@@ -199,7 +208,7 @@ export function ProcessStar() {
               className="text-center font-mono text-xs uppercase tracking-kicker"
               style={{ color: MUTED }}
             >
-              {litCount} / 5 · la marca toma forma
+              {litCount} / {N} · la marca toma forma
             </p>
           </div>
         </div>
@@ -238,6 +247,18 @@ export function ProcessStar() {
                   >
                     {stage.name}
                   </span>
+
+                  {/* "Entender el terreno": el doc da cada fase con su
+                      subtítulo. Se oculta en móvil, donde compite con el
+                      nombre de la fase por el mismo renglón. */}
+                  {stage.tagline && (
+                    <span
+                      className="hidden shrink-0 font-mono text-xs uppercase tracking-kicker transition-colors duration-500 sm:inline"
+                      style={{ color: isActive ? CREAM : MUTED }}
+                    >
+                      {stage.tagline}
+                    </span>
+                  )}
                 </div>
 
                 {/* Descripción: se despliega y aclara al activarse */}

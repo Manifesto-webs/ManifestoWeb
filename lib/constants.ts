@@ -97,5 +97,8 @@ export const NAV_LINKS = [
   { href: "/nosotros", label: "nosotros" },
   { href: "/servicios", label: "servicios" },
   { href: "/#universo", label: "universo" },
-  { href: "/#proceso", label: "proceso" },
+  /* Apuntaba a /#proceso, que era el método dentro de la landing. Al salir
+     a página propia ese ancla se quedaba sin destino, así que la entrada
+     ahora va a /metodologia. Es además lo que pide el documento de textos. */
+  { href: "/metodologia", label: "metodología" },
 ] as const;
