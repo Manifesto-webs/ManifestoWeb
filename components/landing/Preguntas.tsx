@@ -54,16 +54,15 @@ export function Preguntas() {
   return (
     <section
       id="preguntas"
-      className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
     >
-      <SpaceBackdrop glow="ice" />
+      <SpaceBackdrop variant="paper" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
+        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
           Preguntas frecuentes
         </span>
-        <h2 className="mt-3 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-white">
+        <h2 className="mt-3 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
           Lo que casi siempre nos preguntan.
         </h2>
       </Reveal>
@@ -72,13 +71,15 @@ export function Preguntas() {
         {PREGUNTAS.map((p, i) => (
           <Reveal key={p.q} delay={i * 90}>
             <div
-              className="flex h-full flex-col gap-3 rounded-tile border border-[rgba(214,226,237,0.16)] bg-white/[0.03] p-[clamp(1.25rem,2.2vw,2.2rem)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-[rgba(214,226,237,0.4)]"
-              style={{ boxShadow: "0 30px 60px -45px rgba(95,0,0,0.6)" }}
+              className="flex h-full flex-col gap-3 rounded-tile border border-ink-900/12 bg-white/70 p-[clamp(1.25rem,2.2vw,2.2rem)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-ink-900/40"
+              /* La sombra era corinto. Sobre blanco va en el slate del fondo
+                 espacial, que es el mismo azul de los anillos. */
+              style={{ boxShadow: "0 30px 60px -45px rgba(40,46,50,0.45)" }}
             >
-              <dt className="m-0 font-display text-[clamp(1.1rem,1.7vw,1.6rem)] font-normal leading-[1.2] tracking-[-0.02em] text-white text-pretty">
+              <dt className="m-0 font-display text-[clamp(1.1rem,1.7vw,1.6rem)] font-normal leading-[1.2] tracking-[-0.02em] text-ink-900 text-pretty">
                 {p.q}
               </dt>
-              <dd className="m-0 text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-[rgba(214,226,237,0.72)] text-pretty">
+              <dd className="m-0 text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
                 {p.a}
               </dd>
             </div>

@@ -76,21 +76,22 @@ export function Servicios() {
   return (
     <section
       id="servicios"
-      className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
     >
-      <SpaceBackdrop glow="corinto" />
+      {/* Variante clara: sin nada de corinto y con los anillos en ice, que es
+          el azul de la paleta. Sobre blanco el rojo llamaba demasiado. */}
+      <SpaceBackdrop variant="paper" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
+        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
           Cómo trabajamos juntos
         </span>
-        <h2 className="mt-3 max-w-[16ch] font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.92] tracking-[-0.035em] text-white">
+        <h2 className="mt-3 max-w-[16ch] font-display text-[clamp(2rem,5.5vw,6rem)] font-normal leading-[0.92] tracking-[-0.035em] text-ink-900">
           Cuatro frentes. <br /> Una sola marca.
         </h2>
       </Reveal>
 
-      <div className="relative z-10 flex flex-col border-t border-[rgba(214,226,237,0.25)]">
+      <div className="relative z-10 flex flex-col border-t border-ink-900/25">
         {FRENTES.map((f, i) => {
           const active = open === i;
           return (
@@ -98,13 +99,16 @@ export function Servicios() {
               <div
                 onMouseEnter={() => setOpen(i)}
                 onClick={() => setOpen(i)}
-                className="group cursor-pointer border-b border-[rgba(214,226,237,0.16)] transition-colors duration-500"
-                style={{ backgroundColor: active ? "rgba(255,255,255,0.04)" : "transparent" }}
+                className="group cursor-pointer border-b border-ink-900/12 transition-colors duration-500"
+                style={{ backgroundColor: active ? "rgba(45,52,54,0.04)" : "transparent" }}
               >
                 <div className="flex items-center gap-[clamp(0.75rem,2.5vw,2rem)] px-[clamp(0.5rem,1.5vw,1.5rem)] py-[clamp(1.3rem,2.6vw,2.4rem)]">
                   <span
+                    /* El sand no se lee sobre blanco: el número activo pasa a
+                       ink-900 y el inactivo a ink-700, que a 12px sigue
+                       cumpliendo el 4.5:1. */
                     className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
-                    style={{ color: active ? "#dcddca" : "rgba(214,226,237,0.4)" }}
+                    style={{ color: active ? "#2D3436" : "#4A5054" }}
                   >
                     {f.id}
                   </span>
@@ -116,20 +120,15 @@ export function Servicios() {
                   >
                     <h3
                       className="m-0 font-display text-[clamp(1.6rem,4vw,3.6rem)] font-normal leading-[1] tracking-[-0.03em] transition-all duration-500"
-                      style={{
-                        color: active ? "#ffffff" : "rgba(255,255,255,0.5)",
-                        textShadow: active ? "0 0 26px rgba(214,226,237,0.35)" : "none",
-                      }}
+                      /* El 0.55 no es al ojo: por debajo de eso el nombre
+                         inactivo no llega al 3:1 que pide el texto grande. */
+                      style={{ color: active ? "#2D3436" : "rgba(45,52,54,0.55)" }}
                     >
                       {f.name}
                     </h3>
                     <span
                       className="max-w-[54ch] text-[clamp(0.8rem,0.95vw,0.95rem)] leading-[1.45] transition-colors duration-500"
-                      style={{
-                        color: active
-                          ? "rgba(214,226,237,0.85)"
-                          : "rgba(214,226,237,0.45)",
-                      }}
+                      style={{ color: active ? "#2D3436" : "#4A5054" }}
                     >
                       {f.para}
                     </span>
@@ -137,9 +136,8 @@ export function Servicios() {
                   <span
                     className="font-mono text-2xl transition-all duration-500"
                     style={{
-                      color: active ? "#d6e2ed" : "rgba(214,226,237,0.35)",
+                      color: active ? "#2D3436" : "rgba(45,52,54,0.4)",
                       transform: active ? "rotate(45deg)" : "rotate(0deg)",
-                      filter: active ? "drop-shadow(0 0 8px rgba(214,226,237,0.5))" : "none",
                     }}
                   >
                     +
@@ -154,7 +152,7 @@ export function Servicios() {
                   <div className="overflow-hidden">
                     <div className="grid gap-6 pb-[clamp(1.5rem,3vw,2.5rem)] pl-[calc(2ch+clamp(0.75rem,2.5vw,2rem))] md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
                       <div className="flex flex-col items-start gap-6">
-                        <p className="max-w-[36ch] text-[clamp(1rem,1.3vw,1.3rem)] leading-[1.5] text-[rgba(214,226,237,0.72)]">
+                        <p className="max-w-[36ch] text-[clamp(1rem,1.3vw,1.3rem)] leading-[1.5] text-ink-700">
                           {f.desc}
                         </p>
 
@@ -165,7 +163,7 @@ export function Servicios() {
                         <Link
                           href="/#trabajo"
                           tabIndex={active ? 0 : -1}
-                          className="group/cta inline-flex items-center gap-2 rounded-pill border border-[rgba(214,226,237,0.45)] px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:border-white hover:bg-white/10"
+                          className="group/cta inline-flex items-center gap-2 rounded-pill border border-ink-900/35 px-5 py-2.5 font-mono text-xs uppercase tracking-[0.18em] text-ink-900 transition-colors duration-300 hover:border-ink-900 hover:bg-ink-900/5"
                         >
                           ver casos
                           <span className="transition-transform duration-300 group-hover/cta:translate-x-[3px]">
@@ -177,7 +175,7 @@ export function Servicios() {
                         {f.items.map((it, j) => (
                           <li
                             key={it}
-                            className="rounded-pill border border-[rgba(214,226,237,0.22)] bg-white/[0.04] px-4 py-2 font-mono text-xs uppercase tracking-[0.12em] text-[rgba(214,226,237,0.85)] transition-all duration-500 hover:border-[rgba(214,226,237,0.5)] hover:text-white"
+                            className="rounded-pill border border-ink-900/20 bg-ink-900/[0.03] px-4 py-2 font-mono text-xs uppercase tracking-[0.12em] text-ink-700 transition-all duration-500 hover:border-ink-900/60 hover:text-ink-900"
                             style={{
                               opacity: active ? 1 : 0,
                               transform: active ? "translateY(0)" : "translateY(10px)",
