@@ -34,12 +34,21 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 
 const GLOW = "0 0 20px rgba(214,226,237,0.35)";
 
+interface CreenciasProps {
+  /**
+   * Variante para vivir dentro de una tarjeta: sin margen superior, sin
+   * título propio (lo pone la tarjeta) y con el texto más chico.
+   * Por defecto queda exactamente el diseño original de la sección.
+   */
+  compact?: boolean;
+}
+
 /**
  * "Qué creemos": el texto se va escribiendo carácter por carácter (con cursor)
  * y aparece ya alumbrado. Arranca cuando la sección entra en pantalla.
  * El layout es estable (el texto no visible reserva su espacio) para que no salte.
  */
-export function Creencias() {
+export function Creencias({ compact = false }: CreenciasProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [n, setN] = useState(0);
   const [done, setDone] = useState(false);
@@ -94,14 +103,25 @@ export function Creencias() {
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative z-10 mt-[clamp(4rem,8vw,9rem)]">
-      <Reveal>
-        <h3 className="mb-10 font-display text-[clamp(2.5rem,1.8vw,2.5rem)] font-semibold tracking-[-0.03em] text-white">
-          Qué creemos
-        </h3>
-      </Reveal>
+    <div
+      ref={wrapRef}
+      className={compact ? "relative z-10" : "relative z-10 mt-[clamp(4rem,8vw,9rem)]"}
+    >
+      {!compact && (
+        <Reveal>
+          <h3 className="mb-10 font-display text-[clamp(2.5rem,1.8vw,2.5rem)] font-semibold tracking-[-0.03em] text-white">
+            Qué creemos
+          </h3>
+        </Reveal>
+      )}
 
-        <div className="flex flex-col gap-[clamp(1.5rem,2.2vw,2rem)]">
+        <div
+          className={
+            compact
+              ? "flex flex-col gap-[clamp(1rem,1.6vw,1.4rem)]"
+              : "flex flex-col gap-[clamp(1.5rem,2.2vw,2rem)]"
+          }
+        >
         {SEQ.map((c) => {
           const numShown = clamp(n - c.start, 0, c.numLen);
           const bodyShown = clamp(n - c.start - c.numLen, 0, c.bodyLen);
@@ -112,7 +132,11 @@ export function Creencias() {
           return (
             <div
               key={c.id}
-              className="grid grid-cols-[auto_1fr] items-baseline gap-[clamp(2.2rem,2.2vw,2.5rem)]"
+              className={
+                compact
+                  ? "grid grid-cols-[auto_1fr] items-baseline gap-[clamp(1rem,1.4vw,1.4rem)]"
+                  : "grid grid-cols-[auto_1fr] items-baseline gap-[clamp(2.2rem,2.2vw,2.5rem)]"
+              }
             >
               {/* Número */}
               <span className="font-mono text-sm tabular-nums tracking-[0.2em]">
@@ -122,7 +146,13 @@ export function Creencias() {
               </span>
 
               {/* Texto */}
-              <p className="m-0 max-w-[26ch] font-display text-[clamp(2rem,1.5vw,2rem)] font-normal leading-[1.3] tracking-[-0.025em]">
+              <p
+                className={
+                  compact
+                    ? "m-0 max-w-[30ch] font-display text-[clamp(1.05rem,1.5vw,1.45rem)] font-normal leading-[1.35] tracking-[-0.02em]"
+                    : "m-0 max-w-[26ch] font-display text-[clamp(2rem,1.5vw,2rem)] font-normal leading-[1.3] tracking-[-0.025em]"
+                }
+              >
                 <span style={{ color: "#ffffff", textShadow: GLOW }}>
                   {c.text.slice(0, bodyShown)}
                 </span>
