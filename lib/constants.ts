@@ -79,15 +79,23 @@ export const SERVICE_AREAS = [
 ] as const;
 
 /**
- * Nav principal. `nosotros` y `servicios` son páginas propias; `universo`,
- * `proceso` y `trabajo` son anclas dentro de la landing.
+ * Nav principal. `inicio`, `nosotros` y `servicios` son páginas propias;
+ * `universo` y `proceso` son anclas dentro de la landing.
+ *
+ * `inicio` va primero y explícito: desde /nosotros o /servicios el isotipo es
+ * la única vuelta al home y no todo el mundo asume que el logo es un enlace.
+ *
+ * `trabajo` salió del menú porque los proyectos se ven en el inicio. El ancla
+ * #trabajo sigue viva —el bento, los CTA de servicios y el "volver" de cada
+ * caso apuntan ahí—, solo deja de ocupar un lugar en el menú.
+ *
  * ADN y Universo digital salieron del menú pero siguen accesibles como anclas
  * dentro de servicios: /servicios#adn y /servicios#digital.
  */
 export const NAV_LINKS = [
+  { href: "/", label: "inicio" },
   { href: "/nosotros", label: "nosotros" },
   { href: "/servicios", label: "servicios" },
   { href: "/#universo", label: "universo" },
   { href: "/#proceso", label: "proceso" },
-  { href: "/#trabajo", label: "trabajo" },
 ] as const;
