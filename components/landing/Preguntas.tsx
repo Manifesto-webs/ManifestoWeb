@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
 
@@ -9,10 +10,10 @@ import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
 /*  Van al cierre de /servicios: son objeciones a la oferta que está arriba,   */
 /*  así que se responden donde se está tomando la decisión.                    */
 /*                                                                            */
-/*  A propósito NO es un acordeón: justo encima ya hay uno (los cuatro         */
-/*  frentes) y repetir el patrón haría que la página se lea como una sola      */
-/*  lista larga. Acá todo está abierto, que además es lo que conviene para     */
-/*  que un buscador lea las respuestas.                                        */
+/*  Acordeón en una sola columna: se ve la pregunta y la respuesta se abre al  */
+/*  hacer clic en el +. Las respuestas siguen en el HTML aunque estén          */
+/*  plegadas (se colapsan por altura, no se quitan), así que un buscador las   */
+/*  sigue leyendo.                                                             */
 /* -------------------------------------------------------------------------- */
 
 interface Pregunta {
@@ -51,6 +52,9 @@ const PREGUNTAS: Pregunta[] = [
 ];
 
 export function Preguntas() {
+  /** Cuál está abierta. null = todas cerradas; volver a hacer clic cierra. */
+  const [open, setOpen] = useState<number | null>(null);
+
   return (
     <section
       id="preguntas"
@@ -67,24 +71,56 @@ export function Preguntas() {
         </h2>
       </Reveal>
 
-      <dl className="relative z-10 m-0 grid gap-[clamp(1rem,2vw,2rem)] md:grid-cols-2">
-        {PREGUNTAS.map((p, i) => (
-          <Reveal key={p.q} delay={i * 90}>
-            <div
-              className="flex h-full flex-col gap-3 rounded-tile border border-ink-900/12 bg-white/70 p-[clamp(1.25rem,2.2vw,2.2rem)] backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-ink-900/40"
-              /* La sombra era corinto. Sobre blanco va en el slate del fondo
-                 espacial, que es el mismo azul de los anillos. */
-              style={{ boxShadow: "0 30px 60px -45px rgba(40,46,50,0.45)" }}
-            >
-              <dt className="m-0 font-display text-[clamp(1.1rem,1.7vw,1.6rem)] font-normal leading-[1.2] tracking-[-0.02em] text-ink-900 text-pretty">
-                {p.q}
-              </dt>
-              <dd className="m-0 text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
-                {p.a}
-              </dd>
-            </div>
-          </Reveal>
-        ))}
+      <dl className="relative z-10 m-0 grid gap-[clamp(0.75rem,1.4vw,1.1rem)]">
+        {PREGUNTAS.map((p, i) => {
+          const on = open === i;
+          return (
+            <Reveal key={p.q} delay={i * 90}>
+              <div className="rounded-tile border border-ink-900/12 bg-white/70 backdrop-blur-sm transition-colors duration-500 hover:border-ink-900/40">
+                <dt className="m-0">
+                  {/* Botón y no un div con onClick: así el teclado llega solo
+                      y el lector de pantalla anuncia si está abierta. */}
+                  <button
+                    type="button"
+                    onClick={() => setOpen(on ? null : i)}
+                    aria-expanded={on}
+                    aria-controls={`faq-${i}`}
+                    className="flex w-full items-center gap-4 p-[clamp(1.25rem,2.2vw,2.2rem)] text-left outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink-900"
+                  >
+                    <span className="flex-1 font-display text-[clamp(1.1rem,1.7vw,1.6rem)] font-normal leading-[1.2] tracking-[-0.02em] text-ink-900 text-pretty">
+                      {p.q}
+                    </span>
+                    {/* El mismo + que gira a × de los cuatro frentes. */}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 font-mono text-2xl leading-none transition-transform duration-500"
+                      style={{
+                        color: on ? "#2D3436" : "rgba(45,52,54,0.45)",
+                        transform: on ? "rotate(45deg)" : "rotate(0deg)",
+                      }}
+                    >
+                      +
+                    </span>
+                  </button>
+                </dt>
+
+                {/* Se pliega por altura (0fr → 1fr) y no se desmonta: la
+                    respuesta sigue en el HTML para los buscadores. */}
+                <dd
+                  id={`faq-${i}`}
+                  className="m-0 grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  style={{ gridTemplateRows: on ? "1fr" : "0fr", opacity: on ? 1 : 0 }}
+                >
+                  <div className="overflow-hidden">
+                    <p className="m-0 max-w-[68ch] px-[clamp(1.25rem,2.2vw,2.2rem)] pb-[clamp(1.25rem,2.2vw,2.2rem)] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
+                      {p.a}
+                    </p>
+                  </div>
+                </dd>
+              </div>
+            </Reveal>
+          );
+        })}
       </dl>
     </section>
   );
