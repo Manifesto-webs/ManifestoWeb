@@ -29,10 +29,9 @@ export function Somos() {
       borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
       transform: on ? "translateY(-6px)" : "translateY(0)",
       opacity: hover !== null && !on ? 0.6 : 1,
-      /* Las sombras eran corinto. Van en el slate del fondo espacial. */
-      boxShadow: on
-        ? "0 40px 80px -40px rgba(40,46,50,0.5), inset 0 0 0 1px rgba(45,52,54,0.06)"
-        : "0 30px 60px -45px rgba(40,46,50,0.45)",
+      /* Sin sombra: las tarjetas se distinguen por el borde y por el
+         desplazamiento al pasar el puntero. */
+      boxShadow: "none",
     };
   };
 
@@ -54,12 +53,11 @@ export function Somos() {
           se ven. */}
       <MagicRings color="#d6e2ed" tone="light" />
 
-      <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
-          Nosotros
-        </span>
+      {/* Sin el rótulo chico: decía "Nosotros" justo encima del titular que
+          dice lo mismo en grande. */}
+      <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
         <h2 className="m-0 max-w-[22ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 text-balance">
-          Quiénes somos.
+          Nosotros.
         </h2>
       </Reveal>
 
@@ -75,8 +73,10 @@ export function Somos() {
             style={cardStyle(0)}
           >
             <Marca on={hover === 0} />
-            <CardKicker id="01" on={hover === 0} label="Quiénes somos" />
-            <p className="m-0 max-w-[36ch] font-display text-[clamp(1.25rem,1.9vw,1.75rem)] font-normal leading-[1.25] tracking-[-0.02em] text-ink-900 text-pretty">
+            <CardHead id="01" on={hover === 0} title="Quiénes somos" />
+            {/* En texto de cuerpo: el peso display ahora lo lleva el título,
+                y dos bloques grandes seguidos se pelean. */}
+            <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
               Manifesto nació en 2019, pero el equipo lleva más de quince años
               construyendo marcas junto a empresas que necesitan claridad y
               quieren capitalizar su identidad.
@@ -93,7 +93,7 @@ export function Somos() {
             style={cardStyle(1)}
           >
             <Marca on={hover === 1} />
-            <CardKicker id="02" on={hover === 1} label="Qué creemos" />
+            <CardHead id="02" on={hover === 1} title="Qué creemos" />
             <Creencias compact tone="light" />
           </article>
         </Reveal>
@@ -107,8 +107,11 @@ export function Somos() {
             style={cardStyle(2)}
           >
             <Marca on={hover === 2} />
-            <CardKicker id="03" on={hover === 2} label="Nuestro equipo" />
-            <p className="m-0 max-w-[26ch] font-display text-[clamp(1.4rem,2.2vw,2.1rem)] font-normal leading-[1.15] tracking-[-0.025em] text-ink-900 text-pretty">
+            <CardHead id="03" on={hover === 2} title="Nuestro equipo" />
+            {/* Esta frase tenía la tipografía display; ahora esa la lleva el
+                título de la tarjeta, así que baja a cuerpo. Queda en ink-900
+                para que siga leyéndose antes que el cierre. */}
+            <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-900 text-pretty">
               Estructura y sensibilidad. Análisis y creatividad.
             </p>
             {/* El documento pide cambiar este cierre para no repetir la frase
@@ -141,18 +144,25 @@ function Marca({ on }: { on: boolean }) {
   );
 }
 
-function CardKicker({ id, label, on }: { id: string; label: string; on: boolean }) {
+/**
+ * Cabecera de tarjeta: el número y el título.
+ *
+ * El título va en la tipografía display que antes solo tenía "Estructura y
+ * sensibilidad. Análisis y creatividad." — es la que se pidió para los tres.
+ * Antes el título era el mismo rótulo mono chico del resto del sitio.
+ */
+function CardHead({ id, title, on }: { id: string; title: string; on: boolean }) {
   return (
-    <div className="flex items-baseline gap-3">
+    <div className="flex flex-col gap-2">
       <span
         className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
         style={{ color: on ? "#2D3436" : "#4A5054" }}
       >
         {id}
       </span>
-      <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
-        {label}
-      </span>
+      <h3 className="m-0 max-w-[20ch] font-display text-[clamp(1.4rem,2.2vw,2.1rem)] font-normal leading-[1.15] tracking-[-0.025em] text-ink-900 text-pretty">
+        {title}
+      </h3>
     </div>
   );
 }
