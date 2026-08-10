@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { processStages } from "@/data/process";
 import { StarburstImg } from "@/components/icons/StarburstImg";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 
 /* -------------------------------------------------------------------------- */
 /*  Paleta (sección oscura, estilo evaluación 360°)                            */
@@ -21,6 +22,45 @@ const CREAM = "#dcddca";
 const GUIDE = "rgba(214,226,237,0.10)";
 const SPOKE_ON = "rgba(214,226,237,0.55)";
 const SPOKE_OFF = "rgba(214,226,237,0.10)";
+
+/* -------------------------------------------------------------------------- */
+/*  Los mismos papeles, sobre fondo claro                                      */
+/*                                                                            */
+/*  Las constantes de arriba quedan tal cual: son las del fondo #282e32 y      */
+/*  siguen usándose cuando la sección va oscura. Estas son su equivalente      */
+/*  sobre blanco, con los mismos criterios de contraste: MUTED_L para las      */
+/*  etiquetas mono chicas (4.5:1) y DIM_L para los nombres de fase, que por    */
+/*  tamaño piden 3:1 y quedan en 3.30:1.                                       */
+/* -------------------------------------------------------------------------- */
+
+const BRIGHT_L = "#2D3436";
+const MUTED_L = "#4A5054";
+const DIM_L = "rgba(45,52,54,0.55)";
+const LINE_L = "rgba(45,52,54,0.14)";
+const CREAM_L = "#2D3436";
+const GUIDE_L = "rgba(40,46,50,0.14)";
+const SPOKE_ON_L = "rgba(40,46,50,0.55)";
+const SPOKE_OFF_L = "rgba(40,46,50,0.14)";
+
+/** Devuelve la paleta según el fondo sobre el que se dibuja la sección. */
+function paleta(light: boolean) {
+  return {
+    bright: light ? BRIGHT_L : BRIGHT,
+    muted: light ? MUTED_L : MUTED,
+    dim: light ? DIM_L : DIM,
+    line: light ? LINE_L : LINE,
+    cream: light ? CREAM_L : CREAM,
+    guide: light ? GUIDE_L : GUIDE,
+    spokeOn: light ? SPOKE_ON_L : SPOKE_ON,
+    spokeOff: light ? SPOKE_OFF_L : SPOKE_OFF,
+    /** Relleno del polígono y fondo de la fila activa. */
+    wash: light ? "rgba(45,52,54,0.04)" : "rgba(214,226,237,0.035)",
+    polyFill: light ? "rgba(40,46,50,0.05)" : "rgba(214,226,237,0.05)",
+    /** Los starburst son PNG blancos: sobre claro hay que invertirlos. */
+    invert: light ? "brightness(0)" : "brightness(0) invert(1)",
+    body: light ? "#4A5054" : "rgba(214,226,237,0.7)",
+  };
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Geometría radial                                                           */
@@ -53,7 +93,15 @@ const TIPS_PCT = TIPS.map((t) => ({
 /*  Figura compuesta por los gráficos de las etapas                            */
 /* -------------------------------------------------------------------------- */
 
-function CompositeFigure({ lit, active }: { lit: number; active: number }) {
+function CompositeFigure({
+  lit,
+  active,
+  pal,
+}: {
+  lit: number;
+  active: number;
+  pal: ReturnType<typeof paleta>;
+}) {
   // Polígono que une las puntas ya encendidas (se va dibujando la figura).
   const chain = TIPS.slice(0, Math.max(lit, 0))
     .map((t) => `${t.x.toFixed(1)},${t.y.toFixed(1)}`)
@@ -67,9 +115,9 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
         aria-hidden="true"
       >
         {/* Círculos guía */}
-        <circle cx={Cx} cy={Cy} r={132} fill="none" stroke={GUIDE} strokeWidth={1} />
-        <circle cx={Cx} cy={Cy} r={88} fill="none" stroke={GUIDE} strokeWidth={1} />
-        <circle cx={Cx} cy={Cy} r={44} fill="none" stroke={GUIDE} strokeWidth={1} />
+        <circle cx={Cx} cy={Cy} r={132} fill="none" stroke={pal.guide} strokeWidth={1} />
+        <circle cx={Cx} cy={Cy} r={88} fill="none" stroke={pal.guide} strokeWidth={1} />
+        <circle cx={Cx} cy={Cy} r={44} fill="none" stroke={pal.guide} strokeWidth={1} />
 
         {/* Radios: se encienden acumulativamente */}
         {TIPS.map((t, i) => (
@@ -81,7 +129,7 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
             y2={t.y}
             className="transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
-              stroke: i < lit ? SPOKE_ON : SPOKE_OFF,
+              stroke: i < lit ? pal.spokeOn : pal.spokeOff,
               strokeWidth: i === active ? 1.6 : 1,
             }}
           />
@@ -91,8 +139,8 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
         {lit >= 2 && (
           <polyline
             points={lit >= N ? `${chain} ${TIPS[0].x},${TIPS[0].y}` : chain}
-            fill={lit >= N ? "rgba(214,226,237,0.05)" : "none"}
-            stroke={SPOKE_ON}
+            fill={lit >= N ? pal.polyFill : "none"}
+            stroke={pal.spokeOn}
             strokeWidth={1.2}
             className="transition-all duration-700"
           />
@@ -104,11 +152,12 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
           cy={Cy}
           r={lit >= N ? 6 : 3.5}
           className="transition-all duration-700"
-          style={{ fill: CREAM, opacity: lit > 0 ? 0.2 + lit * (0.6 / N) : 0.1 }}
+          style={{ fill: pal.cream, opacity: lit > 0 ? 0.2 + lit * (0.6 / N) : 0.1 }}
         />
       </svg>
 
-      {/* Un gráfico por punta (en blanco sobre el fondo oscuro) */}
+      {/* Un gráfico por punta. Los PNG son blancos: sobre fondo claro hay que
+          invertirlos o no se ven. */}
       {processStages.map((stage, i) => {
         const on = i < lit;
         const isActive = i === active;
@@ -124,9 +173,7 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
                 ? `translate(-50%, -50%) scale(${isActive ? 1.15 : 1}) rotate(0deg)`
                 : "translate(-50%, -50%) scale(0.4) rotate(-40deg)",
               opacity: on ? (isActive ? 1 : 0.55) : 0,
-              filter: isActive
-                ? "brightness(0) invert(1) drop-shadow(0 0 10px rgba(214,226,237,0.5))"
-                : "brightness(0) invert(1)",
+              filter: pal.invert,
             }}
           >
             <StarburstImg id={stage.id} className="h-full w-full object-contain" />
@@ -137,7 +184,7 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
       {/* Contador central */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-kicker"
-        style={{ color: MUTED }}
+        style={{ color: pal.muted }}
       >
         {lit > 0 ? `${lit}/${N}` : ""}
       </div>
@@ -149,7 +196,14 @@ function CompositeFigure({ lit, active }: { lit: number; active: number }) {
 /*  Sección "método"                                                           */
 /* -------------------------------------------------------------------------- */
 
-export function ProcessStar() {
+interface ProcessStarProps {
+  /** Sobre qué fondo se dibuja. `dark` deja el diseño original del #282e32. */
+  tone?: "dark" | "light";
+}
+
+export function ProcessStar({ tone = "dark" }: ProcessStarProps) {
+  const light = tone === "light";
+  const pal = paleta(light);
   const [active, setActive] = useState(0);
   const rowsRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -175,23 +229,30 @@ export function ProcessStar() {
   return (
     <section
       id="proceso"
-      className="px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      /* ═══════════════════════════════════════════════════════════════════
+         COLOR DE FONDO — SECCIÓN "EL MÉTODO"
+         Se decide con la prop `tone` desde la página que la usa, no acá.
+         En /metodologia entra con tone="light" y queda blanco.
+         ═══════════════════════════════════════════════════════════════════ */
+      className={`px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)] ${
+        light ? "bg-paper-bone" : ""
+      }`}
+      style={light ? undefined : { backgroundColor: "#282e32" }}
     >
       <div className="mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
         <span
           className="font-mono text-xs uppercase tracking-kicker"
-          style={{ color: MUTED }}
+          style={{ color: pal.muted }}
         >
           El método
         </span>
         <h2
           className="m-0 max-w-[16ch] font-display text-display-2xl font-normal"
-          style={{ color: BRIGHT }}
+          style={{ color: pal.bright }}
         >
-          Un método en cuatro fases.
+          <TitleReveal text="Un método en cuatro fases." />
         </h2>
-        <p className="m-0 max-w-[62ch] text-body-sm" style={{ color: MUTED }}>
+        <p className="m-0 max-w-[62ch] text-body-sm" style={{ color: pal.muted }}>
           Cada fase cierra una decisión. Ninguna avanza sin la anterior: así no se
           repite trabajo ni se discute dos veces lo mismo.
         </p>
@@ -202,11 +263,11 @@ export function ProcessStar() {
         <div className="order-1 lg:order-2">
           <div className="sticky top-20 flex flex-col items-center gap-5 lg:top-24">
             <div className="w-[clamp(180px,42vw,420px)]">
-              <CompositeFigure lit={litCount} active={active} />
+              <CompositeFigure lit={litCount} active={active} pal={pal} />
             </div>
             <p
               className="text-center font-mono text-xs uppercase tracking-kicker"
-              style={{ color: MUTED }}
+              style={{ color: pal.muted }}
             >
               {litCount} / {N} · la marca toma forma
             </p>
@@ -229,21 +290,21 @@ export function ProcessStar() {
                 onFocus={() => setActive(i)}
                 className="group cursor-default border-t px-[clamp(0.5rem,1.5vw,1rem)] py-[clamp(1.2rem,2.2vw,1.9rem)] outline-none transition-colors duration-500 last:border-b"
                 style={{
-                  borderColor: LINE,
-                  backgroundColor: isActive ? "rgba(214,226,237,0.035)" : "transparent",
+                  borderColor: pal.line,
+                  backgroundColor: isActive ? pal.wash : "transparent",
                 }}
               >
                 <div className="flex items-center gap-[clamp(0.75rem,2vw,1.5rem)]">
                   <span
                     className="font-mono text-xs tabular-nums tracking-kicker transition-colors duration-500"
-                    style={{ color: isActive ? CREAM : MUTED }}
+                    style={{ color: isActive ? pal.cream : pal.muted }}
                   >
                     {stage.id}
                   </span>
 
                   <span
                     className="flex-1 font-display text-display-xl font-normal transition-colors duration-500"
-                    style={{ color: isActive ? BRIGHT : DIM }}
+                    style={{ color: isActive ? pal.bright : pal.dim }}
                   >
                     {stage.name}
                   </span>
@@ -254,7 +315,7 @@ export function ProcessStar() {
                   {stage.tagline && (
                     <span
                       className="hidden shrink-0 font-mono text-xs uppercase tracking-kicker transition-colors duration-500 sm:inline"
-                      style={{ color: isActive ? CREAM : MUTED }}
+                      style={{ color: isActive ? pal.cream : pal.muted }}
                     >
                       {stage.tagline}
                     </span>
@@ -271,7 +332,7 @@ export function ProcessStar() {
                 >
                   <p
                     className="overflow-hidden pl-[calc(2ch+clamp(0.75rem,2vw,1.5rem))] pt-3 text-body-sm"
-                    style={{ color: "rgba(214,226,237,0.7)" }}
+                    style={{ color: pal.body }}
                   >
                     {stage.description}
                   </p>

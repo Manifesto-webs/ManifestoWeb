@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 
 /* -------------------------------------------------------------------------- */
 /*  Instrumentos de dirección de marca — copy de "Textos web v3"               */
@@ -68,19 +69,23 @@ export function Instrumentos() {
   return (
     <section
       id="instrumentos"
-      className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
-      style={{ backgroundColor: "#282e32" }}
+      /* ═══════════════════════════════════════════════════════════════════
+         COLOR DE FONDO — SECCIÓN "INSTRUMENTOS DE DIRECCIÓN"
+         Es este `bg-paper-bone`. Cambiando esta clase cambia solo esta
+         sección; las otras dos tienen la suya.
+         ═══════════════════════════════════════════════════════════════════ */
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
     >
-      <SpaceBackdrop glow="dual" />
+      <SpaceBackdrop variant="paper" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
+        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
           Dirección de marca
         </span>
-        <h2 className="m-0 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-white text-balance">
-          Instrumentos de dirección de marca.
+        <h2 className="m-0 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 text-balance">
+          <TitleReveal text="Instrumentos de dirección de marca." />
         </h2>
-        <p className="m-0 max-w-[54ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-[rgba(214,226,237,0.72)] text-pretty">
+        <p className="m-0 max-w-[54ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
           Cinco entregables concretos. Uno por cada decisión que la marca
           necesita tomar.
         </p>
@@ -101,15 +106,13 @@ export function Instrumentos() {
                 onMouseLeave={() => setHover(null)}
                 className="relative flex h-full flex-col gap-3 overflow-hidden rounded-tile border p-[clamp(1.25rem,2.2vw,2.2rem)] backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                 style={{
-                  backgroundColor: on ? "rgba(0,0,0,0.32)" : "rgba(255,255,255,0.03)",
-                  borderColor: on
-                    ? "rgba(214,226,237,0.45)"
-                    : "rgba(214,226,237,0.16)",
+                  backgroundColor: on ? "rgba(45,52,54,0.05)" : "rgba(255,255,255,0.7)",
+                  borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
                   transform: on ? "translateY(-6px)" : "translateY(0)",
                   opacity: dimmed ? 0.55 : 1,
-                  boxShadow: on
-                    ? "0 40px 80px -40px rgba(95,0,0,0.75), inset 0 0 0 1px rgba(214,226,237,0.06)"
-                    : "0 30px 60px -45px rgba(95,0,0,0.6)",
+                  /* El resplandor al pasar el mouse era corinto: fuera. Las
+                     fichas se distinguen por el borde y el desplazamiento. */
+                  boxShadow: "none",
                 }}
               >
                 {/* Línea superior que crece, el mismo gesto del resto del sitio */}
@@ -118,32 +121,30 @@ export function Instrumentos() {
                   className="absolute left-0 top-0 h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   style={{
                     width: on ? "100%" : "0%",
-                    background: "linear-gradient(90deg, #5f0000, transparent)",
+                    background: "linear-gradient(90deg, #282e32, transparent)",
                   }}
                 />
 
                 <span
                   className="font-mono text-xs tabular-nums tracking-[0.2em] transition-colors duration-500"
-                  style={{ color: on ? "#dcddca" : "rgba(214,226,237,0.4)" }}
+                  style={{ color: on ? "#2D3436" : "#4A5054" }}
                 >
                   {it.id}
                 </span>
 
-                <h3 className="m-0 max-w-[26ch] font-display text-[clamp(1.3rem,2.2vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.025em] text-white text-pretty">
+                <h3 className="m-0 max-w-[26ch] font-display text-[clamp(1.3rem,2.2vw,2.1rem)] font-normal leading-[1.1] tracking-[-0.025em] text-ink-900 text-pretty">
                   {it.name}
                 </h3>
 
                 <p
                   className="m-0 max-w-[52ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] transition-colors duration-500 text-pretty"
-                  style={{
-                    color: on ? "rgba(214,226,237,0.9)" : "rgba(214,226,237,0.7)",
-                  }}
+                  style={{ color: on ? "#2D3436" : "#4A5054" }}
                 >
                   {it.desc}
                 </p>
 
                 {it.detail && (
-                  <p className="m-0 max-w-[62ch] border-t border-[rgba(214,226,237,0.14)] pt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-[1.6] text-[rgba(214,226,237,0.6)] text-pretty">
+                  <p className="m-0 max-w-[62ch] border-t border-ink-900/14 pt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-[1.6] text-ink-700 text-pretty">
                     {it.detail}
                   </p>
                 )}
@@ -155,21 +156,15 @@ export function Instrumentos() {
 
       {/* "Por qué funciona": el cierre del bloque en el documento. */}
       <Reveal className="relative z-10 mt-[clamp(3rem,6vw,6rem)]" delay={200}>
-        <div
-          className="grid gap-4 rounded-tile border border-[rgba(214,226,237,0.18)] p-[clamp(1.5rem,4vw,4rem)]"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.35)",
-            boxShadow: "0 40px 90px -50px rgba(95,0,0,0.7)",
-          }}
-        >
-          <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.6)]">
+        <div className="grid gap-4 rounded-tile border border-ink-900/18 bg-white/70 p-[clamp(1.5rem,4vw,4rem)]">
+          <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
             Por qué funciona
           </span>
-          <p className="m-0 max-w-[48ch] text-[clamp(0.95rem,1.1vw,1.15rem)] leading-[1.6] text-[rgba(214,226,237,0.75)] text-pretty">
+          <p className="m-0 max-w-[48ch] text-[clamp(0.95rem,1.1vw,1.15rem)] leading-[1.6] text-ink-700 text-pretty">
             Porque cada fase cierra una decisión que antes estaba abierta.
           </p>
-          <p className="m-0 max-w-[22ch] font-display text-[clamp(1.6rem,3.6vw,3.4rem)] font-normal leading-[1.08] tracking-[-0.03em] text-white">
-            Al final no tienes un manual. Tienes criterio.
+          <p className="m-0 max-w-[22ch] font-display text-[clamp(1.6rem,3.6vw,3.4rem)] font-normal leading-[1.08] tracking-[-0.03em] text-ink-900">
+            <TitleReveal text="Al final no tienes un manual. Tienes criterio." />
           </p>
         </div>
       </Reveal>

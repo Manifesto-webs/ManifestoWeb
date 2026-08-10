@@ -24,12 +24,26 @@ export const metadata: Metadata = {
  */
 export default function MetodologiaPage() {
   return (
-    // El nav es fijo: este padding evita que se coma el arranque de la sección en mobile.
-    <div
-      className="pt-[clamp(4rem,7vw,5.5rem)]"
-      style={{ backgroundColor: "#282e32" }}
-    >
-      <ProcessStar />
+    /* ═══════════════════════════════════════════════════════════════════════
+       DÓNDE SE CAMBIA EL COLOR DE FONDO DE ESTA PÁGINA
+
+       El color NO se pone acá. Cada sección pinta el suyo, así que hay tres
+       lugares, uno por sección, y se cambian por separado:
+
+         1. El método          → components/landing/ProcessStar.tsx
+            (esta sección recibe el color por la prop `tone` de abajo:
+             tone="light" = blanco, tone="dark" = el #282e32 original)
+         2. Decisión financiera → components/landing/DecisionFinanciera.tsx
+         3. Instrumentos        → components/landing/Instrumentos.tsx
+
+       En los tres, la línea a tocar está marcada con un comentario igual a
+       este que dice COLOR DE FONDO — SECCIÓN ...
+
+       Este div solo pone el espacio de arriba: el nav es fijo y sin esto se
+       come el arranque de la primera sección en celular.
+       ═══════════════════════════════════════════════════════════════════════ */
+    <div className="pt-[clamp(4rem,7vw,5.5rem)]">
+      <ProcessStar tone="light" />
       <DecisionFinanciera />
       <Instrumentos />
     </div>
