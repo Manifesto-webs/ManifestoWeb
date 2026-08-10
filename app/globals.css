@@ -289,6 +289,27 @@ body {
   box-shadow: none;
 }
 
+/* Puntero suave (components/ui/SmoothCursor.tsx).
+   La clase la pone el propio componente, y solo cuando hay mouse de verdad:
+   en táctil o con prefers-reduced-motion no se agrega y queda el del sistema. */
+.smooth-cursor {
+  /* Contra lo que tenga debajo: se invierte, así que se ve igual sobre las
+     secciones blancas y sobre las oscuras sin tener que saber en cuál está. */
+  mix-blend-mode: difference;
+  will-change: transform;
+}
+.smooth-cursor-on,
+.smooth-cursor-on * {
+  cursor: none;
+}
+/* Menos en los campos de texto: sin la barra de escritura no se ve dónde se
+   está escribiendo, y eso sí molesta al llenar el formulario. */
+.smooth-cursor-on input,
+.smooth-cursor-on textarea,
+.smooth-cursor-on select {
+  cursor: auto;
+}
+
 /* Anillos concéntricos del fondo de Nosotros (/nosotros). */
 @keyframes magic-ring {
   0%   { transform: scale(0.05); opacity: 0; }

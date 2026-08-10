@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { SITE } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
+import { SmoothCursor } from "@/components/ui/SmoothCursor";
 import { graph, organizationSchema, websiteSchema } from "@/lib/schema";
 
 /**
@@ -69,6 +70,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Un solo bloque JSON-LD para toda la identidad del sitio. Las
             páginas internas referencian estos nodos por @id. */}
         <JsonLd data={graph(organizationSchema(), websiteSchema())} />
+        {/* Se dibuja solo si hay mouse y no se pidió menos movimiento. */}
+        <SmoothCursor />
         <Nav />
         <main id="main">{children}</main>
         <Footer />
