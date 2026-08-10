@@ -12,7 +12,7 @@ import { CorredorProyectos } from "@/components/demo/CorredorProyectos";
  * nada colgando.
  */
 export const metadata: Metadata = {
-  title: "Demo · Proyectos en corredor",
+  title: "Demo · Proyectos en caja 3D",
   robots: { index: false, follow: false },
 };
 
@@ -27,12 +27,14 @@ export default function DemoProyectosPage() {
           Demo
         </span>
         <h1 className="mt-3 font-display text-display-xl font-normal text-white">
-          Proyectos en corredor.
+          Proyectos en caja 3D.
         </h1>
         <p className="mt-4 text-body-sm">
-          Las piezas avanzan solas por el pasillo. Moviendo el mouse hacia
-          arriba dentro de la sección se frena y da marcha atrás; hacia abajo,
-          acelera. Al soltar vuelve a su ritmo. Un clic abre el proyecto.
+          Carrusel vertical: la pieza del centro está de frente y, al llegar a
+          los bordes de la pantalla, las de arriba y abajo se pliegan contra el
+          techo y el piso de la caja. Avanza solo. Moviendo el mouse hacia
+          arriba dentro de la sección frena y da marcha atrás; hacia abajo,
+          acelera. Al salir vuelve a su ritmo. Un clic abre el proyecto.
         </p>
         <p className="mt-4 text-body-sm">
           Es una prueba: no está en el menú ni se indexa. El portafolio del
