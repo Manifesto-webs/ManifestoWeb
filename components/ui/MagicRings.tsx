@@ -29,7 +29,10 @@ interface MagicRingsProps {
 }
 
 export function MagicRings({
-  color = "#5f0000",
+  /* Ice y no el corinto (#5f0000) que era el valor por defecto: sobre el
+     #282e32 —el único fondo con el que se usa esta pieza— era rojo sobre azul.
+     El default importa: es el que hereda cualquier uso nuevo. */
+  color = "#d6e2ed",
   tone = "dark",
   className = "",
 }: MagicRingsProps) {

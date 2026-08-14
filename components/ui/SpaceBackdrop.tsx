@@ -1,7 +1,13 @@
 /**
  * Fondo espacial reutilizable: destellos radiales + campo de estrellas tenue.
  * Posiciones deterministas (sin Math.random) para evitar desajustes de hidratación.
- * Solo usa la paleta de marca: ice (#d6e2ed), corinto (#5f0000), sand (#dcddca).
+ *
+ * Paleta: ice (#d6e2ed) y sand (#dcddca). NO hay corinto acá.
+ * El destello y las estrellas en #5f0000 sobre el #282e32 eran el caso más
+ * repetido de rojo sobre azul del sitio —esta pieza va en clientes, servicios,
+ * preguntas e instrumentos—, y en oscuro ese rojo no aporta profundidad: se ve
+ * como una mancha sucia. El sand cumple el mismo papel de segundo tono cálido
+ * sin salirse de la familia fría.
  */
 
 // [x%, y%, tamaño px, delay s]
@@ -14,19 +20,20 @@ const STARS: [number, number, number, number][] = [
 ];
 
 interface SpaceBackdropProps {
-  /** Color del destello principal. */
+  /**
+   * Segundo destello, el que da profundidad.
+   * `corinto` se mantiene como valor aceptado para no romper las llamadas
+   * existentes, pero ya no pinta rojo: se resuelve como el destello sand.
+   */
   glow?: "corinto" | "ice" | "dual";
   /**
    * Sobre qué fondo se dibuja.
    *
-   * `space` (por defecto) es el original: pensado para el #282e32, con el
-   * corinto dando profundidad y todo a muy baja opacidad porque sobre oscuro
-   * un 6% ya se ve.
+   * `space` (por defecto) es el del #282e32: todo a muy baja opacidad, porque
+   * sobre oscuro un 6% ya se ve.
    *
-   * `paper` es para fondos claros: fuera todo el corinto —sobre blanco el
-   * rojo llama demasiado— y sube la opacidad, porque ese mismo 6% de ice
-   * sobre blanco no se ve. Los anillos y las estrellas quedan en ice, que es
-   * el azul de la paleta.
+   * `paper` es para fondos claros: sube la opacidad, porque ese mismo 6% de
+   * ice sobre blanco no se ve.
    */
   variant?: "space" | "paper";
   className?: string;
@@ -39,9 +46,8 @@ export function SpaceBackdrop({
 }: SpaceBackdropProps) {
   const paper = variant === "paper";
 
-  /* Sobre claro no hay destello corinto: el rojo es lo que se pidió sacar. */
-  const showCorintoGlow = !paper && (glow === "corinto" || glow === "dual");
-  /* ...y el destello de ice pasa a estar siempre, porque es el único que queda. */
+  /* El segundo destello (el que estaba en corinto) ahora va en sand. */
+  const showSandGlow = !paper && (glow === "corinto" || glow === "dual");
   const showIceGlow = paper || glow === "ice" || glow === "dual";
 
   const iceGlow = paper
@@ -50,18 +56,18 @@ export function SpaceBackdrop({
 
   const ring = paper
     ? ["rgba(214,226,237,0.9)", "rgba(214,226,237,0.75)", "rgba(214,226,237,0.6)"]
-    : ["rgba(214,226,237,0.06)", "rgba(214,226,237,0.05)", "rgba(95,0,0,0.10)"];
+    : ["rgba(214,226,237,0.06)", "rgba(214,226,237,0.05)", "rgba(220,221,202,0.05)"];
 
   return (
     <div
       className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       aria-hidden="true"
     >
-      {/* Destello corinto (profundidad) */}
-      {showCorintoGlow && (
+      {/* Destello sand (profundidad). Era corinto: rojo sobre azul. */}
+      {showSandGlow && (
         <div
           className="absolute -left-[10%] top-[8%] h-[60vmin] w-[60vmin] rounded-full blur-[80px]"
-          style={{ background: "radial-gradient(circle, rgba(95,0,0,0.35) 0%, transparent 65%)" }}
+          style={{ background: "radial-gradient(circle, rgba(220,221,202,0.10) 0%, transparent 65%)" }}
         />
       )}
       {/* Destello ice (frío/espacial) */}
@@ -101,9 +107,10 @@ export function SpaceBackdrop({
             top: `${y}%`,
             height: `${s}px`,
             width: `${s}px`,
-            /* Sobre oscuro una de cada cinco va en corinto; sobre claro son
-               todas ice, que es el azul de la paleta. */
-            background: !paper && i % 5 === 0 ? "#5f0000" : "#d6e2ed",
+            /* Una de cada cinco va en sand, para que el campo no quede de un
+               solo tono. Antes esa quinta era corinto: sobre el #282e32 se
+               leía como un punto sucio, no como una estrella. */
+            background: !paper && i % 5 === 0 ? "#dcddca" : "#d6e2ed",
             animationDelay: `${d}s`,
           }}
         />
