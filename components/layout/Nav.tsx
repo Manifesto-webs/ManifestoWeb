@@ -6,8 +6,9 @@ import { ManifestoLogo } from "@/components/icons/ManifestoLogo";
 import { NAV_LINKS } from "@/lib/constants";
 
 /**
- * Scroll mínimo, en px, para que aparezca el header en una página SIN hero.
- * En las interiores no hay nada que dejar limpio, así que llega enseguida.
+ * Piso del umbral del hero, en px. El inicio calcula cuándo baja la barra a
+ * partir del alto real del hero; este valor solo evita que ese cálculo caiga a
+ * cero si el hero llegara a ser más corto que la ventana.
  */
 const APARECE_EN = 90;
 
@@ -19,25 +20,30 @@ export function Nav() {
   /* ------------------------------------------------------------------ */
   /*  Cuándo aparece                                                     */
   /*                                                                    */
-  /*  Baja una sola vez, cuando el hero ya quedó atrás, y a partir de     */
-  /*  ahí se queda. Antes se escondía al bajar y volvía solo al subir:    */
-  /*  la barra estaba, pero había que ir a buscarla con un gesto que      */
-  /*  nadie tiene por qué adivinar.                                      */
+  /*  Dos reglas, según la página:                                       */
   /*                                                                    */
-  /*  El umbral sale del hero de verdad (#top, que solo existe en la      */
-  /*  home) y no de un número fijo: el hero mide 150 vh con el contenido  */
-  /*  pegado arriba, así que visualmente termina un viewport antes de que */
-  /*  termine la sección. De ahí el `- innerHeight`. En las páginas sin   */
-  /*  hero cae al umbral corto.                                          */
+  /*  • Con hero (solo el inicio, #top): la barra está fuera mientras el  */
+  /*    hero ocupa la pantalla y baja cuando el hero ya quedó atrás, para */
+  /*    que la portada astral quede limpia. El umbral sale del alto real  */
+  /*    del hero —mide 150 vh con el contenido pegado arriba, así que     */
+  /*    visualmente termina un viewport antes; de ahí el `- innerHeight`— */
+  /*    y no de un número fijo.                                          */
+  /*                                                                    */
+  /*  • Sin hero (todas las interiores, incluidas las de proyecto): no    */
+  /*    hay portada que dejar limpia, así que la barra está SIEMPRE. Esto */
+  /*    arregla el bug por el que, al entrar a un proyecto y hacer scroll */
+  /*    hacia arriba, la barra desaparecía al acercarse al tope —justo    */
+  /*    cuando se la necesita para volver.                               */
   /* ------------------------------------------------------------------ */
   useEffect(() => {
-    let umbral = APARECE_EN;
+    // 0 = la página no tiene hero (interiores): la barra va siempre visible.
+    let heroFin = 0;
 
     const medir = () => {
       const hero = document.getElementById("top");
-      umbral = hero
+      heroFin = hero
         ? Math.max(APARECE_EN, hero.offsetHeight - window.innerHeight)
-        : APARECE_EN;
+        : 0;
     };
 
     // Sin requestAnimationFrame: el handler es una comparación y un setState,
@@ -45,7 +51,8 @@ export function Nav() {
     // en rAF solo agregaba un frame de retraso y una dependencia de más —en
     // contextos donde el navegador pausa los frames, el header no aparecía
     // nunca aunque el scroll sí estuviera llegando.
-    const onScroll = () => setVisible(window.scrollY > umbral);
+    const onScroll = () =>
+      setVisible(heroFin === 0 || window.scrollY > heroFin);
 
     // Con nombre y no una flecha anónima: si no, el cleanup no puede
     // quitarlo y cada navegación deja un listener vivo.
