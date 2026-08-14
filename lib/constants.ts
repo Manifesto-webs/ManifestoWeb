@@ -94,12 +94,21 @@ export const SERVICE_AREAS = [
  * tres veces lo mismo con tres taxonomías distintas.
  */
 export const NAV_LINKS = [
-  { href: "/", label: "inicio" },
-  { href: "/nosotros", label: "nosotros" },
-  { href: "/servicios", label: "servicios" },
-  { href: "/#universo", label: "universo" },
+  { href: "/", label: "Inicio" },
+  /* Proyectos tiene página propia (/proyectos). Antes esta entrada era un
+     ancla a la caja 3D del inicio: servía como gesto pero no como destino
+     —sin URL para compartir, sin indexar por separado, y quien venía a ver el
+     trabajo caía en medio de la landing. La caja 3D sigue en el inicio y el
+     ancla #trabajo sigue viva para los enlaces que ya apuntaban ahí. */
+  { href: "/proyectos", label: "Proyectos" },
+  { href: "/nosotros", label: "Nosotros" },
+  { href: "/servicios", label: "Servicios" },
   /* Apuntaba a /#proceso, que era el método dentro de la landing. Al salir
      a página propia ese ancla se quedaba sin destino, así que la entrada
      ahora va a /metodologia. Es además lo que pide el documento de textos. */
-  { href: "/metodologia", label: "metodología" },
+  { href: "/metodologia", label: "Metodología" },
+  /* "Universo" (/#universo) salió del menú: la sección sigue en la landing,
+     pero como entrada de barra competía con Servicios —donde "Universo de
+     marca" es además el primero de los cuatro frentes— y el visitante no
+     tenía forma de saber cuál de las dos era cuál. */
 ] as const;
