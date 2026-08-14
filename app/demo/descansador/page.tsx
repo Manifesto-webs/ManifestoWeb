@@ -31,9 +31,8 @@ export default function DemoDescansadorPage() {
           Descansador de pantalla.
         </h1>
         <p className="mt-4 text-body-sm">
-          El isotipo rebota contra los bordes y cambia de color de marca en
-          cada rebote, dejando rastro como los televisores de tubo: el fósforo
-          tardaba en apagarse y lo que ya pasó se quedaba un rato en pantalla.
+          El isotipo rebota contra los bordes y alterna entre blanco y celeste
+          en cada rebote. Limpio, sin rastro.
         </p>
         <p className="mt-4 text-body-sm">
           Es una prueba: no está en el menú ni se indexa. Falta decidir si se

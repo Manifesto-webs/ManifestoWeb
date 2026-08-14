@@ -5,16 +5,11 @@ import { useEffect, useRef } from "react";
 /* -------------------------------------------------------------------------- */
 /*  Descansador de pantalla — isotipo de Manifesto                             */
 /*                                                                            */
-/*  El isotipo rebota contra los bordes y cambia de color en cada rebote,      */
-/*  dejando su rastro como los tubos de rayos catódicos: el fósforo tardaba    */
-/*  en apagarse y lo que ya pasó se queda un rato en pantalla.                 */
+/*  El isotipo rebota contra los bordes y alterna entre blanco y celeste en    */
+/*  cada rebote. Sin rastro: el lienzo se limpia entero cada cuadro, así solo   */
+/*  se ve el isotipo en su posición actual, limpio.                           */
 /*                                                                            */
-/*  Cómo se hace el rastro: en vez de borrar el lienzo cada cuadro, se le      */
-/*  pinta encima un negro casi transparente. Lo viejo se va apagando solo,     */
-/*  capa sobre capa, y nunca hay que guardar posiciones anteriores.            */
-/*                                                                            */
-/*  Se dibuja en canvas y no con divs: son cientos de capas por segundo y el   */
-/*  DOM no da abasto.                                                         */
+/*  Se dibuja en canvas y no con divs por rendimiento.                        */
 /* -------------------------------------------------------------------------- */
 
 /** Rutas del isotipo, en su viewBox original de 96 × 51. */
@@ -27,11 +22,8 @@ const TRAZOS = [
 const LOGO_W = 96;
 const LOGO_H = 51;
 
-/** Solo colores de marca. El corinto entra porque acá es relleno, no texto. */
-const COLORES = ["#d6e2ed", "#dcddca", "#ffffff", "#5f0000"];
-
-/** Cuánto se apaga el rastro por cuadro. Más alto, rastro más corto. */
-const APAGADO = 0.055;
+/** Solo blanco y celeste (ice), alternando en cada rebote. */
+const COLORES = ["#ffffff", "#d6e2ed"];
 /** Velocidad del isotipo, en píxeles por segundo. */
 const VELOCIDAD = 190;
 
@@ -59,6 +51,8 @@ export function Descansador({ ancho = 190, className = "" }: DescansadorProps) {
     let lw = 0;
     let lh = 0;
     let iniciado = false;
+    let tiempo = 0;
+    let estrellas: { x: number; y: number; r: number; fase: number }[] = [];
 
     /**
      * Ajusta el lienzo al tamaño real del elemento.
@@ -81,6 +75,15 @@ export function Descansador({ ancho = 190, className = "" }: DescansadorProps) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, w, h);
+
+      // Estrellas de fondo (como en el hero). Se regeneran al cambiar el tamaño.
+      const cuenta = Math.min(160, Math.max(40, Math.round((w * h) / 9000)));
+      estrellas = Array.from({ length: cuenta }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.2 + 0.3,
+        fase: Math.random() * Math.PI * 2,
+      }));
 
       // El isotipo se achica en pantallas angostas para que quepa el rebote.
       escala = Math.min(ancho, w * 0.42) / LOGO_W;
@@ -122,9 +125,21 @@ export function Descansador({ ancho = 190, className = "" }: DescansadorProps) {
       const dt = Math.min((t - ultimo) / 1000, 0.05);
       ultimo = t;
 
-      // El velo que apaga lo anterior: esto es el rastro.
-      ctx.fillStyle = `rgba(0,0,0,${APAGADO})`;
+      // Sin rastro: se limpia el lienzo entero cada cuadro.
+      ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, w, h);
+
+      // Estrellas titilando de fondo, en ice, como en el inicio.
+      tiempo += dt;
+      for (const e of estrellas) {
+        const tw = quieto ? 0.7 : 0.5 + 0.5 * Math.sin(tiempo * 1.4 + e.fase);
+        ctx.globalAlpha = tw * 0.55;
+        ctx.fillStyle = "#d6e2ed";
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
 
       x += vx * dt;
       y += vy * dt;
@@ -183,7 +198,7 @@ export function Descansador({ ancho = 190, className = "" }: DescansadorProps) {
       ref={canvasRef}
       className={`block h-full w-full bg-ink-pure ${className}`}
       role="img"
-      aria-label="Descansador de pantalla: el isotipo de Manifesto rebotando y dejando rastro"
+      aria-label="Descansador de pantalla: el isotipo de Manifesto rebotando"
     />
   );
 }
