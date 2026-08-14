@@ -16,7 +16,7 @@ export function ProjectNext({ project }: ProjectNextProps) {
       <div className="mx-auto max-w-[1280px]">
         <Link
           href={`/proyectos/${next.slug}`}
-          className="group relative flex min-h-[clamp(340px,42vw,520px)] items-end overflow-hidden rounded-tile bg-ink-900"
+          className="group relative flex min-h-[clamp(340px,42vw,520px)] items-end overflow-hidden rounded-tile bg-space-slate"
         >
           <Image
             src={next.coverImage}
@@ -32,7 +32,7 @@ export function ProjectNext({ project }: ProjectNextProps) {
             </span>
             <h3 className="m-0 font-display text-display-2xl font-normal">
               {next.name}
-              <span className="text-accent-clay">.</span>
+              <span className="text-[#d6e2ed]">.</span>
             </h3>
           </div>
           <span className="absolute right-[clamp(1.5rem,3vw,3rem)] top-[clamp(1.5rem,3vw,3rem)] z-10 grid h-[64px] w-[64px] place-items-center rounded-full bg-paper-bone font-mono text-xl text-ink-900 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">

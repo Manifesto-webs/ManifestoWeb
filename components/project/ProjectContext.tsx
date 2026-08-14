@@ -27,7 +27,7 @@ export function ProjectContext({ project }: ProjectContextProps) {
             <div
               key={i}
               className={`flex flex-col gap-2 rounded-tile p-6 ${
-                i % 2 === 0 ? "bg-paper-sage" : "bg-paper-ice"
+                i % 2 === 0 ? "bg-paper-ice" : "bg-[#e7eef4]"
               }`}
             >
               <span className="font-mono text-[0.7rem] uppercase tracking-kicker opacity-70">
