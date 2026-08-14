@@ -6,140 +6,160 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { projects } from "@/data/projects";
 
 /* -------------------------------------------------------------------------- */
-/*  DEMO — Proyectos en caja 3D                                                */
+/*  Portafolio — proyectos en caja 3D                                          */
 /*                                                                            */
 /*  Carrusel dentro de una caja. La pieza del centro está de frente; al        */
-/*  alejarse hacia los bordes se va plegando —como una tapa que se abre—       */
-/*  hasta quedar acostada contra la pared. Siempre se ven tres: la del centro  */
-/*  y sus dos vecinas plegadas.                                               */
+/*  alejarse hacia los bordes se pliega —como una tapa que se abre— contra el   */
+/*  techo y el piso. El recorrido es VERTICAL en todas las pantallas.          */
 /*                                                                            */
-/*  El eje cambia con el tamaño de pantalla: en escritorio el recorrido es     */
-/*  vertical (se pliegan contra techo y piso) y en celular es horizontal (se   */
-/*  pliegan contra las paredes laterales), que es donde hay lugar.            */
+/*  ── Cómo se maneja: el scroll ES el carrusel ────────────────────────────   */
+/*  La sección mide varias pantallas de alto y su contenido queda FIJO         */
+/*  (sticky) mientras se la recorre. Ese recorrido se reparte entre los        */
+/*  proyectos: arriba de todo está el primero de frente, abajo del todo el     */
+/*  último, y cada punto intermedio es una posición exacta del carrusel.       */
+/*  Bajar dos dedos avanza siempre lo mismo, y volver a subir devuelve         */
+/*  exactamente donde se estaba.                                              */
 /*                                                                            */
-/*  El pliegue no gira sobre el centro de la pieza sino sobre el borde que da  */
-/*  al centro de la pantalla: por eso parece que la caja se abre y no que la   */
-/*  imagen se tuerce.                                                         */
+/*  Antes convivían tres fuentes de movimiento sobre el mismo recorrido —una   */
+/*  marcha automática, un empujón por scroll y un arrastre— cada una con su    */
+/*  inercia. El resultado era que la caja nunca estaba donde uno la había      */
+/*  dejado: seguía andando sola, el scroll le sumaba un envión que no          */
+/*  correspondía a la distancia recorrida, y al volver hacia arriba no         */
+/*  regresaba al mismo lugar. Nada de eso era controlable.                    */
 /*                                                                            */
-/*  Control: automático y manual a la vez. Con mouse, la altura del cursor     */
-/*  suma o resta velocidad. Con dedo, el arrastre de costado. La rueda del     */
-/*  mouse no se secuestra: si la sección se queda con el scroll, la página     */
-/*  deja de poder pasarse y se siente rota.                                   */
+/*  Queda UNA fuente: la posición del scroll. El bucle solo suaviza el camino  */
+/*  hacia ella, así que el movimiento se siente pesado y continuo sin dejar    */
+/*  de ser predecible. Y como el scroll de la página es el que manda, en       */
+/*  celular funciona igual sin secuestrar el gesto del dedo.                  */
+/*                                                                            */
+/*  ── Composición (escritorio) ───────────────────────────────────────────    */
+/*  Nombre a la IZQUIERDA, pieza a la DERECHA. La pieza es lo más grande de la  */
+/*  sección y el nombre la acompaña; el eje de la caja está corrido a la        */
+/*  derecha para dejarle la columna izquierda al texto.                        */
 /* -------------------------------------------------------------------------- */
 
-/** Separación entre piezas cuando el recorrido es vertical. */
-const PASO_VERTICAL = 560;
 /**
- * En horizontal la separación sale del ancho real de la pieza y no de un
- * número fijo: así no queda un hueco enorme entre proyecto y proyecto en
- * pantallas angostas. El 1.12 es apenas más que la pieza, lo justo para que
- * no se toquen.
+ * Cuánto separa una pieza de la siguiente, como múltiplo del alto REAL de la
+ * pieza. Se mide en vivo (y en cada resize) en vez de ir en px fijos: así el
+ * pliegue se ve igual con la pieza chica del celular y con la grande del
+ * escritorio, y sobre todo no hay que recalcularlo a mano cada vez que cambia
+ * el ancho de la lámina. Con ~1.1 se ven solo tres a la vez.
  */
-const HOLGURA_HORIZONTAL = 1.12;
+const FACTOR_ESCRITORIO = 1.08;
+const FACTOR_MOVIL = 1.25;
 /** Cuánto se pliega, en grados. 90 la dejaría de canto e invisible. */
 const ANGULO = 72;
 /**
- * A qué profundidad está el fondo de la caja.
- *
- * Todas las piezas viven en ese plano; el pliegue las trae hacia adelante, no
- * hacia atrás. Es lo que hace que las vecinas se vean grandes y se ensanchen
- * hacia el borde de la pantalla en vez de encogerse.
+ * Profundidad del fondo de la caja. Ojo: junto con la perspectiva decide el
+ * TAMAÑO REAL en pantalla, que es lo que se ve. La escala aplicada es
+ * PERSPECTIVA / (PERSPECTIVA + PROFUNDIDAD) — con 700 y 1150 la lámina se
+ * achicaba al 62%, así que un ancho de 700 px terminaba midiendo 435. Bajarla
+ * a 640 y subir la perspectiva sube esa escala al 67%, y ahí sí el aumento de
+ * ancho del CSS se ve en pantalla.
  */
-const PROFUNDIDAD = 700;
+const PROFUNDIDAD = 640;
 /** Perspectiva de la caja. Cuanto más chica, más marcada la fuga. */
-const PERSPECTIVA = 1150;
-/** Velocidad de crucero, en px por segundo. */
-const VELOCIDAD_BASE = 90;
-/** Cuánto suma o resta la posición del mouse a esa velocidad. */
-const GANANCIA_MANUAL = 420;
-/** Debajo de este ancho el recorrido pasa a horizontal. */
-const CORTE_HORIZONTAL = "(max-width: 1023px)";
+const PERSPECTIVA = 1300;
+/**
+ * Cuántas pantallas de scroll se le dan a CADA proyecto después del primero.
+ * Es la sensibilidad del carrusel: más alto, más despacio y más deliberado.
+ * Con 0.62 hacen falta unas dos vueltas de rueda por proyecto, que es lo que
+ * deja mirar una pieza sin que la siguiente ya esté encima.
+ */
+const PANTALLAS_POR_PIEZA = 0.62;
+/**
+ * Constante de tiempo del suavizado, en ms: cuánto tarda la caja en recorrer
+ * ~63% de lo que le falta para llegar a donde dice el scroll. Es lo único que
+ * separa la posición real de la que pide la página, y de acá sale todo el
+ * peso del movimiento. Más alto = más pesado y más retrasado.
+ */
+const TAU_SEGUIMIENTO = 165;
+/** Debajo de este ancho la caja va en su versión compacta y clara. */
+const CORTE_MOVIL = "(max-width: 1023px)";
 
 const wrap = (v: number, n: number) => ((v % n) + n) % n;
 const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
 
-export function CorredorProyectos() {
+interface CorredorProyectosProps {
+  /**
+   * id de la sección (ancla de scroll). Por defecto "corredor"; en la home va
+   * "trabajo" para conservar los enlaces existentes que apuntaban al bento.
+   */
+  id?: string;
+}
+
+export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const offsetRef = useRef(0);
-  const manualRef = useRef(0);
   const [frente, setFrente] = useState(0);
-  const [sobrePieza, setSobrePieza] = useState(false);
 
   useEffect(() => {
     const seccion = sectionRef.current;
     if (!seccion) return;
 
     const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mq = window.matchMedia(CORTE_HORIZONTAL);
+    const movil = window.matchMedia(CORTE_MOVIL);
 
-    let horizontal = mq.matches;
-    let paso = PASO_VERTICAL;
+    let paso = 520;
     let tira = projects.length * paso;
+    /** Recorrido total del carrusel, en px: del primer proyecto al último. */
+    let recorrido = (projects.length - 1) * paso;
 
-    /**
-     * Recalcula eje y separación. La separación horizontal depende del ancho
-     * real de la pieza, así que hay que volver a medirla cada vez que cambia
-     * el tamaño de la ventana.
-     */
+    // La separación sale del alto real de la pieza, así que hay que remedirla
+    // cada vez que cambia el tamaño.
     const medir = () => {
-      horizontal = mq.matches;
-      const ancho = itemRefs.current[0]?.offsetWidth ?? 0;
-      paso = horizontal
-        ? Math.max(200, ancho * HOLGURA_HORIZONTAL)
-        : PASO_VERTICAL;
+      const alto = itemRefs.current[0]?.offsetHeight ?? 0;
+      const factor = movil.matches ? FACTOR_MOVIL : FACTOR_ESCRITORIO;
+      paso = Math.max(260, alto * factor);
       tira = projects.length * paso;
+      recorrido = (projects.length - 1) * paso;
     };
-
-    medir();
 
     let raf = 0;
     let ultimo = 0;
     let frenteAnterior = -1;
 
-    // Arrastre para pantallas táctiles: horizontal, que es además el eje del
-    // carrusel en celular. Con `touch-action: pan-y` el dedo hacia arriba
-    // sigue moviendo la página y el de costado, el carrusel.
-    let arrastrando = false;
-    let ultimaX = 0;
+    /* ---------------------------------------------------------------- */
+    /*  El scroll dice DÓNDE está el carrusel                            */
+    /*                                                                  */
+    /*  La sección mide varias pantallas y su contenido va sticky. El    */
+    /*  progreso de ese tramo (0 arriba, 1 abajo) se mapea al recorrido   */
+    /*  completo: es una posición, no un empujón. Por eso volver hacia    */
+    /*  arriba devuelve exactamente al mismo lugar.                      */
+    /* ---------------------------------------------------------------- */
+    let destino = 0;
 
-    const onDown = (e: PointerEvent) => {
-      if (e.pointerType === "mouse") return;
-      arrastrando = true;
-      ultimaX = e.clientX;
-    };
-    const onUp = () => {
-      arrastrando = false;
-      manualRef.current = 0;
-    };
-
-    const onMove = (e: PointerEvent) => {
-      if (arrastrando) {
-        offsetRef.current += (ultimaX - e.clientX) * 1.6;
-        ultimaX = e.clientX;
-        return;
-      }
-      // La altura del mouse solo manda si de verdad hay mouse: en táctil este
-      // evento llega solo mientras se toca y daría saltos.
-      if (e.pointerType !== "mouse") return;
+    const leerScroll = () => {
       const r = seccion.getBoundingClientRect();
-      manualRef.current = clamp(
-        (e.clientY - (r.top + r.height / 2)) / (r.height / 2),
-        -1,
-        1,
-      );
+      // El tramo útil es el alto de la sección menos la pantalla que queda
+      // pegada: mientras el sticky está fijo, esto va de 0 a 1.
+      const total = r.height - window.innerHeight;
+      const p = total > 0 ? clamp(-r.top / total, 0, 1) : 0;
+      destino = p * recorrido;
     };
-    const onLeave = () => (manualRef.current = 0);
 
     const frame = (t: number) => {
       if (!ultimo) ultimo = t;
-      // Delta acotado: si la pestaña estuvo en segundo plano, un salto de
-      // varios segundos mandaría la tira al otro extremo de golpe.
-      const dt = Math.min((t - ultimo) / 1000, 0.05);
+      const dtMs = Math.min(t - ultimo, 50);
       ultimo = t;
 
-      const base = quieto ? 0 : VELOCIDAD_BASE;
-      offsetRef.current += (base + manualRef.current * GANANCIA_MANUAL) * dt;
+      /* El único movimiento: perseguir el destino que marca el scroll. El
+         suavizado es exponencial sobre el tiempo REAL del frame, así que la
+         caja se siente igual a 60, 120 o 144 Hz. Y como el destino es una
+         posición absoluta, nunca se acumula error: por más que se scrollee a
+         los tirones, la caja siempre termina exactamente donde corresponde. */
+      if (quieto) {
+        offsetRef.current = destino;
+      } else {
+        const k = 1 - Math.exp(-dtMs / TAU_SEGUIMIENTO);
+        offsetRef.current += (destino - offsetRef.current) * k;
+        // Cuando falta menos de medio píxel se planta: si no, el bucle queda
+        // persiguiendo decimales para siempre.
+        if (Math.abs(destino - offsetRef.current) < 0.5) {
+          offsetRef.current = destino;
+        }
+      }
 
       let masCerca = 0;
       let minAbs = Infinity;
@@ -150,25 +170,18 @@ export function CorredorProyectos() {
 
         // Posición de esta pieza respecto al centro, dando la vuelta a la tira.
         const d = wrap(i * paso - offsetRef.current + tira / 2, tira) - tira / 2;
-        // -1 pegada a una pared, 0 de frente, 1 pegada a la de enfrente.
+        // -1 pegada al techo, 0 de frente, 1 pegada al piso.
         const t01 = clamp(d / paso, -1, 1);
         const abs = Math.abs(t01);
 
-        if (horizontal) {
-          // Bisagra en el borde que mira al centro de la pantalla.
-          el.style.transformOrigin = d < 0 ? "right center" : "left center";
-          el.style.transform =
-            `translate(-50%, -50%) translateZ(${-PROFUNDIDAD}px) ` +
-            `translateX(${d}px) rotateY(${-t01 * ANGULO}deg)`;
-        } else {
-          el.style.transformOrigin = d < 0 ? "center bottom" : "center top";
-          el.style.transform =
-            `translate(-50%, -50%) translateZ(${-PROFUNDIDAD}px) ` +
-            `translateY(${d}px) rotateX(${t01 * ANGULO}deg)`;
-        }
+        // Bisagra en el borde que mira al centro de la pantalla.
+        el.style.transformOrigin = d < 0 ? "center bottom" : "center top";
+        el.style.transform =
+          `translate(-50%, -50%) translateZ(${-PROFUNDIDAD}px) ` +
+          `translateY(${d}px) rotateX(${t01 * ANGULO}deg)`;
 
-        // Las tres de en medio a opacidad plena; la cuarta y siguientes se
-        // apagan, que si no se amontonan detrás de las plegadas.
+        // Las de en medio a opacidad plena; las de más allá se apagan, que si
+        // no se amontonan detrás de las plegadas.
         const visible = clamp((1.7 - Math.abs(d) / paso) / 0.6, 0, 1);
         el.style.opacity = String(visible);
         el.style.zIndex = String(Math.round(500 - abs * 100));
@@ -188,113 +201,146 @@ export function CorredorProyectos() {
       raf = requestAnimationFrame(frame);
     };
 
+    const remedir = () => {
+      medir();
+      leerScroll();
+    };
+
+    remedir();
+    // Primer frame sin recorrido: la caja arranca donde corresponde en vez de
+    // viajar desde el proyecto 01 cuando se entra a media página.
+    offsetRef.current = destino;
+
     // ResizeObserver y no el evento de ventana: la sección puede cambiar de
     // tamaño sin que la ventana lo haga, y ahí el evento nunca llega.
-    const ro = new ResizeObserver(medir);
+    const ro = new ResizeObserver(remedir);
     ro.observe(seccion);
-    mq.addEventListener("change", medir);
+    movil.addEventListener("change", remedir);
 
-    seccion.addEventListener("pointermove", onMove, { passive: true });
-    seccion.addEventListener("pointerleave", onLeave);
-    seccion.addEventListener("pointerdown", onDown, { passive: true });
-    window.addEventListener("pointerup", onUp, { passive: true });
-    window.addEventListener("pointercancel", onUp, { passive: true });
+    window.addEventListener("scroll", leerScroll, { passive: true });
+    window.addEventListener("resize", remedir);
     raf = requestAnimationFrame(frame);
 
     return () => {
       ro.disconnect();
-      mq.removeEventListener("change", medir);
-      seccion.removeEventListener("pointermove", onMove);
-      seccion.removeEventListener("pointerleave", onLeave);
-      seccion.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointerup", onUp);
-      window.removeEventListener("pointercancel", onUp);
+      movil.removeEventListener("change", remedir);
+      window.removeEventListener("scroll", leerScroll);
+      window.removeEventListener("resize", remedir);
       cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
+    /* ═══════════════════════════════════════════════════════════════════════
+       La sección es ALTA y su contenido va fijo (sticky) mientras se la
+       recorre. Ese alto es literalmente cuánto scroll se le dedica al
+       portafolio: una pantalla para dejar la primera pieza quieta de frente,
+       más PANTALLAS_POR_PIEZA por cada una de las siguientes.
+
+       COLOR DE FONDO — PORTAFOLIO
+       Blanco (`bg-paper-bone`). Por eso las aristas van en slate y no en ice:
+       el ice a 1 px sobre blanco no se leería.
+       ═══════════════════════════════════════════════════════════════════════ */
     <section
       ref={sectionRef}
-      id="corredor"
-      /* Columna: arriba la caja y abajo una banda fija. La banda no es
-         decorativa — es lo que garantiza que el texto del pie nunca se encime
-         con la pieza plegada, que antes le pasaba por encima en celular. */
-      className="relative isolate flex h-[100svh] w-full flex-col overflow-hidden bg-ink-pure"
-      /* pan-y: el dedo hacia arriba scrollea la página, el de costado mueve el
-         carrusel. Sin esto habría que elegir una de las dos. */
-      style={{ touchAction: "pan-y" }}
+      id={id}
+      className="relative isolate w-full bg-paper-bone"
+      style={{
+        height: `calc(100svh + ${(projects.length - 1) * PANTALLAS_POR_PIEZA * 100}svh)`,
+      }}
     >
-      <div
-        /* ═══════════════════════════════════════════════════════════════════
-           COLOR DE FONDO — DEMO CAJA 3D
-           Es el `bg-ink-pure` de la sección. La caja necesita fondo oscuro:
-           las aristas van en ice a baja opacidad y sobre claro no se leerían.
-           ═══════════════════════════════════════════════════════════════════ */
-        className="relative min-h-0 flex-1"
-        style={{ perspective: `${PERSPECTIVA}px` }}
-      >
-        <AristasDeLaCaja />
+      {/* El sticky es lo que hace que la caja se quede quieta en pantalla
+          mientras la página sigue bajando. select-none para que arrastrar el
+          scroll no vaya seleccionando los nombres de los proyectos. */}
+      <div className="sticky top-0 flex h-svh flex-col overflow-hidden select-none">
+        <div
+          className="relative min-h-0 flex-1"
+          style={{ perspective: `${PERSPECTIVA}px` }}
+        >
+          <AristasDeLaCaja />
 
-        <div className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
-          {projects.map((p, i) => (
-            <Link
-              key={p.slug}
-              href={`/proyectos/${p.slug}`}
-              ref={(el) => {
-                itemRefs.current[i] = el;
-              }}
-              onMouseEnter={() => setSobrePieza(true)}
-              onMouseLeave={() => setSobrePieza(false)}
-              aria-label={`Ver el proyecto ${p.name}`}
-              /* Al vivir en el fondo de la caja la perspectiva las achica, así
-                 que hay que compensar acá. El tope de 660 deja libre la
-                 columna derecha donde va el nombre en escritorio. */
-              className="group absolute left-1/2 top-1/2 block w-[min(74vw,660px)] will-change-transform"
-              style={{ opacity: 0, transformStyle: "preserve-3d" }}
-            >
-              <span className="relative block aspect-[4/3] overflow-hidden bg-ink-900">
-                <Image
-                  src={p.coverImage}
-                  alt={p.name}
-                  fill
-                  sizes="(max-width: 640px) 74vw, 660px"
-                  className="object-cover transition-[filter] duration-500 [filter:saturate(0.85)] group-hover:[filter:saturate(1)]"
-                />
-                {/* Marco claro: es lo que hace que se lea como una lámina y no
-                    como una imagen flotando en el negro. */}
-                <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/25 transition-colors duration-300 group-hover:ring-white/80" />
-              </span>
-            </Link>
-          ))}
+          {/* ── Nombre del proyecto de frente — columna IZQUIERDA ──────────
+              Va antes que las piezas en el DOM pero por debajo en z: la caja
+              manda, el nombre acompaña. El ancho se corta antes de que empiece
+              la lámina para que nunca se le monte encima. */}
+          <NombreActivo
+            nombre={projects[frente]?.name ?? ""}
+            slug={projects[frente]?.slug ?? ""}
+            indice={frente}
+            total={projects.length}
+            anio={projects[frente]?.meta.year ?? ""}
+            className="absolute left-[clamp(1.5rem,4vw,4.5rem)] top-1/2 hidden w-[min(32vw,480px)] -translate-y-1/2 lg:block"
+          />
+
+          {/* pointer-events-none es CLAVE: las piezas viven en
+              translateZ(-640px), así que este contenedor plano queda adelante
+              en el eje Z e interceptaría todos los clics. Apagándolo, el clic
+              pasa a las piezas (que se prenden solas con pointer-events:auto
+              cuando están al frente). */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            {projects.map((p, i) => (
+              <Link
+                key={p.slug}
+                href={`/proyectos/${p.slug}`}
+                ref={(el) => {
+                  itemRefs.current[i] = el;
+                }}
+                /* El puntero pasa a su estado "importante" (estrella grande +
+                   halo) sobre una pieza: es lo que abre un proyecto. */
+                data-cursor="estrella"
+                aria-label={`Ver el proyecto ${p.name}`}
+                /* Láminas más anchas y más grandes que antes (eran 700px de
+                   tope). El eje va centrado en celular y corrido a la derecha
+                   en escritorio (left-[64%]), que es lo que le abre la columna
+                   izquierda al nombre. */
+                className="group absolute left-1/2 top-1/2 block w-[78vw] will-change-transform lg:left-[64%] lg:w-[min(72vw,1120px)]"
+                style={{ opacity: 0, transformStyle: "preserve-3d" }}
+              >
+                <span className="relative block aspect-[4/3] overflow-hidden bg-ink-900/5 lg:aspect-[16/10]">
+                  <Image
+                    src={p.coverImage}
+                    alt={p.name}
+                    fill
+                    sizes="(max-width: 1023px) 78vw, 1120px"
+                    className="object-cover transition-[filter,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [filter:saturate(0.85)] group-hover:scale-[1.02] group-hover:[filter:saturate(1)]"
+                    priority={i < 2}
+                  />
+                  {/* Marco fino oscuro: define la lámina sobre el blanco. */}
+                  <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink-900/20 transition-colors duration-300 group-hover:ring-ink-900/45 group-active:ring-ink-900/45" />
+                </span>
+
+                {/* Solo en celular: número · año · nombre pegados debajo de la
+                    pieza (con su margen para no tocar la lámina). Se pliegan
+                    junto con ella. En escritorio el nombre va en la columna
+                    izquierda. */}
+                <span className="mt-2.5 block lg:hidden">
+                  <span className="block font-mono text-[0.65rem] uppercase tracking-kicker text-ink-700">
+                    {String(i + 1).padStart(2, "0")} · {p.meta.year}
+                  </span>
+                  <span className="mt-0.5 block font-display text-[clamp(1.1rem,5.5vw,1.6rem)] font-normal leading-[1.05] tracking-[-0.02em] text-ink-900">
+                    {p.name}
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
-
-        {/* En escritorio el nombre va al costado derecho, dentro de la caja:
-            desde lg hay columna de sobra y no toca la pieza. */}
-        <NombreActivo
-          nombre={projects[frente]?.name ?? ""}
-          slug={projects[frente]?.slug ?? ""}
-          className="absolute right-[clamp(1rem,3vw,3rem)] top-1/2 hidden max-w-[22vw] -translate-y-1/2 text-right lg:block"
-          tamano="text-[clamp(1.75rem,3.4vw,4rem)]"
-        />
       </div>
-
-      <PieDeCaja
-        proyecto={projects[frente]}
-        indice={frente}
-        total={projects.length}
-        sobrePieza={sobrePieza}
-      />
     </section>
   );
 }
 
 /** Las cuatro aristas que van de las esquinas de la pantalla al fondo. */
 function AristasDeLaCaja() {
-  const trazo = "rgba(214,226,237,0.30)";
   return (
     <svg
-      className="pointer-events-none absolute inset-0 h-full w-full"
+      /* El trazo toma el color de `currentColor`: slate sobre el blanco de
+         celular, ice sobre el negro de escritorio. En 1 px el ice sobre blanco
+         no se ve, por eso el slate. */
+      className="pointer-events-none absolute inset-0 h-full w-full text-[rgba(40,46,50,0.4)] lg:text-[rgba(214,226,237,0.3)]"
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
       aria-hidden="true"
@@ -305,7 +351,7 @@ function AristasDeLaCaja() {
         width="58"
         height="74"
         fill="none"
-        stroke={trazo}
+        stroke="currentColor"
         strokeWidth="0.1"
         vectorEffect="non-scaling-stroke"
       />
@@ -321,7 +367,7 @@ function AristasDeLaCaja() {
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke={trazo}
+          stroke="currentColor"
           strokeWidth="0.1"
           vectorEffect="non-scaling-stroke"
         />
@@ -333,103 +379,83 @@ function AristasDeLaCaja() {
 interface NombreActivoProps {
   nombre: string;
   slug: string;
+  indice: number;
+  total: number;
+  anio: string;
   className?: string;
-  /** Clase de tamaño de letra: cambia según dónde se muestre. */
-  tamano: string;
 }
 
 /**
- * Nombre del proyecto que está de frente, animado letra por letra.
+ * Columna izquierda de escritorio: el proyecto que está de frente.
  *
- * Cada palabra va en su propio bloque `whitespace-nowrap` con las letras
- * adentro, y el espacio entre palabras queda FUERA de ese bloque. Es la única
- * forma de que se cumplan las dos cosas a la vez: que "Barretal" no se parta
- * a la mitad al quedarse sin ancho, y que "El Barretal" conserve su espacio.
- * Con el espacio adentro del bloque, el navegador lo recorta por ser espacio
- * final de un inline-block y quedaba "ElBarretal".
- *
- * La `key` es el slug a propósito: al cambiar de proyecto React reemplaza el
- * bloque y las animaciones vuelven a correr solas.
+ * Cada palabra va en su propio bloque `whitespace-nowrap` y el espacio entre
+ * palabras queda FUERA del bloque: así "Barretal" no se parte al quedarse sin
+ * ancho y "El Barretal" conserva su espacio. La `key` es el slug para que al
+ * cambiar de proyecto la animación vuelva a correr sola.
  */
-function NombreActivo({ nombre, slug, className = "", tamano }: NombreActivoProps) {
+function NombreActivo({
+  nombre,
+  slug,
+  indice,
+  total,
+  anio,
+  className = "",
+}: NombreActivoProps) {
   const palabras = nombre.split(" ");
   let orden = 0;
 
   return (
-    <p
-      key={slug}
-      aria-live="polite"
-      aria-label={nombre}
-      className={`pointer-events-none m-0 font-display font-normal leading-[1.05] tracking-[-0.03em] text-white text-balance ${tamano} ${className}`}
-    >
-      {palabras.map((palabra, w) => (
-        <Fragment key={`${slug}-p${w}`}>
-          <span className="inline-block whitespace-nowrap">
-            {[...palabra].map((c, i) => {
-              const n = orden++;
-              return (
-                <span
-                  key={`${slug}-${w}-${i}`}
-                  aria-hidden="true"
-                  className="animate-drift-up inline-block"
-                  // 28 ms por letra: se lee como una ola sin que el nombre
-                  // tarde en terminar de armarse.
-                  style={{ animationDelay: `${n * 28}ms` }}
-                >
-                  {c}
-                </span>
-              );
-            })}
-          </span>
-          {w < palabras.length - 1 ? " " : null}
-        </Fragment>
-      ))}
-    </p>
-  );
-}
-
-interface PieProps {
-  proyecto?: { name: string; slug: string; meta: { year: string } };
-  indice: number;
-  total: number;
-  sobrePieza: boolean;
-}
-
-/**
- * Banda fija al pie de la caja.
- *
- * Es una fila propia del flex, no algo flotando encima: la caja de arriba se
- * encoge para dejarle lugar, así que por construcción ninguna pieza puede
- * quedar debajo de este texto.
- */
-function PieDeCaja({ proyecto, indice, total, sobrePieza }: PieProps) {
-  return (
-    <div className="relative z-[2000] shrink-0 border-t border-white/10 px-[clamp(1rem,3vw,3rem)] py-[clamp(0.75rem,1.6vh,1.25rem)]">
-      {/* El nombre grande solo en pantallas chicas: en escritorio ya está al
-          costado derecho de la caja. */}
-      {proyecto && (
-        <NombreActivo
-          nombre={proyecto.name}
-          slug={proyecto.slug}
-          className="mb-2 block lg:hidden"
-          tamano="text-[clamp(1.5rem,7vw,2.25rem)]"
-        />
-      )}
-
-      <div className="flex items-baseline justify-between gap-4 font-mono text-xs uppercase tracking-kicker text-white/60">
-        {/* El año vive acá, junto al contador. */}
-        <span className="whitespace-nowrap">
-          <span className="text-white">{String(indice + 1).padStart(2, "0")}</span> /{" "}
-          {String(total).padStart(2, "0")}
-          {proyecto ? ` · ${proyecto.meta.year}` : null}
+    <div key={slug} className={`pointer-events-none z-[1] ${className}`}>
+      {/* Índice y año: el dato duro que antes vivía en la barra de abajo.
+          Acá acompaña al nombre en vez de ocupar una franja propia. */}
+      <p
+        className="m-0 flex items-baseline gap-2 font-mono text-xs uppercase tracking-kicker text-ink-500 animate-drift-up"
+        style={{ animationDelay: "40ms" }}
+      >
+        <span className="tabular-nums text-ink-900">
+          {String(indice + 1).padStart(2, "0")}
         </span>
-        <span className="hidden text-right lg:inline">
-          {sobrePieza
-            ? "clic para abrir el proyecto"
-            : "mové el mouse arriba y abajo para recorrer"}
-        </span>
-        <span className="text-right lg:hidden">deslizá de lado · tocá para abrir</span>
-      </div>
+        <span className="h-px w-8 bg-ink-300" aria-hidden="true" />
+        <span className="tabular-nums">{String(total).padStart(2, "0")}</span>
+        {anio ? <span className="ml-1 text-ink-500">· {anio}</span> : null}
+      </p>
+
+      <p
+        aria-live="polite"
+        aria-label={nombre}
+        className="mt-4 m-0 font-display text-[clamp(2rem,3.4vw,3.6rem)] font-normal leading-[1.02] tracking-[-0.035em] text-ink-900 text-balance"
+      >
+        {palabras.map((palabra, w) => (
+          <Fragment key={`${slug}-p${w}`}>
+            <span className="inline-block whitespace-nowrap">
+              {[...palabra].map((c, i) => {
+                const n = orden++;
+                return (
+                  <span
+                    key={`${slug}-${w}-${i}`}
+                    aria-hidden="true"
+                    className="animate-drift-up inline-block"
+                    style={{ animationDelay: `${n * 28}ms` }}
+                  >
+                    {c}
+                  </span>
+                );
+              })}
+            </span>
+            {w < palabras.length - 1 ? " " : null}
+          </Fragment>
+        ))}
+      </p>
+
+      {/* La pista de que la lámina abre el proyecto. Discreta: el trabajo ya
+          está a la vista, esto solo confirma que se puede entrar. */}
+      <p
+        className="mt-6 m-0 inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-kicker text-ink-500 animate-drift-up"
+        style={{ animationDelay: "260ms" }}
+      >
+        Ver proyecto
+        <span aria-hidden="true">→</span>
+      </p>
     </div>
   );
 }

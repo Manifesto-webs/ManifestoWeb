@@ -1,5 +1,5 @@
 import { HeroAstral } from "@/components/landing/HeroAstral";
-import { Bento } from "@/components/landing/Bento";
+import { CorredorProyectos } from "@/components/demo/CorredorProyectos";
 // import { Marquee } from "@/components/landing/Marquee"; // desactivado: no va en la web por ahora
 import { Universe } from "@/components/landing/Universe";
 import { Quote } from "@/components/landing/Quote";
@@ -17,7 +17,14 @@ export default function HomePage() {
   return (
     <>
       <HeroAstral />
-      <Bento />
+      {/* Portafolio: la caja 3D es ahora la sección de proyectos (reemplazó al
+          bento "Trabajo seleccionado", que se conserva en disco). Cada pieza
+          abre su proyecto.
+
+          La sección se ancla sola: mide varias pantallas de alto y el scroll
+          de la página recorre el carrusel. Ya no hace falta decirle si puede
+          atrapar el scroll —nunca lo atrapa—, así que esa prop se fue. */}
+      <CorredorProyectos id="trabajo" />
       {/* el marquee queda desactivado a pedido; lo dejo comentado por si se retoma */}
       {/* <Marquee /> */}
       {/* Bloque 3 del doc de textos. Va en paper-ice: corta la corrida de
