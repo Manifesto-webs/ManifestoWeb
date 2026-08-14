@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { MagicRings } from "@/components/ui/MagicRings";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 import { Creencias } from "@/components/landing/Creencias";
 
 /* -------------------------------------------------------------------------- */
@@ -21,14 +22,32 @@ import { Creencias } from "@/components/landing/Creencias";
 export function Somos() {
   const [hover, setHover] = useState<number | null>(null);
 
+  /* ── Cómo responden las tarjetas ──────────────────────────────────────────
+     Antes: subían 6 px, el borde se oscurecía y las otras dos bajaban a 0.6 de
+     opacidad. Tres cosas a la vez y ninguna se notaba, porque `transition-all`
+     interpolaba TODAS las propiedades —incluido el backdrop-blur— y el
+     navegador terminaba repintando la tarjeta entera en cada frame.
+
+     Ahora el gesto es uno solo y se lee: la tarjeta apuntada SE LEVANTA (sube
+     10 px y escala un 1.5%) mientras las otras dos se hunden apenas y pierden
+     un punto de contraste. Y las propiedades animadas se declaran una por una
+     —transform, background, border, opacity—, que son las que el compositor
+     resuelve sin recalcular layout. */
   const cardStyle = (i: number) => {
     const on = hover === i;
+    const otra = hover !== null && !on;
     return {
       /* ── FONDO DE CADA TARJETA ── */
       backgroundColor: on ? "rgba(45,52,54,0.05)" : "rgba(255,255,255,0.7)",
       borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
-      transform: on ? "translateY(-6px)" : "translateY(0)",
-      opacity: hover !== null && !on ? 0.6 : 1,
+      // scale junto al translate: sin él, subir 10 px se lee como un salto;
+      // con él, como una tarjeta que se acerca.
+      transform: on
+        ? "translateY(-10px) scale(1.015)"
+        : otra
+          ? "translateY(2px) scale(0.99)"
+          : "translateY(0) scale(1)",
+      opacity: otra ? 0.72 : 1,
       /* Sin sombra: las tarjetas se distinguen por el borde y por el
          desplazamiento al pasar el puntero. */
       boxShadow: "none",
@@ -36,7 +55,7 @@ export function Somos() {
   };
 
   const cardClass =
-    "relative flex h-full flex-col gap-4 overflow-hidden rounded-tile border p-[clamp(1.5rem,2.4vw,2.4rem)] backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]";
+    "relative flex h-full flex-col gap-4 overflow-hidden rounded-tile border p-[clamp(1.5rem,2.4vw,2.4rem)] backdrop-blur-sm transition-[transform,background-color,border-color,opacity] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform";
 
   return (
     <section
@@ -46,7 +65,10 @@ export function Somos() {
          Va en blanco: bg-paper-bone. Para cambiarlo, es esta clase.
          El fondo de TODA la página está en app/nosotros/page.tsx.
          ───────────────────────────────────────────────────────────────── */
-      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
+      /* El padding de abajo es la mitad del de arriba: "Por qué Manifesto"
+         tiene que leerse pegado a estas tarjetas y no como un bloque suelto
+         más abajo. Entre los dos sumaban hasta 26 rem de blanco. */
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] pb-[clamp(2rem,4vw,4.5rem)] pt-[clamp(4.5rem,11vw,13rem)]"
     >
       {/* Los anillos eran corinto. Van en ice —el azul de la paleta— y en
           variante clara, porque sobre blanco las opacidades originales no
@@ -55,9 +77,9 @@ export function Somos() {
 
       {/* Sin el rótulo chico: decía "Nosotros" justo encima del titular que
           dice lo mismo en grande. */}
-      <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
+      <Reveal className="relative z-10 mb-[clamp(1.5rem,3vw,2.75rem)]">
         <h2 className="m-0 max-w-[22ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 text-balance">
-          Nosotros.
+          <TitleReveal text="Nosotros." />
         </h2>
       </Reveal>
 
@@ -128,14 +150,21 @@ export function Somos() {
   );
 }
 
-/** Línea superior que crece al pasar el puntero, igual que en el resto del sitio. */
+/**
+ * Línea superior que crece al pasar el puntero, igual que en el resto del sitio.
+ *
+ * Va con `transform: scaleX` y no animando el `width`: el ancho obliga al
+ * navegador a rehacer el layout en cada frame, la escala la resuelve el
+ * compositor. Se nota en móvil, que es donde estas tres tarjetas y sus
+ * `backdrop-blur` ya cuestan caro.
+ */
 function Marca({ on }: { on: boolean }) {
   return (
     <span
       aria-hidden="true"
-      className="absolute left-0 top-0 h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+      className="absolute left-0 top-0 h-[2px] w-full origin-left transition-transform duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
       style={{
-        width: on ? "100%" : "0%",
+        transform: on ? "scaleX(1)" : "scaleX(0)",
         /* Era corinto. Va en el slate del fondo espacial: el ice sobre
            blanco no se ve en una línea de 2px. */
         background: "linear-gradient(90deg, #282e32, transparent)",

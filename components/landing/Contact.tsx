@@ -54,17 +54,18 @@ export function Contact() {
   return (
     <section
       id="contacto"
-      className="bg-paper-sage px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
+      /* Fondo blanco (pedido de Karla). Los campos llevan un tinte muy tenue
+         (bg-ink-900/5) para que el formulario no quede plano sobre el blanco. */
+      className="bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4rem,10vw,12rem)]"
     >
       <div className="mx-auto grid max-w-[980px] gap-12 max-sm:gap-8">
         <div className="grid gap-4">
-          {/* Copy de "Textos web v2" (julio 2026) — bloque Contacto. */}
+          {/* La bajada ("Escríbenos. La primera conversación no cuesta
+              nada...") salió a pedido: el formulario que está debajo ya dice
+              lo mismo y con menos palabras. */}
           <h2 className="m-0 font-display text-display-2xl font-normal text-ink-900 max-sm:text-[clamp(2rem,8vw,3rem)]">
-            ¿Tienes una marca que necesita dirección?
+            ¿Tu marca necesita dirección?
           </h2>
-          <p className="m-0 max-w-[56ch] text-body-sm text-ink-700">
-            Escríbenos. La primera conversación no cuesta nada y casi siempre aclara algo.
-          </p>
         </div>
 
         <form onSubmit={onSubmit} className="grid w-full max-w-[720px] gap-4" noValidate>
@@ -84,7 +85,7 @@ export function Contact() {
               id="msg"
               name="msg"
               placeholder="¿Qué necesitas resolver? Cuéntanos el contexto y los plazos."
-              className="min-h-[140px] resize-y rounded-2xl border border-ink-900/20 bg-paper-bone px-6 py-4 text-base leading-[1.5] text-ink-900 outline-none transition-colors focus:border-ink-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-clay max-sm:px-4 max-sm:py-3 max-sm:text-[0.95rem]"
+              className="min-h-[140px] resize-y rounded-2xl border border-ink-900/20 bg-ink-900/5 px-6 py-4 text-base leading-[1.5] text-ink-900 outline-none transition-colors focus:border-ink-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-space-slate max-sm:px-4 max-sm:py-3 max-sm:text-[0.95rem]"
 
             />
           </div>
@@ -100,15 +101,27 @@ export function Contact() {
               self-* cae en el eje vertical y el botón se estiraba a todo el
               ancho pese al inline-flex. */}
           <div className="mt-2 flex flex-wrap items-center gap-4">
+            {/* El hover pasaba a accent-clay (#4A0010). Un botón que se pone
+                rojo oscuro al pasar el mouse lee como error, no como acción —
+                y era el mismo rojo que se sacó del resto del sitio. Ahora se
+                invierte: el relleno sube desde abajo y el texto pasa a tinta,
+                igual que el "Hablemos" del header. */}
             <button
               type="submit"
               disabled={status === "sending"}
-              className="group inline-flex items-center gap-3 rounded-2xl bg-ink-900 px-8 py-4 font-body text-base font-medium text-paper-bone transition-colors duration-200 ease-out hover:bg-accent-clay active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
+              data-cursor="estrella"
+              className="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border border-space-slate bg-space-slate px-8 py-4 font-body text-base font-medium text-paper-bone transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-ink-900 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 max-sm:px-6 max-sm:py-3 max-sm:text-[0.95rem]"
             >
-              {status === "sending" ? "Enviando…" : status === "sent" ? "Recibido" : "Enviar manifiesto"}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 origin-bottom scale-y-0 bg-paper-bone transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+              />
+              <span className="relative">
+                {status === "sending" ? "Enviando…" : status === "sent" ? "Recibido" : "Enviar manifiesto"}
+              </span>
               {/* La flecha se desplaza con transform; antes se animaba el gap
                   del flex, que obliga a recalcular layout en cada frame. */}
-              <span className="font-mono transition-transform duration-200 ease-out group-hover:translate-x-1">
+              <span className="relative font-mono transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1">
                 →
               </span>
             </button>
@@ -150,7 +163,7 @@ function Field({ id, label, type, placeholder, required }: FieldProps) {
         type={type}
         placeholder={placeholder}
         required={required}
-        className="rounded-2xl border border-ink-900/20 bg-paper-bone px-6 py-4 text-base text-ink-900 outline-none transition-colors focus:border-ink-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-accent-clay max-sm:px-4 max-sm:py-3 max-sm:text-[0.95rem]"
+        className="rounded-2xl border border-ink-900/20 bg-ink-900/5 px-6 py-4 text-base text-ink-900 outline-none transition-colors focus:border-ink-900 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-space-slate max-sm:px-4 max-sm:py-3 max-sm:text-[0.95rem]"
       />
     </div>
   );

@@ -6,6 +6,7 @@ import { SITE } from "@/lib/constants";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { SmoothCursor } from "@/components/ui/SmoothCursor";
+import { DescansadorInactividad } from "@/components/ui/DescansadorInactividad";
 import { graph, organizationSchema, websiteSchema } from "@/lib/schema";
 
 /**
@@ -60,7 +61,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#2D3436",
+  /* El azul de marca (space-slate), el mismo del hero y de todas las secciones
+     oscuras. Era #2D3436 (ink-900): la barra del navegador en móvil quedaba en
+     un azul distinto al de la página que estaba tapando. */
+  themeColor: "#282e32",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -72,6 +76,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={graph(organizationSchema(), websiteSchema())} />
         {/* Se dibuja solo si hay mouse y no se pidió menos movimiento. */}
         <SmoothCursor />
+        {/* Descansador de pantalla: aparece tras 30 s de inactividad. */}
+        <DescansadorInactividad />
         <Nav />
         <main id="main">{children}</main>
         <Footer />

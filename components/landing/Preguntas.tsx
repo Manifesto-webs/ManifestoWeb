@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Reveal } from "@/components/ui/Reveal";
 import { SpaceBackdrop } from "@/components/ui/SpaceBackdrop";
+import { TitleReveal } from "@/components/ui/TitleReveal";
 
 /* -------------------------------------------------------------------------- */
 /*  Preguntas frecuentes — copy de "Textos web v3"                             */
@@ -58,16 +59,24 @@ export function Preguntas() {
   return (
     <section
       id="preguntas"
-      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
+      /* El padding de arriba es un tercio del de abajo: esta sección cierra
+         la idea de los cuatro frentes, así que va pegada a ellos. */
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] pb-[clamp(4.5rem,11vw,13rem)] pt-[clamp(1rem,2.5vw,3rem)]"
     >
       <SpaceBackdrop variant="paper" />
 
-      <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
-          Preguntas frecuentes
+      <Reveal className="relative z-10 mb-[clamp(1.5rem,3vw,2.75rem)]">
+        <span className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="h-px w-[clamp(1.5rem,4vw,3.5rem)] bg-ink-900/35"
+          />
+          <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
+            Preguntas frecuentes
+          </span>
         </span>
-        <h2 className="mt-3 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
-          Lo que casi siempre nos preguntan.
+        <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
+          <TitleReveal text="Lo que casi siempre nos preguntan." />
         </h2>
       </Reveal>
 

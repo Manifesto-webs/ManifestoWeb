@@ -79,8 +79,9 @@ export function About() {
       className="relative overflow-hidden px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
       style={{ backgroundColor: "#282e32" }}
     >
-      {/* Fondo "magic rings" — cambiá el color con la prop `color` (ej. "#d6e2ed" ice, "#5f0000" corinto) */}
-      <MagicRings color="#5f0000" />
+      {/* Fondo "magic rings". Iba en corinto (#5f0000) sobre el #282e32: rojo
+          sobre azul. Va en ice, que es el azul de la paleta. */}
+      <MagicRings color="#d6e2ed" />
 
       <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)]">
         <span className="font-mono text-xs uppercase tracking-[0.28em] text-[rgba(214,226,237,0.55)]">
@@ -107,7 +108,7 @@ export function About() {
           <Reveal delay={200}>
             <blockquote
               className="mt-4 border-l-[3px] pl-5 font-display text-[clamp(1.15rem,1.8vw,1.8rem)] font-normal leading-[1.25] text-white before:content-['“'] before:opacity-40 after:content-['”'] after:opacity-40"
-              style={{ borderColor: "#5f0000" }}
+              style={{ borderColor: "#d6e2ed" }}
             >
               De dónde venimos, por qué y a dónde vamos: creemos firmemente que
               las historias marcan vidas.

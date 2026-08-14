@@ -65,6 +65,8 @@ const INSTRUMENTOS: Instrumento[] = [
 
 export function Instrumentos() {
   const [hover, setHover] = useState<number | null>(null);
+  /** Cuál tiene la segunda línea abierta. Solo dos la traen. */
+  const [abierto, setAbierto] = useState<number | null>(null);
 
   return (
     <section
@@ -74,13 +76,19 @@ export function Instrumentos() {
          Es este `bg-paper-bone`. Cambiando esta clase cambia solo esta
          sección; las otras dos tienen la suya.
          ═══════════════════════════════════════════════════════════════════ */
-      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[clamp(4.5rem,11vw,13rem)]"
+      className="relative overflow-hidden bg-paper-bone px-[clamp(1rem,3vw,3rem)] pb-[clamp(4.5rem,11vw,13rem)] pt-[clamp(3rem,7vw,8rem)]"
     >
       <SpaceBackdrop variant="paper" />
 
-      <Reveal className="relative z-10 mb-[clamp(2.5rem,4vw,4rem)] flex flex-col gap-3">
-        <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
-          Dirección de marca
+      <Reveal className="relative z-10 mb-[clamp(1.5rem,3vw,2.75rem)] flex flex-col gap-3">
+        <span className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="h-px w-[clamp(1.5rem,4vw,3.5rem)] bg-ink-900/35"
+          />
+          <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
+            Dirección de marca
+          </span>
         </span>
         <h2 className="m-0 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900 text-balance">
           <TitleReveal text="Instrumentos de dirección de marca." />
@@ -143,10 +151,59 @@ export function Instrumentos() {
                   {it.desc}
                 </p>
 
+                {/* ── La segunda línea ──────────────────────────────────────
+                    Solo dos instrumentos la traen, y son las dos más largas
+                    de la sección: juntas sumaban un párrafo entero encima de
+                    una página que ya tiene el método y tres argumentos. Van
+                    detrás de un clic. El botón dice "Cómo funciona" —no un
+                    "+" mudo—, así que se abre a propósito y no por curiosidad.
+
+                    mt-auto lo pega al pie de la ficha: sin eso, en la grilla
+                    de alturas iguales el botón quedaba flotando a media
+                    tarjeta. */}
                 {it.detail && (
-                  <p className="m-0 max-w-[62ch] border-t border-ink-900/14 pt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-[1.6] text-ink-700 text-pretty">
-                    {it.detail}
-                  </p>
+                  <div className="mt-auto pt-1">
+                    <button
+                      type="button"
+                      aria-expanded={abierto === i}
+                      aria-controls={`instrumento-${it.id}`}
+                      onClick={() => setAbierto(abierto === i ? null : i)}
+                      className="inline-flex items-center gap-1.5 border-t border-ink-900/14 pt-3 font-mono text-[0.65rem] uppercase tracking-kicker transition-colors duration-500 hover:text-ink-900"
+                      style={{ color: abierto === i ? "#2D3436" : "#757A7D" }}
+                    >
+                      Cómo funciona
+                      <span
+                        aria-hidden="true"
+                        className="inline-block text-sm leading-none transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                        style={{
+                          transform: abierto === i ? "rotate(135deg)" : "rotate(0deg)",
+                        }}
+                      >
+                        +
+                      </span>
+                    </button>
+
+                    <div
+                      id={`instrumento-${it.id}`}
+                      className="grid transition-[grid-template-rows] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      style={{ gridTemplateRows: abierto === i ? "1fr" : "0fr" }}
+                    >
+                      <div className="overflow-hidden">
+                        <p
+                          className="m-0 max-w-[62ch] pt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-[1.6] text-ink-700 transition-[opacity,transform,filter] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)] text-pretty"
+                          style={{
+                            opacity: abierto === i ? 1 : 0,
+                            transform:
+                              abierto === i ? "translateY(0)" : "translateY(-6px)",
+                            filter: abierto === i ? "blur(0)" : "blur(3px)",
+                            transitionDelay: abierto === i ? "120ms" : "0ms",
+                          }}
+                        >
+                          {it.detail}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 )}
               </li>
             </Reveal>

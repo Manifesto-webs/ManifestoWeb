@@ -80,7 +80,7 @@ export function QueHacemos() {
                   className="absolute left-0 top-0 h-[2px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   style={{
                     width: active ? "100%" : "0%",
-                    background: "linear-gradient(90deg, #5f0000, #212223)",
+                    background: "linear-gradient(90deg, #d6e2ed, #212223)",
                   }}
                 />
 

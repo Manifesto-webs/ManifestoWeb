@@ -8,9 +8,32 @@ export function Clients() {
   const sectionRef = useRef<HTMLElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLOListElement>(null);
-  const [active, setActive] = useState(0);
+  /**
+   * Posición continua dentro de la lista (2.4 = entre el tercero y el cuarto,
+   * más cerca del tercero). Con decimales y no con un índice entero: es lo que
+   * permite que el resalte sea un degradado y no un interruptor.
+   */
+  const [pos, setPos] = useState(0);
   const [pinned, setPinned] = useState(true);
 
+  /** El más cercano al centro — para el contador y el aria-current. */
+  const active = Math.round(pos);
+
+  /* ---------------------------------------------------------------------- */
+  /*  Movimiento                                                             */
+  /*                                                                        */
+  /*  Antes la lista se posicionaba DENTRO del handler de scroll: el         */
+  /*  translateY saltaba exactamente lo que había saltado la rueda, así que  */
+  /*  con un trackpad se veía fluido y con una rueda de clicks iba a         */
+  /*  tirones. Y el resalte era binario (Math.round), o sea que el nombre    */
+  /*  activo cambiaba de golpe a mitad de camino.                           */
+  /*                                                                        */
+  /*  Ahora hay un bucle propio: el scroll solo actualiza el OBJETIVO y el   */
+  /*  bucle persigue ese objetivo con suavizado exponencial sobre el delta   */
+  /*  real de cada frame. Y la posición dentro de la lista es continua, así  */
+  /*  que cada nombre se enciende y se apaga de forma gradual según su       */
+  /*  distancia al centro, en vez de prenderse de una.                      */
+  /* ---------------------------------------------------------------------- */
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPinned(false);
@@ -23,29 +46,48 @@ export function Clients() {
 
     const n = clients.length;
     let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const rect = section.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const total = rect.height - vh;
-        const p = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
+    /** Progreso objetivo, 0-1, el que dicta el scroll. */
+    let objetivo = 0;
+    /** Progreso mostrado. Persigue al objetivo con retraso. */
+    let actual = -1;
+    let ultimo = 0;
 
-        const rowH = list.children[0]?.getBoundingClientRect().height || 100;
-        const rightH = right.clientHeight || vh;
-        const activeFloat = p * (n - 1);
-        // Centra el nombre activo dentro del área derecha.
-        const ty = rightH / 2 - (rowH * activeFloat + rowH / 2);
-        list.style.transform = `translateY(${ty}px)`;
-        setActive(Math.round(activeFloat));
-      });
+    const medir = () => {
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const total = rect.height - vh;
+      objetivo = total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0;
     };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+
+    const frame = (t: number) => {
+      if (!ultimo) ultimo = t;
+      const dt = Math.min(t - ultimo, 50);
+      ultimo = t;
+
+      // Primer frame: se planta directo en el objetivo, sin recorrer desde 0.
+      if (actual < 0) actual = objetivo;
+      else actual += (objetivo - actual) * (1 - Math.exp(-dt / 150));
+
+      const rowH = list.children[0]?.getBoundingClientRect().height || 100;
+      const rightH = right.clientHeight || window.innerHeight;
+      const flotante = actual * (n - 1);
+      // Centra el nombre activo dentro del área derecha.
+      list.style.transform = `translateY(${rightH / 2 - (rowH * flotante + rowH / 2)}px)`;
+
+      // El resalte también es continuo: se guarda el valor con decimales y
+      // cada fila calcula su propia intensidad según lo lejos que esté.
+      setPos((prev) => (Math.abs(prev - flotante) > 0.002 ? flotante : prev));
+
+      raf = requestAnimationFrame(frame);
+    };
+
+    medir();
+    raf = requestAnimationFrame(frame);
+    window.addEventListener("scroll", medir, { passive: true });
+    window.addEventListener("resize", medir);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("scroll", medir);
+      window.removeEventListener("resize", medir);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -133,25 +175,40 @@ export function Clients() {
               className="absolute inset-x-0 top-0 will-change-transform"
             >
               {clients.map((c, i) => {
-                const isActive = i === active;
+                /* Intensidad continua: 1 justo en el centro, 0 a dos filas de
+                   distancia. El resalte deja de ser un interruptor y pasa a
+                   ser un degradado —el nombre se enciende MIENTRAS sube—, que
+                   es de donde sale la sensación de fluidez.
+
+                   Sin transition en estas propiedades a propósito: el valor ya
+                   viene suavizado del bucle, y una transición encima agregaría
+                   un segundo retraso que se siente como goma. */
+                const d = Math.abs(i - pos);
+                const luz = Math.max(0, 1 - d / 2);
+                // Curva: la fila del centro se despega de sus vecinas en vez
+                // de que las tres se vean casi iguales.
+                const k = luz * luz;
                 return (
                   <li
                     key={c.name}
+                    aria-current={i === active ? "true" : undefined}
                     className="flex h-[clamp(64px,11vh,120px)] items-center gap-[clamp(0.75rem,2vw,2rem)]"
                   >
                     <span
-                      className="self-start pt-2 font-mono text-xs italic tabular-nums transition-colors duration-300"
-                      style={{ color: isActive ? "#dcddca" : "rgba(214,226,237,0.3)" }}
+                      className="self-start pt-2 font-mono text-xs italic tabular-nums"
+                      style={{
+                        color: `color-mix(in oklab, #dcddca ${k * 100}%, rgba(214,226,237,0.3))`,
+                      }}
                     >
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     <span
-                      className="font-display font-medium leading-[0.98] tracking-[-0.03em] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      className="font-display font-medium leading-[0.98] tracking-[-0.03em]"
                       style={{
                         fontSize: "clamp(2rem,6vw,5rem)",
-                        color: isActive ? "#ffffff" : "rgba(214,226,237,0.22)",
-                        transform: isActive ? "translateX(10px)" : "translateX(0)",
-                        textShadow: isActive ? "0 0 34px rgba(214,226,237,0.45)" : "none",
+                        color: `rgba(255,255,255,${0.2 + k * 0.8})`,
+                        transform: `translateX(${k * 12}px)`,
+                        textShadow: `0 0 ${34 * k}px rgba(214,226,237,${0.45 * k})`,
                       }}
                     >
                       {c.name}
