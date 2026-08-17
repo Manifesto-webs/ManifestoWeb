@@ -158,10 +158,15 @@ export function Quote() {
                     key={j}
                     className="inline-block"
                     style={{
+                      // El delay va DENTRO del shorthand `animation` (su segundo
+                      // valor de tiempo), no como `animationDelay` aparte: mezclar
+                      // un shorthand con su longhand hace que React avise —al
+                      // re-renderizar con el scroll uno puede pisar al otro— y el
+                      // escalonado letra por letra se rompería. Orden del
+                      // shorthand: nombre, duración, easing, delay, fill-mode.
                       animation: visible
-                        ? `word-settle 780ms var(--ease-out-spring) both`
+                        ? `word-settle 780ms var(--ease-out-spring) ${i * 42 + j * 12}ms both`
                         : "none",
-                      animationDelay: `${i * 42 + j * 12}ms`,
                       opacity: visible ? undefined : 0,
                     }}
                   >
