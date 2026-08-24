@@ -6,14 +6,14 @@ import { Descansador } from "@/components/demo/Descansador";
 /* -------------------------------------------------------------------------- */
 /*  Descansador por inactividad                                                */
 /*                                                                            */
-/*  Tras 30 s sin actividad (mouse, teclado, rueda, scroll o toque) aparece    */
+/*  Tras x tiempo sin actividad (mouse, teclado, rueda, scroll o toque) aparece    */
 /*  el descansador a pantalla completa. Cualquier gesto lo cierra y reinicia   */
 /*  el conteo. El canvas solo se monta mientras está activo, así no consume     */
 /*  nada el resto del tiempo. Con prefers-reduced-motion no se activa: es puro  */
 /*  movimiento.                                                                */
 /* -------------------------------------------------------------------------- */
 
-const INACTIVIDAD_MS = 30_000;
+const INACTIVIDAD_MS = 60_000;
 
 export function DescansadorInactividad() {
   const [activo, setActivo] = useState(false);

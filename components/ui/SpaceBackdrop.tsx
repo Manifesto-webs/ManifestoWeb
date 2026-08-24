@@ -56,7 +56,10 @@ export function SpaceBackdrop({
 
   const ring = paper
     ? ["rgba(214,226,237,0.9)", "rgba(214,226,237,0.75)", "rgba(214,226,237,0.6)"]
-    : ["rgba(214,226,237,0.06)", "rgba(214,226,237,0.05)", "rgba(220,221,202,0.05)"];
+    // Aros de las secciones oscuras. Subidos (antes 0.06/0.05/0.05) para que se
+    // vean más de fondo. Si se quieren más marcados, subir estos alfas; más
+    // tenues, bajarlos.
+    : ["rgba(214,226,237,0.15)", "rgba(214,226,237,0.12)", "rgba(220,221,202,0.11)"];
 
   return (
     <div
@@ -88,13 +91,13 @@ export function SpaceBackdrop({
 
       {/* Anillos orbitales tenues */}
       <svg
-        className="absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2 opacity-[0.5]"
+        className="absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2 opacity-[0.85]"
         viewBox="0 0 100 100"
         fill="none"
       >
-        <circle cx="50" cy="50" r="30" stroke={ring[0]} strokeWidth="0.15" />
-        <circle cx="50" cy="50" r="42" stroke={ring[1]} strokeWidth="0.15" />
-        <circle cx="50" cy="50" r="49" stroke={ring[2]} strokeWidth="0.15" />
+        <circle cx="50" cy="50" r="30" stroke={ring[0]} strokeWidth="0.2" />
+        <circle cx="50" cy="50" r="42" stroke={ring[1]} strokeWidth="0.2" />
+        <circle cx="50" cy="50" r="49" stroke={ring[2]} strokeWidth="0.2" />
       </svg>
 
       {/* Estrellas */}

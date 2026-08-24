@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { projects } from "@/data/projects";
 import { ProjectHero } from "@/components/project/ProjectHero";
-import { ProjectCover } from "@/components/project/ProjectCover";
 import { ProjectContext } from "@/components/project/ProjectContext";
 import { ProjectBillboard } from "@/components/project/ProjectBillboard";
 import { ProjectGallery } from "@/components/project/ProjectGallery";
@@ -79,7 +78,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         )}
       />
       <ProjectHero project={project} />
-      <ProjectCover project={project} />
       <ProjectContext project={project} />
       <ProjectBillboard project={project} />
       <ProjectGallery project={project} />

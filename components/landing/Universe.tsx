@@ -33,8 +33,8 @@ const C = VB / 2;
  */
 const FIELDS = [
   { label: "Equipo", r: 74, angle: -90, orbit: 32 },
-  { label: "Mercado", r: 130, angle: -32, orbit: 48 },
-  { label: "Cultura", r: 186, angle: -140, orbit: 66 },
+  { label: "Cultura", r: 130, angle: -32, orbit: 48 },
+  { label: "Mercado", r: 186, angle: -140, orbit: 66 },
 ] as const;
 
 const pointAt = (r: number, deg: number) => {

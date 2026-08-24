@@ -185,12 +185,20 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
         const visible = clamp((1.7 - Math.abs(d) / paso) / 0.6, 0, 1);
         el.style.opacity = String(visible);
         el.style.zIndex = String(Math.round(500 - abs * 100));
-        el.style.pointerEvents = visible > 0.5 ? "auto" : "none";
 
         if (Math.abs(d) < minAbs) {
           minAbs = Math.abs(d);
           masCerca = i;
         }
+      });
+
+      // Clics: SOLO la pieza de frente. Antes todas las piezas con opacidad >0.5
+      // eran clicables, así que las plegadas de arriba/abajo —por el 3D, su área
+      // de click se superpone a la del centro— interceptaban el clic y había que
+      // insistir varias veces para abrir el proyecto. Ahora la del frente manda:
+      // un clic a la imagen navega directo a SU proyecto.
+      itemRefs.current.forEach((el, i) => {
+        if (el) el.style.pointerEvents = i === masCerca ? "auto" : "none";
       });
 
       if (masCerca !== frenteAnterior) {
@@ -296,7 +304,7 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
                    tope). El eje va centrado en celular y corrido a la derecha
                    en escritorio (left-[64%]), que es lo que le abre la columna
                    izquierda al nombre. */
-                className="group absolute left-1/2 top-1/2 block w-[78vw] will-change-transform lg:left-[64%] lg:w-[min(72vw,1120px)]"
+                className="group absolute left-1/2 top-1/2 block w-[78vw] will-change-transform lg:left-[76%] lg:w-[min(82vw,1120px)]"
                 style={{ opacity: 0, transformStyle: "preserve-3d" }}
               >
                 <span className="relative block aspect-[4/3] overflow-hidden bg-ink-900/5 lg:aspect-[16/10]">
