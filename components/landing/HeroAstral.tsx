@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { ScrambleText } from "@/components/ui/ScrambleText";
 
 /* -------------------------------------------------------------------------- */
 /*  Utils                                                                      */
@@ -360,14 +359,11 @@ export function HeroAstral() {
               <span className="line-mask">
                 <span style={{ animationDelay: "320ms" }}>
                   activo que crece{" "}
-                  {/* El scramble va SOLO en las letras celestes: al pasar el
-                      mouse (y una vez al entrar, en celular) "cuando se usa" se
-                      desordena y se reordena. Cada palabra va entera. */}
-                  <ScrambleText
-                    paso={34}
-                    parpadeo={230}
-                    tramos={[{ texto: "cuando se usa.", style: { color: STAR } }]}
-                  />
+                  {/* "cuando se usa" brilla como una estrella: la palabra en
+                      blanco se enciende y se atenúa en loop, pero nunca se apaga
+                      del todo —siempre se lee—. La animación vive en globals.css
+                      (.brillo-estrella). */}
+                  <span className="brillo-estrella">cuando se usa.</span>
                 </span>
               </span>
             </h1>
@@ -391,7 +387,7 @@ export function HeroAstral() {
                     className="absolute inset-0 origin-bottom scale-y-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
                     style={{ background: `${STAR}14` }}
                   />
-                  <span className="relative">Conoce el método</span>
+                  <span className="relative">Conocer el método</span>
                   <span className="relative font-mono transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-[4px]">
                     →
                   </span>

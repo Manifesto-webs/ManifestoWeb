@@ -249,6 +249,34 @@ body {
   0%, 100% { opacity: 0.25; transform: scale(0.85); }
   50%      { opacity: 1;    transform: scale(1.15); }
 }
+
+/* "cuando se usa" en el hero: la palabra brilla como una estrella. Se ENCIENDE
+   (halo blanco fuerte) y se ATENÚA, en loop, pero nunca se apaga del todo —el
+   texto es blanco sólido, así que siempre se lee—. Late sobre el text-shadow,
+   no sobre la opacidad, justo para que no desaparezca en el valle. */
+@keyframes brillo-estrella {
+  0%, 100% {
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.22);
+  }
+  50% {
+    text-shadow:
+      0 0 14px rgba(255, 255, 255, 0.95),
+      0 0 30px rgba(214, 226, 237, 0.7),
+      0 0 54px rgba(214, 226, 237, 0.35);
+  }
+}
+.brillo-estrella {
+  color: #ffffff;
+  animation: brillo-estrella 2.6s ease-in-out infinite;
+  will-change: text-shadow;
+}
+/* Sin movimiento: queda blanca con un halo fijo, sin latir. */
+@media (prefers-reduced-motion: reduce) {
+  .brillo-estrella {
+    animation: none;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+  }
+}
 @keyframes drift-up {
   from { transform: translateY(14px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
@@ -297,6 +325,33 @@ body {
 .line-mask > * {
   display: block;
   animation: line-rise 1000ms var(--ease-out-spring) both;
+}
+
+/* Palabra resaltada de un titular (p. ej. "decisión" en /metodología): late
+   como un corazón —dos pulsos cortos (lub-dub) y descanso—, sutil, para que el
+   ojo caiga ahí sin que crezca de más. Va con transform:scale (no
+   letter-spacing) para no reflowear el resto del titular, y vive en un span
+   propio, aparte del que hace el revelado, así el pulso no pelea con el
+   translateY de entrada. El latido es SOLO en escritorio (ver más abajo). */
+@keyframes word-heartbeat {
+  0%   { transform: scale(1); }
+  10%  { transform: scale(1.07); }
+  20%  { transform: scale(1); }
+  30%  { transform: scale(1.07); }
+  45%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+.word-heartbeat {
+  display: inline-block;
+  transform-origin: center;
+  will-change: transform;
+}
+/* El latido corre solo en escritorio, como se pidió. En móvil la palabra queda
+   quieta a su tamaño normal. */
+@media (min-width: 1024px) {
+  .word-heartbeat {
+    animation: word-heartbeat 1.4s ease-in-out infinite;
+  }
 }
 
 /* Palabra que se enciende con el scroll (la cita). */
@@ -417,28 +472,6 @@ body {
   animation: cursor-pulse 2.4s ease-in-out infinite;
 }
 
-/* Anillos concéntricos del fondo de Nosotros (/nosotros). */
-@keyframes magic-ring {
-  0%   { transform: scale(0.05); opacity: 0; }
-  12%  { opacity: 0.7; }
-  100% { transform: scale(1); opacity: 0; }
-}
-.magic-ring {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 84vmin;
-  height: 84vmin;
-  margin-left: -42vmin;
-  margin-top: -42vmin;
-  transform: scale(0.6);
-  border: 1px solid var(--ring-color, #d6e2ed);
-  border-radius: 9999px;
-  box-shadow: 0 0 40px -6px var(--ring-color, #d6e2ed);
-  animation: magic-ring 9s linear infinite;
-  will-change: transform, opacity;
-}
-
 .animate-marquee { animation: marquee 60s linear infinite; }
 .animate-spin-slow { animation: spin-slow 80s linear infinite; }
 .animate-tile-reveal { animation: tile-reveal 700ms var(--ease-out-spring) forwards; }
@@ -451,7 +484,6 @@ body {
   .animate-tile-reveal,
   .animate-twinkle,
   .animate-drift-up,
-  .magic-ring,
   .orbit,
   .orbit-counter,
   .field-pulse,
@@ -460,6 +492,8 @@ body {
   }
   /* El pulso apagado tiene que quedar invisible, no congelado en el centro. */
   .field-pulse { opacity: 0 !important; }
+  /* La palabra resaltada se queda quieta a su tamaño normal. */
+  .word-heartbeat { animation: none !important; transform: none !important; }
   /* La máscara sí se apaga, pero el texto tiene que quedar visible: sin esto
      la línea se queda en opacity 0 y el titular desaparece. */
   .line-mask > * {
@@ -467,9 +501,5 @@ body {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
-  }
-  /* Sin movimiento: deja los anillos visibles y quietos en tamaños escalonados */
-  .magic-ring {
-    opacity: 0.16;
   }
 }

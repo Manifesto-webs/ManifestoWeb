@@ -5,37 +5,31 @@ import { useEffect, useRef } from "react";
 /* -------------------------------------------------------------------------- */
 /*  Puntero suave — estrella                                                    */
 /*                                                                            */
-/*  Tres capas, cada una con su propio retraso. Esa diferencia es lo que da la  */
+/*  Dos capas, cada una con su propio retraso. Esa diferencia es lo que da la   */
 /*  sensación de suavidad: el puntero no "salta", persigue.                    */
 /*                                                                            */
 /*    · estrella — la estrella de marca, casi pegada al mouse. Gira despacio   */
 /*      todo el tiempo y se inclina con la velocidad del movimiento.           */
-/*    · anillo   — llega tarde. Es el que reacciona a lo que hay debajo.       */
-/*    · halo     — llega más tarde todavía y solo se ve sobre algo importante.  */
+/*    · anillo   — llega tarde. Es el que reacciona a lo que hay debajo: se    */
+/*      abre sobre un control y se abre más (y adelgaza) sobre lo importante.   */
 /*                                                                            */
-/*  Sobre qué reacciona (los tres estados):                                    */
-/*    normal      — nada debajo: estrella chica, anillo chico.                 */
-/*    clicable    — cualquier control (botón, campo, label): el anillo abre.   */
-/*    importante  — un proyecto, el CTA, un enlace del menú: el anillo abre    */
-/*      más, late, y la estrella crece y se acelera. Se marca con              */
-/*      `data-cursor="estrella"` o sale solo de los <a> a /proyectos.          */
+/*  Antes había una tercera capa —un halo grande y lentísimo que solo salía    */
+/*  sobre lo importante—. Se quitó: por ser la capa más lenta, al pasar el      */
+/*  mouse a un proyecto el halo se encendía pero su posición venía retrasada    */
+/*  desde donde venía el cursor, y aparecía un aro suelto en la esquina         */
+/*  superior izquierda. El anillo ya cumple ese rol sin el retraso.            */
 /*                                                                            */
-/*  Además deja una estela de chispas cuando el mouse se mueve rápido —        */
-/*  espaciada por distancia, no por tiempo, así no aparecen amontonadas.       */
-/*                                                                            */
-/*  No se dibuja en pantallas táctiles (no hay puntero que reemplazar) ni con  */
-/*  prefers-reduced-motion: ahí se deja el del sistema, que es lo correcto.    */
+/*  No se dibuja en pantallas táctiles ni con prefers-reduced-motion: ahí se    */
+/*  deja el puntero del sistema, que es lo correcto.                           */
 /* -------------------------------------------------------------------------- */
 
 /**
  * Constantes de tiempo, en ms: cuánto tarda cada capa en recorrer ~63% de lo
  * que le falta. Se usan con suavizado exponencial sobre el delta real de cada
- * frame, así el puntero se siente IGUAL a 60, 120 o 144 Hz. Antes era un lerp
- * de factor fijo por frame: en una pantalla de 120 Hz iba al doble de rápido.
+ * frame, así el puntero se siente IGUAL a 60, 120 o 144 Hz.
  */
 const TAU_ESTRELLA = 42;
 const TAU_ANILLO = 105;
-const TAU_HALO = 190;
 /** Distancia mínima entre chispas de la estela, en px. */
 const PASO_CHISPA = 90;
 /** Velocidad (px/frame) a partir de la cual se empieza a dejar estela. */
@@ -58,7 +52,6 @@ const IMPORTANTE =
 export function SmoothCursor() {
   const estrellaRef = useRef<HTMLDivElement>(null);
   const anilloRef = useRef<HTMLDivElement>(null);
-  const haloRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fino = window.matchMedia("(pointer: fine)").matches;
@@ -67,8 +60,7 @@ export function SmoothCursor() {
 
     const estrella = estrellaRef.current;
     const anillo = anilloRef.current;
-    const halo = haloRef.current;
-    if (!estrella || !anillo || !halo) return;
+    if (!estrella || !anillo) return;
 
     // Mientras no se mueva el mouse no se dibuja nada: si no, al cargar la
     // página aparecería un puntero pegado en la esquina superior izquierda.
@@ -76,7 +68,6 @@ export function SmoothCursor() {
     const target = { x: 0, y: 0 };
     const e = { x: 0, y: 0 };
     const a = { x: 0, y: 0 };
-    const h = { x: 0, y: 0 };
     // Última posición donde nació una chispa, para espaciar la estela.
     const chispa = { x: 0, y: 0 };
 
@@ -89,9 +80,8 @@ export function SmoothCursor() {
     /** Escalas suavizadas: sin esto el cambio de estado sería un salto. */
     let escAnillo = 1;
     let escEstrella = 1;
-    let opHalo = 0;
 
-    const capas = [estrella, anillo, halo];
+    const capas = [estrella, anillo];
 
     const mostrar = (on: boolean) => {
       visible = on;
@@ -102,8 +92,8 @@ export function SmoothCursor() {
       target.x = ev.clientX;
       target.y = ev.clientY;
       if (!visible) {
-        e.x = a.x = h.x = chispa.x = ev.clientX;
-        e.y = a.y = h.y = chispa.y = ev.clientY;
+        e.x = a.x = chispa.x = ev.clientX;
+        e.y = a.y = chispa.y = ev.clientY;
         mostrar(true);
       }
       const bajo = ev.target as Element | null;
@@ -144,7 +134,6 @@ export function SmoothCursor() {
       // Suavizado exponencial: independiente de los Hz de la pantalla.
       const kE = 1 - Math.exp(-dt / TAU_ESTRELLA);
       const kA = 1 - Math.exp(-dt / TAU_ANILLO);
-      const kH = 1 - Math.exp(-dt / TAU_HALO);
 
       const antX = e.x;
       const antY = e.y;
@@ -153,8 +142,6 @@ export function SmoothCursor() {
       e.y += (target.y - e.y) * kE;
       a.x += (target.x - a.x) * kA;
       a.y += (target.y - a.y) * kA;
-      h.x += (target.x - h.x) * kH;
-      h.y += (target.y - h.y) * kH;
 
       const vx = e.x - antX;
       const vy = e.y - antY;
@@ -171,16 +158,17 @@ export function SmoothCursor() {
         }
       }
 
-      // Objetivos de cada estado. El halo solo existe sobre lo importante.
-      const objAnillo = (sobreFuerte ? 2.5 : sobreClic ? 1.75 : 1) * (presionado ? 0.82 : 1);
-      const objEstrella = (sobreFuerte ? 1.75 : sobreClic ? 0.55 : 1) * (presionado ? 0.85 : 1);
-      const objHalo = sobreFuerte ? 1 : 0;
+      // Objetivos de cada estado. La estrella (la punta real) mantiene SIEMPRE
+      // su tamaño: antes crecía a 1.75× sobre un proyecto y se leía como un
+      // puntero enorme. Ahora solo el anillo reacciona —y apenas— para que siga
+      // habiendo señal de "esto es clicable" sin que el cursor se agrande.
+      const objAnillo = (sobreFuerte ? 1.5 : sobreClic ? 1.3 : 1) * (presionado ? 0.85 : 1);
+      const objEstrella = presionado ? 0.9 : 1;
 
       // Los estados también se suavizan: el anillo se ABRE, no aparece abierto.
       const kS = 1 - Math.exp(-dt / 130);
       escAnillo += (objAnillo - escAnillo) * kS;
       escEstrella += (objEstrella - escEstrella) * kS;
-      opHalo += (objHalo - opHalo) * kS;
 
       // Gira siempre despacio; sobre algo importante acelera. La velocidad del
       // mouse le suma una inclinación, que es lo que la hace sentir con peso.
@@ -192,10 +180,6 @@ export function SmoothCursor() {
         `rotate(${giro + inclina}deg) scale(${escEstrella})`;
       anillo.style.transform =
         `translate3d(${a.x}px, ${a.y}px, 0) translate(-50%, -50%) scale(${escAnillo})`;
-      halo.style.transform =
-        `translate3d(${h.x}px, ${h.y}px, 0) translate(-50%, -50%) scale(${0.9 + opHalo * 0.8})`;
-      halo.style.opacity = visible ? String(opHalo * 0.9) : "0";
-      halo.dataset.fuerte = String(sobreFuerte);
       // El anillo se adelgaza al abrirse: un aro grueso y grande tapa el
       // contenido, uno fino a la misma escala se lee como un encuadre.
       anillo.style.borderWidth = escAnillo > 1.6 ? "1px" : "1.5px";
@@ -227,12 +211,6 @@ export function SmoothCursor() {
 
   return (
     <>
-      {/* Halo — la capa más lenta. Solo se ve sobre lo importante. */}
-      <div
-        ref={haloRef}
-        aria-hidden="true"
-        className="cursor-halo smooth-cursor pointer-events-none fixed left-0 top-0 z-[9997] h-16 w-16 rounded-full border border-white/50 opacity-0"
-      />
       {/* Anillo — el que reacciona a lo que hay debajo. */}
       <div
         ref={anilloRef}

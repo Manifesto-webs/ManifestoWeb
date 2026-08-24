@@ -25,7 +25,7 @@ interface Pregunta {
 const PREGUNTAS: Pregunta[] = [
   {
     q: "Solo necesito vender más rápido. ¿Igual necesito branding?",
-    a: "La publicidad sin marca es tráfico que no vuelve. Podemos empezar por lo que hace que la primera venta traiga la segunda.",
+    a: "La publicidad sin marca es tráfico que no vuelve. Se puede empezar por lo que hace que la primera venta traiga la segunda.",
   },
   {
     q: "Estoy empezando. ¿Es muy pronto para invertir en marca?",
@@ -42,13 +42,13 @@ const PREGUNTAS: Pregunta[] = [
     a: "Es uno de los momentos donde más se teme perder el valor construido. La marca —los valores, el propósito— es lo que sostiene el negocio mientras cambian las personas.",
   },
   {
-    q: "¿Cómo trabajamos durante el proyecto?",
-    a: "Con tu equipo en la sala. La fase de definición no funciona si la hacemos solos.",
+    q: "¿Cómo se trabaja durante el proyecto?",
+    a: "Con tu equipo en la sala. La fase de definición no funciona en solitario.",
   },
   {
     // El documento pedía sumar acá el rango de 6 a 12 semanas.
     q: "¿Cuánto dura un proyecto?",
-    a: "Entre 6 y 12 semanas, según el alcance. Lo definimos en la primera conversación, junto con el calendario de cada fase.",
+    a: "Entre 6 y 12 semanas, según el alcance. Se define en la primera conversación, junto con el calendario de cada fase.",
   },
 ];
 
@@ -76,7 +76,7 @@ export function Preguntas() {
           </span>
         </span>
         <h2 className="mt-4 max-w-[18ch] font-display text-[clamp(2rem,5vw,5rem)] font-normal leading-[0.95] tracking-[-0.035em] text-ink-900">
-          <TitleReveal text="Lo que casi siempre nos preguntan." />
+          <TitleReveal text="Lo que casi siempre preguntan." />
         </h2>
       </Reveal>
 
@@ -85,7 +85,7 @@ export function Preguntas() {
           const on = open === i;
           return (
             <Reveal key={p.q} delay={i * 90}>
-              <div className="rounded-tile border border-ink-900/12 bg-white/70 backdrop-blur-sm transition-colors duration-500 hover:border-ink-900/40">
+              <div className="rounded-tile border border-ink-900/12 bg-white/90 transition-colors duration-500 hover:border-ink-900/40">
                 <dt className="m-0">
                   {/* Botón y no un div con onClick: así el teclado llega solo
                       y el lector de pantalla anuncia si está abierta. */}

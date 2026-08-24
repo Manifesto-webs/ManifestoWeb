@@ -1,19 +1,18 @@
-"use client";
-
-import { useEffect, useRef, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 
 /**
- * Fondo "magic rings": ondas concéntricas que se expanden desde el centro con
- * glow, y que **siguen el mouse** con parallax por capas (sensación espacial).
- * El color se cambia con la prop `color`. CSS respeta prefers-reduced-motion.
+ * Fondo "magic rings" ESTÁTICO: un glow central, tres guías concéntricas y unas
+ * estrellas, todo quieto. Antes tenía anillos que se expandían y un parallax que
+ * seguía el mouse; se quitaron porque, combinados con el `backdrop-blur` de las
+ * tarjetas, obligaban al navegador a redibujar el fondo continuamente y hacían
+ * lenta la página. Ahora es pura decoración estática: cero animación, cero
+ * trabajo por frame. El color se cambia con la prop `color`.
  */
 
-const RINGS = [0, 1, 2, 3];
-
-const STARS: [number, number, number, number][] = [
-  [10, 24, 2, 0], [22, 70, 4, 1.4], [34, 16, 3, 0.6], [48, 84, 2, 2.0],
-  [60, 30, 2, 0.9], [72, 66, 3, 1.7], [84, 20, 2, 0.4], [90, 74, 2, 2.3],
-  [16, 88, 2, 1.1], [66, 90, 2, 0.7],
+const STARS: [number, number, number][] = [
+  [10, 24, 2], [22, 70, 4], [34, 16, 3], [48, 84, 2],
+  [60, 30, 2], [72, 66, 3], [84, 20, 2], [90, 74, 2],
+  [16, 88, 2], [66, 90, 2],
 ];
 
 interface MagicRingsProps {
@@ -29,118 +28,53 @@ interface MagicRingsProps {
 }
 
 export function MagicRings({
-  /* Ice y no el corinto (#5f0000) que era el valor por defecto: sobre el
-     #282e32 —el único fondo con el que se usa esta pieza— era rojo sobre azul.
-     El default importa: es el que hereda cualquier uso nuevo. */
-  color = "#d6e2ed",
+  color = "#de2f2f",
   tone = "dark",
   className = "",
 }: MagicRingsProps) {
   const light = tone === "light";
   /** Opacidad de las tres guías estáticas, de adentro hacia afuera. */
-  const guide = light ? [0.55, 0.45, 0.35] : [0.1, 0.08, 0.06];
+  const guide = light ? [0.55, 0.45, 0.35] : [0.26, 0.2, 0.16];
   /** Alfa del glow central, en hexadecimal sobre el color. */
   const glowAlpha = light ? "aa" : "55";
-  const rootRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
-  const ringsRef = useRef<HTMLDivElement>(null);
-  const guidesRef = useRef<HTMLDivElement>(null);
-  const starsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    // objetivo (según cursor) y valor actual (suavizado)
-    const target = { x: 0, y: 0 };
-    const cur = { x: 0, y: 0 };
-    let raf = 0;
-    let alive = true;
-
-    const onMove = (e: PointerEvent) => {
-      const r = root.getBoundingClientRect();
-      target.x = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
-      target.y = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
-      target.x = Math.max(-1, Math.min(1, target.x));
-      target.y = Math.max(-1, Math.min(1, target.y));
-    };
-
-    const loop = () => {
-      if (!alive) return;
-      cur.x += (target.x - cur.x) * 0.08;
-      cur.y += (target.y - cur.y) * 0.08;
-      // Cada capa se mueve distinto → profundidad (parallax)
-      if (glowRef.current)
-        glowRef.current.style.transform = `translate(calc(-50% + ${cur.x * 46}px), calc(-50% + ${cur.y * 46}px))`;
-      if (ringsRef.current)
-        ringsRef.current.style.transform = `translate(${cur.x * 26}px, ${cur.y * 26}px)`;
-      if (guidesRef.current)
-        guidesRef.current.style.transform = `translate(-50%, -50%) translate(${cur.x * 16}px, ${cur.y * 16}px)`;
-      if (starsRef.current)
-        starsRef.current.style.transform = `translate(${cur.x * 10}px, ${cur.y * 10}px)`;
-      raf = requestAnimationFrame(loop);
-    };
-
-    window.addEventListener("pointermove", onMove, { passive: true });
-    raf = requestAnimationFrame(loop);
-    return () => {
-      alive = false;
-      window.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
 
   const style = { "--ring-color": color } as CSSProperties;
 
   return (
     <div
-      ref={rootRef}
       className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       style={style}
       aria-hidden="true"
     >
-      {/* Glow central (sigue más al cursor) */}
+      {/* Glow central (estático) */}
       <div
-        ref={glowRef}
-        className="absolute left-1/2 top-1/2 h-[46vmin] w-[46vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px] will-change-transform"
+        className="absolute left-1/2 top-1/2 h-[46vmin] w-[46vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px]"
         style={{
           background: `radial-gradient(circle, ${color}${glowAlpha} 0%, transparent 66%)`,
         }}
       />
 
       {/* Guías estáticas */}
-      <div
-        ref={guidesRef}
-        className="absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2 will-change-transform"
-      >
+      <div className="absolute left-1/2 top-1/2 h-[120vmin] w-[120vmin] -translate-x-1/2 -translate-y-1/2">
         <svg className="h-full w-full" viewBox="0 0 100 100" fill="none">
-          <circle cx="50" cy="50" r="20" stroke={color} strokeOpacity={guide[0]} strokeWidth="0.12" />
-          <circle cx="50" cy="50" r="34" stroke={color} strokeOpacity={guide[1]} strokeWidth="0.12" />
-          <circle cx="50" cy="50" r="47" stroke={color} strokeOpacity={guide[2]} strokeWidth="0.12" />
+          <circle cx="50" cy="50" r="20" stroke={color} strokeOpacity={guide[0]} strokeWidth="0.2" />
+          <circle cx="50" cy="50" r="34" stroke={color} strokeOpacity={guide[1]} strokeWidth="0.2" />
+          <circle cx="50" cy="50" r="47" stroke={color} strokeOpacity={guide[2]} strokeWidth="0.2" />
         </svg>
       </div>
 
-      {/* Ondas animadas */}
-      <div ref={ringsRef} className="absolute inset-0 will-change-transform">
-        {RINGS.map((i) => (
-          <span key={i} className="magic-ring" style={{ animationDelay: `${i * 1.5}s` }} />
-        ))}
-      </div>
-
-      {/* Estrellas */}
-      <div ref={starsRef} className="absolute inset-0 will-change-transform">
-        {STARS.map(([x, y, s, d], i) => (
+      {/* Estrellas (estáticas) */}
+      <div className="absolute inset-0">
+        {STARS.map(([x, y, s], i) => (
           <span
             key={i}
-            className="animate-twinkle absolute block rounded-full"
+            className="absolute block rounded-full"
             style={{
               left: `${x}%`,
               top: `${y}%`,
               height: `${s}px`,
               width: `${s}px`,
               background: "#d6e2ed",
-              animationDelay: `${d}s`,
             }}
           />
         ))}

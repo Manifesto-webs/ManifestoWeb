@@ -23,13 +23,32 @@ interface TitleRevealProps {
   /** Milisegundos entre una palabra y la siguiente. */
   stagger?: number;
   className?: string;
+  /**
+   * Palabra a resaltar (una sola). Se compara sin acentos, mayúsculas ni
+   * puntuación, así que `accent="decisión"` alcanza "decisión." al final de la
+   * frase. La palabra entra con la misma máscara; el resalte va en un span
+   * interno propio, aparte del que hace el revelado.
+   */
+  accent?: string;
+  /** Clase para la palabra resaltada (p. ej. una animación de brillo/expansión). */
+  accentClassName?: string;
 }
+
+/** Normaliza para comparar: minúsculas, sin acentos y sin puntuación. */
+const normalizar = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^\p{L}\p{N}]/gu, "");
 
 export function TitleReveal({
   text,
   delay = 0,
   stagger = 55,
   className = "",
+  accent,
+  accentClassName = "",
 }: TitleRevealProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [shown, setShown] = useState(false);
@@ -64,30 +83,43 @@ export function TitleReveal({
   }, []);
 
   const palabras = text.split(" ");
+  const accentNorm = accent ? normalizar(accent) : "";
 
   return (
     <span ref={ref} className={className}>
-      {palabras.map((palabra, i) => (
-        <Fragment key={`${palabra}-${i}`}>
-          {/* La ventana que recorta. El padding-bottom evita que las colas de
-              la g y la j queden cortadas por el propio overflow. */}
-          <span className="inline-flex overflow-hidden pb-[0.12em] align-bottom">
+      {palabras.map((palabra, i) => {
+        const resaltada = !!accentNorm && normalizar(palabra) === accentNorm;
+        return (
+          <Fragment key={`${palabra}-${i}`}>
+            {/* La ventana que recorta. El padding-bottom evita que las colas de
+                la g y la j queden cortadas por el propio overflow.
+
+                En la palabra resaltada NO se recorta: si no, la animación de
+                expansión (scale) le cortaría el borde al crecer. */}
             <span
-              className="inline-block will-change-transform"
-              style={{
-                transform: shown ? "translateY(0)" : "translateY(105%)",
-                opacity: shown ? 1 : 0,
-                transition:
-                  "transform 900ms cubic-bezier(0.16,1,0.3,1), opacity 700ms cubic-bezier(0.16,1,0.3,1)",
-                transitionDelay: `${delay + i * stagger}ms`,
-              }}
+              className={`inline-flex pb-[0.12em] align-bottom${resaltada ? "" : " overflow-hidden"}`}
             >
-              {palabra}
+              <span
+                className="inline-block will-change-transform"
+                style={{
+                  transform: shown ? "translateY(0)" : "translateY(105%)",
+                  opacity: shown ? 1 : 0,
+                  transition:
+                    "transform 900ms cubic-bezier(0.16,1,0.3,1), opacity 700ms cubic-bezier(0.16,1,0.3,1)",
+                  transitionDelay: `${delay + i * stagger}ms`,
+                }}
+              >
+                {resaltada ? (
+                  <span className={accentClassName}>{palabra}</span>
+                ) : (
+                  palabra
+                )}
+              </span>
             </span>
-          </span>
-          {i < palabras.length - 1 ? " " : null}
-        </Fragment>
-      ))}
+            {i < palabras.length - 1 ? " " : null}
+          </Fragment>
+        );
+      })}
     </span>
   );
 }

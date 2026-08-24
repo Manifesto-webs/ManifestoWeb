@@ -102,11 +102,6 @@ function CompositeFigure({
   active: number;
   pal: ReturnType<typeof paleta>;
 }) {
-  // Polígono que une las puntas ya encendidas (se va dibujando la figura).
-  const chain = TIPS.slice(0, Math.max(lit, 0))
-    .map((t) => `${t.x.toFixed(1)},${t.y.toFixed(1)}`)
-    .join(" ");
-
   return (
     <div className="relative aspect-square w-full">
       <svg
@@ -135,16 +130,8 @@ function CompositeFigure({
           />
         ))}
 
-        {/* Polígono que dibuja la figura al complementarse las etapas */}
-        {lit >= 2 && (
-          <polyline
-            points={lit >= N ? `${chain} ${TIPS[0].x},${TIPS[0].y}` : chain}
-            fill={lit >= N ? pal.polyFill : "none"}
-            stroke={pal.spokeOn}
-            strokeWidth={1.2}
-            className="transition-all duration-700"
-          />
-        )}
+        {/* El rombo (polígono que unía las 4 puntas) se quitó a pedido: quedan
+            los radios —el "+"— y los gráficos de cada fase. */}
 
         {/* Núcleo */}
         <circle
@@ -250,7 +237,7 @@ export function ProcessStar({ tone = "dark" }: ProcessStarProps) {
           className="m-0 max-w-[16ch] font-display text-display-2xl font-normal"
           style={{ color: pal.bright }}
         >
-          <TitleReveal text="Un método en cuatro fases." />
+          <TitleReveal text="De la D a la A." />
         </h2>
         <p className="m-0 max-w-[62ch] text-body-sm" style={{ color: pal.muted }}>
           Cada fase cierra una decisión. Ninguna avanza sin la anterior: así no se

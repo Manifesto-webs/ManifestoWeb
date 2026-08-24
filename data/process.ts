@@ -17,7 +17,7 @@ export const processStages: ProcessStage[] = [
     name: "Diagnóstico",
     tagline: "Entender el terreno",
     description:
-      "Cultura, mercado y audiencias. Salimos con una lectura clara de dónde está parada la marca y contra quién compite de verdad. El arranque mapea dónde vive el valor del negocio, quién paga por él y qué lo sostiene.",
+      "Cultura, mercado y audiencias. Una lectura clara de dónde está parada la marca y contra quién compite de verdad. El arranque mapea dónde vive el valor del negocio, quién paga por él y qué lo sostiene.",
     starburstSrc: "/graphics/starburst-01-discovery.png",
   },
   {

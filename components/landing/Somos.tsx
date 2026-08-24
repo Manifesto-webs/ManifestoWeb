@@ -37,8 +37,12 @@ export function Somos() {
     const on = hover === i;
     const otra = hover !== null && !on;
     return {
-      /* ── FONDO DE CADA TARJETA ── */
-      backgroundColor: on ? "rgba(45,52,54,0.05)" : "rgba(255,255,255,0.7)",
+      /* ── FONDO DE CADA TARJETA ──
+         Opacidad subida (antes 0.7) para compensar que se quitó el
+         backdrop-blur: la tarjeta tapa el fondo por opacidad en vez de por
+         desenfoque, que sobre este fondo casi blanco se ve igual y no obliga
+         al navegador a re-desenfocar el fondo en cada frame. */
+      backgroundColor: on ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.9)",
       borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
       // scale junto al translate: sin él, subir 10 px se lee como un salto;
       // con él, como una tarjeta que se acerca.
@@ -55,7 +59,7 @@ export function Somos() {
   };
 
   const cardClass =
-    "relative flex h-full flex-col gap-4 overflow-hidden rounded-tile border p-[clamp(1.5rem,2.4vw,2.4rem)] backdrop-blur-sm transition-[transform,background-color,border-color,opacity] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform";
+    "relative flex h-full flex-col gap-4 overflow-hidden rounded-tile border p-[clamp(1.5rem,2.4vw,2.4rem)] transition-[transform,background-color,border-color,opacity] duration-[650ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform";
 
   return (
     <section
@@ -95,7 +99,7 @@ export function Somos() {
             style={cardStyle(0)}
           >
             <Marca on={hover === 0} />
-            <CardHead id="01" on={hover === 0} title="Quiénes somos" />
+            <CardHead id="01" on={hover === 0} title="El estudio" />
             {/* En texto de cuerpo: el peso display ahora lo lleva el título,
                 y dos bloques grandes seguidos se pelean. */}
             <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
@@ -115,7 +119,7 @@ export function Somos() {
             style={cardStyle(1)}
           >
             <Marca on={hover === 1} />
-            <CardHead id="02" on={hover === 1} title="Qué creemos" />
+            <CardHead id="02" on={hover === 1} title="Las creencias" />
             <Creencias compact tone="light" />
           </article>
         </Reveal>
@@ -129,7 +133,7 @@ export function Somos() {
             style={cardStyle(2)}
           >
             <Marca on={hover === 2} />
-            <CardHead id="03" on={hover === 2} title="Nuestro equipo" />
+            <CardHead id="03" on={hover === 2} title="El equipo" />
             {/* Esta frase tenía la tipografía display; ahora esa la lleva el
                 título de la tarjeta, así que baja a cuerpo. Queda en ink-900
                 para que siga leyéndose antes que el cierre. */}
@@ -140,7 +144,7 @@ export function Somos() {
                 del punto 05 de "Por qué Manifesto". Queda el del doc hasta
                 que el cliente dé el reemplazo. */}
             <p className="m-0 max-w-[38ch] text-[clamp(0.95rem,1.05vw,1.1rem)] leading-[1.6] text-ink-700 text-pretty">
-              Trabajamos como socios, no como proveedores. Las buenas ideas rara
+              Trabajar como socios, no como proveedores. Las buenas ideas rara
               vez llegan solas.
             </p>
           </article>

@@ -39,7 +39,7 @@ const INSTRUMENTOS: Instrumento[] = [
   {
     id: "02",
     name: "Perfil de tono y personalidad",
-    desc: "Nuestra plataforma reúne las lecturas del equipo y devuelve una guía expresiva aplicable en cualquier canal.",
+    desc: "La plataforma reúne las lecturas del equipo y devuelve una guía expresiva aplicable en cualquier canal.",
     detail:
       "Trabaja en tres capas: lo que la organización muestra, lo que declara y lo que da por sentado sin decirlo. La tercera es la que casi nadie mira y la que explica todo lo demás.",
     wide: true,
@@ -112,9 +112,13 @@ export function Instrumentos() {
               <li
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(null)}
-                className="relative flex h-full flex-col gap-3 overflow-hidden rounded-tile border p-[clamp(1.25rem,2.2vw,2.2rem)] backdrop-blur-sm transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                className="relative flex h-full flex-col gap-3 overflow-hidden rounded-tile border p-[clamp(1.25rem,2.2vw,2.2rem)] transition-[transform,background-color,border-color,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                 style={{
-                  backgroundColor: on ? "rgba(45,52,54,0.05)" : "rgba(255,255,255,0.7)",
+                  /* Opacidad subida (antes 0.7) para compensar que se quitó el
+                     backdrop-blur: sin él, el titileo de las estrellas del fondo
+                     ya no obliga a re-desenfocar el fondo de las 5 tarjetas en
+                     cada frame. Sobre este fondo casi blanco se ve igual. */
+                  backgroundColor: on ? "rgba(255,255,255,0.72)" : "rgba(255,255,255,0.9)",
                   borderColor: on ? "rgba(45,52,54,0.45)" : "rgba(45,52,54,0.14)",
                   transform: on ? "translateY(-6px)" : "translateY(0)",
                   opacity: dimmed ? 0.55 : 1,

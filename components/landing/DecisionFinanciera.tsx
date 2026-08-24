@@ -80,7 +80,14 @@ export function DecisionFinanciera() {
           </span>
         </span>
         <h2 className="m-0 max-w-[20ch] font-display text-display-2xl font-normal text-ink-900 text-balance">
-          <TitleReveal text="Por qué el branding es una decisión financiera." />
+          {/* "decisión" es la palabra que carga el argumento: late como un
+              corazón (sutil, solo en escritorio) para que el ojo caiga ahí. El
+              resto del titular entra igual que siempre, palabra por palabra. */}
+          <TitleReveal
+            text="Por qué el branding es una decisión financiera."
+            accent="decisión"
+            accentClassName="word-heartbeat"
+          />
         </h2>
       </Reveal>
 
@@ -98,29 +105,12 @@ export function DecisionFinanciera() {
                   className="group relative flex h-full w-full flex-col gap-3 border-t pt-5 text-left transition-[border-color] duration-500"
                   style={{ borderColor: on ? "#282e32" : "rgba(45,52,54,0.15)" }}
                 >
-                  <span className="flex items-center justify-between gap-3">
-                    <span
-                      className="font-mono text-xs tabular-nums tracking-kicker transition-colors duration-500"
-                      style={{ color: on ? "#2D3436" : "#757A7D" }}
-                    >
-                      {a.id}
-                    </span>
-                    {/* Dice QUÉ hay debajo, no solo que hay algo. "La
-                        evidencia" y "Por qué" invitan distinto que un "+"
-                        suelto, y el visitante elige con criterio si abre. */}
-                    <span
-                      className="inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-kicker transition-colors duration-500"
-                      style={{ color: on ? "#2D3436" : "#757A7D" }}
-                    >
-                      {a.prueba}
-                      <span
-                        aria-hidden="true"
-                        className="inline-block text-sm leading-none transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-                        style={{ transform: on ? "rotate(135deg)" : "rotate(0deg)" }}
-                      >
-                        +
-                      </span>
-                    </span>
+                  <span
+                    aria-hidden="true"
+                    className="font-mono text-xs tabular-nums tracking-kicker transition-colors duration-500"
+                    style={{ color: on ? "#2D3436" : "#757A7D" }}
+                  >
+                    {a.id}
                   </span>
 
                   <span className="m-0 block max-w-[24ch] font-display text-display-md font-normal text-ink-900 text-pretty">
@@ -130,6 +120,20 @@ export function DecisionFinanciera() {
                   {/* Mismo plegado que el resto del sitio: el hueco se abre
                       con grid-template-rows y el texto entra después, ya a su
                       tamaño final. */}
+
+                  <span
+                    className="inline-flex items-center gap-1.5 font-mono text-[0.65rem] uppercase tracking-kicker transition-colors duration-500"
+                    style={{ color: on ? "#2D3436" : "#757A7D" }}
+                  >
+                    {a.prueba}
+                    <span
+                      aria-hidden="true"
+                      className="inline-block text-sm leading-none transition-transform duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      style={{ transform: on ? "rotate(135deg)" : "rotate(0deg)" }}
+                    >
+                      +
+                    </span>
+                  </span>
                   <span
                     id={`arg-${a.id}`}
                     className="grid transition-[grid-template-rows] duration-[600ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -163,7 +167,7 @@ export function DecisionFinanciera() {
           style={{ borderColor: "#282e32" }}
         >
           Por eso el diagnóstico incluye un informe ejecutivo que estima cómo la
-          marca va a mover tus números: precio, fidelidad y expansión. Antes de
+          marca va a mover los números: precio, fidelidad y expansión. Antes de
           diseñar nada.
         </p>
       </Reveal>

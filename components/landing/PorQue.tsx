@@ -43,20 +43,20 @@ const MOTIVOS: Motivo[] = [
   {
     id: "02",
     title: "Método corto, fondo profundo",
-    desc: "Cuatro fases que se entienden en diez segundos. Lo que hay debajo es lo que toma tiempo, pero definimos una ruta personalizada para abordarlo.",
+    desc: "Cuatro fases que se entienden en diez segundos. Lo que hay debajo es lo que toma tiempo, pero se define una ruta personalizada para abordarlo.",
   },
   {
     // El documento marcaba esta línea como poco clara. Se reescribió con la
     // misma fórmula que usa el bloque de la decisión financiera, para que las
     // dos secciones se refuercen en vez de sonar distintas.
     id: "03",
-    title: "Empezamos por el número",
-    desc: "Antes de diseñar, estimamos cómo la marca puede mover tus números: precio, fidelidad y expansión.",
+    title: "Empezar por el número",
+    desc: "Antes de diseñar, estimar cómo la marca puede mover tus números: precio, fidelidad y expansión.",
   },
   {
     id: "04",
     title: "El equipo se queda con el criterio",
-    desc: "Entregamos herramientas para que se apoderen de sus procesos. No construimos dependencia.",
+    desc: "Entregar herramientas para que el equipo se apodere de sus procesos. Sin construir dependencia.",
   },
   {
     // El documento cerraba con "Las buenas ideas rara vez llegan solas", que ya
@@ -64,7 +64,7 @@ const MOTIVOS: Motivo[] = [
     // primera frase para no repetirla.
     id: "05",
     title: "Socios, no proveedores",
-    desc: "Trabajamos dentro del equipo del cliente.",
+    desc: "Trabajar dentro del equipo del cliente.",
   },
 ];
 

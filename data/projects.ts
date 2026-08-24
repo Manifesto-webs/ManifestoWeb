@@ -80,7 +80,7 @@ export const projects: Project[] = [
       title: "Corporativo\nno significa rígido.",
       paragraphs: [
         "Boré pidió una identidad que pudiera circular entre clientes, partners y reguladores sin perder presencia. La mayoría de competidores en su sector optan por azules genéricos y formas seguras.",
-        "Trabajamos un verde profundo como color anclaje y un naranja terracota como acento puntual — suficiente para sostener jerarquía y respetar el documento. El sistema se aplica de la carpeta de archivo a la firma del PDF: misma malla, distinto rol.",
+        "Un verde profundo como color anclaje y un naranja terracota como acento puntual — suficiente para sostener jerarquía y respetar el documento. El sistema se aplica de la carpeta de archivo a la firma del PDF: misma malla, distinto rol.",
       ],
       aside: [
         { label: "Sector", value: "Corporativo" },
@@ -115,7 +115,7 @@ export const projects: Project[] = [
     context: {
       title: "Menos signo,\nmás superficie.",
       paragraphs: [
-        "Décima Plaza buscaba diferenciarse en un mercado saturado de logotipos opulentos. Construimos una marca que parte del blanco y negro absolutos y deja que el material —papel, sobre, tarjeta— haga el trabajo restante.",
+        "Décima Plaza buscaba diferenciarse en un mercado saturado de logotipos opulentos. Construir una marca que parte del blanco y negro absolutos y deja que el material —papel, sobre, tarjeta— haga el trabajo restante.",
         "La marca habita los espacios como un sello: discreta, repetida, reconocible. Cada pieza editorial respira con el mismo sistema tipográfico.",
       ],
       aside: [
@@ -151,7 +151,7 @@ export const projects: Project[] = [
     context: {
       title: "Lo silvestre\ncomo lenguaje.",
       paragraphs: [
-        "El Barretal nació con la inquietud de no parecerse a nada del sector. En vez de competir por modernidad, decidimos abrazar una estética orgánica: ilustraciones florales como motivo recurrente, papel craft como aliado táctil y dorado como acento ceremonial.",
+        "El Barretal nació con la inquietud de no parecerse a nada del sector. En vez de competir por modernidad, abrazar una estética orgánica: ilustraciones florales como motivo recurrente, papel craft como aliado táctil y dorado como acento ceremonial.",
         "El sistema se aplicó a papelería, packaging y carpeta institucional. Cada pieza siente que pertenece a un mismo jardín — distinto en composición, idéntico en lenguaje.",
       ],
       aside: [
@@ -187,7 +187,7 @@ export const projects: Project[] = [
     context: {
       title: "Lo esencial,\nimpreso.",
       paragraphs: [
-        "Ark se mueve en un sector —arquitectura, construcción— donde abundan las marcas verticales y las paletas frías. Decidimos invertir el código: cálido, terroso, tipográfico, casi escultórico.",
+        "Ark se mueve en un sector —arquitectura, construcción— donde abundan las marcas verticales y las paletas frías. Invertir el código: cálido, terroso, tipográfico, casi escultórico.",
         "La identidad se concentra en una sola pieza tipográfica que opera como marca. No hay isotipo separado. El relieve sobre papel, la luz lateral y el peso de la composición hacen el resto del trabajo.",
       ],
       aside: [
@@ -224,7 +224,7 @@ export const projects: Project[] = [
       title: "Un trazo\nque cae como tela.",
       paragraphs: [
         "Lando opera en un cruce entre moda y diseño textil. Buscaba una marca que se sintiera cómoda tanto bordada como impresa, tanto a 8mm como a 80cm.",
-        "Construimos un logotipo monolineal con vocación tipográfica — sin retornos ni ornamentos — que se siente igual de bien sobre algodón crudo, sobre etiqueta de papel o sobre fondo azul nocturno. Una sola firma, muchos vehículos.",
+        "Un logotipo monolineal con vocación tipográfica — sin retornos ni ornamentos — que se siente igual de bien sobre algodón crudo, sobre etiqueta de papel o sobre fondo azul nocturno. Una sola firma, muchos vehículos.",
       ],
       aside: [
         { label: "Sector", value: "Moda · textil" },

@@ -121,7 +121,7 @@ export function Creencias({ compact = false, tone = "dark" }: CreenciasProps) {
       {!compact && (
         <Reveal>
           <h3 className="mb-10 font-display text-[clamp(2.5rem,1.8vw,2.5rem)] font-semibold tracking-[-0.03em] text-white">
-            Qué creemos
+            Las creencias
           </h3>
         </Reveal>
       )}
@@ -162,7 +162,7 @@ export function Creencias({ compact = false, tone = "dark" }: CreenciasProps) {
               <p
                 className={
                   compact
-                    ? "m-0 max-w-[30ch] font-display text-[clamp(1.05rem,1.5vw,1.45rem)] font-normal leading-[1.35] tracking-[-0.02em]"
+                    ? "m-0 max-w-[34ch] font-display text-[clamp(0.95rem,1.05vw,1.1rem)] font-normal leading-[1.6] tracking-[-0.01em]"
                     : "m-0 max-w-[26ch] font-display text-[clamp(2rem,1.5vw,2rem)] font-normal leading-[1.3] tracking-[-0.025em]"
                 }
               >

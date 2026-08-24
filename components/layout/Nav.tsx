@@ -2,74 +2,21 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ManifestoLogo } from "@/components/icons/ManifestoLogo";
 import { NAV_LINKS } from "@/lib/constants";
 
-/**
- * Piso del umbral del hero, en px. El inicio calcula cuándo baja la barra a
- * partir del alto real del hero; este valor solo evita que ese cálculo caiga a
- * cero si el hero llegara a ser más corto que la ventana.
- */
-const APARECE_EN = 90;
-
 export function Nav() {
   const [open, setOpen] = useState(false);
-  /** El header está en pantalla. Arranca en false: la página abre sin barra. */
-  const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
 
-  /* ------------------------------------------------------------------ */
-  /*  Cuándo aparece                                                     */
-  /*                                                                    */
-  /*  Dos reglas, según la página:                                       */
-  /*                                                                    */
-  /*  • Con hero (solo el inicio, #top): la barra está fuera mientras el  */
-  /*    hero ocupa la pantalla y baja cuando el hero ya quedó atrás, para */
-  /*    que la portada astral quede limpia. El umbral sale del alto real  */
-  /*    del hero —mide 150 vh con el contenido pegado arriba, así que     */
-  /*    visualmente termina un viewport antes; de ahí el `- innerHeight`— */
-  /*    y no de un número fijo.                                          */
-  /*                                                                    */
-  /*  • Sin hero (todas las interiores, incluidas las de proyecto): no    */
-  /*    hay portada que dejar limpia, así que la barra está SIEMPRE. Esto */
-  /*    arregla el bug por el que, al entrar a un proyecto y hacer scroll */
-  /*    hacia arriba, la barra desaparecía al acercarse al tope —justo    */
-  /*    cuando se la necesita para volver.                               */
-  /* ------------------------------------------------------------------ */
-  useEffect(() => {
-    // 0 = la página no tiene hero (interiores): la barra va siempre visible.
-    let heroFin = 0;
-
-    const medir = () => {
-      const hero = document.getElementById("top");
-      heroFin = hero
-        ? Math.max(APARECE_EN, hero.offsetHeight - window.innerHeight)
-        : 0;
-    };
-
-    // Sin requestAnimationFrame: el handler es una comparación y un setState,
-    // y React descarta solo el render cuando el booleano no cambió. Envolverlo
-    // en rAF solo agregaba un frame de retraso y una dependencia de más —en
-    // contextos donde el navegador pausa los frames, el header no aparecía
-    // nunca aunque el scroll sí estuviera llegando.
-    const onScroll = () =>
-      setVisible(heroFin === 0 || window.scrollY > heroFin);
-
-    // Con nombre y no una flecha anónima: si no, el cleanup no puede
-    // quitarlo y cada navegación deja un listener vivo.
-    const onResize = () => {
-      medir();
-      onScroll();
-    };
-
-    medir();
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
+  /**
+   * En qué página estamos: la del menú que coincide con la ruta va en negrita.
+   * "/" (Inicio) solo coincide exacto; las demás también cuando la ruta es una
+   * hija (p. ej. /proyectos/algun-caso resalta "Proyectos").
+   */
+  const esActivo = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
   // cuando el menu esta abierto bloqueo el scroll del fondo y dejo cerrar con Escape
   useEffect(() => {
@@ -97,23 +44,15 @@ export function Nav() {
   return (
     <>
       <header
-        /* El header no ocupa lugar (fixed) y ahora además ENTRA: arriba de
-           todo está fuera de cuadro y sin fondo, y baja recién cuando se
-           scrollea hacia arriba. La transición va sobre transform y opacity —
-           las dos propiedades que el compositor resuelve sin recalcular
-           layout—, así el deslizamiento no arrastra el scroll.
+        /* La barra SIEMPRE está visible (fija arriba), en todas las páginas y
+           también sobre el hero: así el visitante puede ir a cualquier sección
+           en cualquier momento sin tener que hacer scroll para que aparezca.
 
-           Mientras el menú móvil está abierto se fuerza visible: si no, el
-           botón de cerrar se iría con la barra. */
-        /* Blanco sólido, sin efecto vidrio: el backdrop-blur dejaba pasar en
+           Blanco sólido, sin efecto vidrio: el backdrop-blur dejaba pasar en
            borroso lo que hubiera debajo, y sobre el portafolio o el hero eso
            ensuciaba la barra con las imágenes que iban pasando. Sólido queda
            siempre igual y el contenido se corta limpio contra el borde. */
-        className={`fixed inset-x-0 top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-ink-900/[0.09] bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[0.55rem] transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          visible || open
-            ? "translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-full opacity-0"
-        }`}
+        className="fixed inset-x-0 top-0 z-50 grid grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-ink-900/[0.09] bg-paper-bone px-[clamp(1rem,3vw,3rem)] py-[0.55rem]"
         role="banner"
       >
         {/* IZQUIERDA — en escritorio los enlaces del menú; en celular la
@@ -123,14 +62,22 @@ export function Nav() {
             aria-label="Principal"
             className="hidden items-center gap-5 font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-500 lg:inline-flex"
           >
-            {NAV_LINKS.map((link, i) => (
+            {NAV_LINKS.map((link, i) => {
+              const activo = esActivo(link.href);
+              return (
               <span key={link.href} className="inline-flex items-center gap-5">
                 {/* Subrayado que crece desde la izquierda. Un cambio de color
                     a secas se pierde en una barra translúcida; la línea da la
-                    respuesta sin subir el peso visual del enlace. */}
+                    respuesta sin subir el peso visual del enlace.
+
+                    La página en la que estamos va en negrita y en tinta plena;
+                    las demás quedan en el gris normal. */}
                 <Link
                   href={link.href}
-                  className="group relative py-1 transition-colors duration-300 hover:text-ink-900"
+                  aria-current={activo ? "page" : undefined}
+                  className={`group relative py-1 transition-colors duration-300 hover:text-ink-900 ${
+                    activo ? "font-bold text-ink-900" : ""
+                  }`}
                 >
                   {link.label}
                   <span
@@ -142,7 +89,8 @@ export function Nav() {
                   <span className="inline-block h-[2px] w-[2px] rounded-full bg-ink-300" />
                 )}
               </span>
-            ))}
+              );
+            })}
           </nav>
 
           <button
@@ -224,20 +172,24 @@ export function Nav() {
           aria-label="Menú"
           className="relative flex h-full flex-col justify-center gap-1 px-[clamp(1.5rem,7vw,4rem)]"
         >
-          {NAV_LINKS.map((link, i) => (
+          {NAV_LINKS.map((link, i) => {
+            const activo = esActivo(link.href);
+            return (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
               tabIndex={open ? 0 : -1}
+              aria-current={activo ? "page" : undefined}
               style={{ transitionDelay: open ? `${120 + i * 55}ms` : "0ms" }}
-              className={`w-fit font-display text-[clamp(2.5rem,11vw,4.5rem)] font-medium leading-[1.15] tracking-[-0.03em] text-ink-900 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-accent-clay ${
-                open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
-              }`}
+              className={`w-fit font-display text-[clamp(2.5rem,11vw,4.5rem)] leading-[1.15] tracking-[-0.03em] text-ink-900 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-accent-clay ${
+                activo ? "font-bold" : "font-medium"
+              } ${open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`}
             >
               {link.label}
             </Link>
-          ))}
+            );
+          })}
 
           <Link
             href="/#contacto"

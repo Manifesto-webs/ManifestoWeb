@@ -142,6 +142,16 @@ export function Clients() {
       <div className="sticky top-0 h-screen overflow-hidden">
         <SpaceBackdrop glow="dual" />
 
+        {/* Halo central — la misma "brillosidad" del hero de inicio, para que
+            los clientes no se lean apagados frente al arranque de la página.
+            Decorativo (ice sobre el #282e32), por debajo del contenido, con un
+            pulso lento igual al del resto del sitio. */}
+        <div
+          className="animate-twinkle pointer-events-none absolute left-1/2 top-1/2 h-[75vmin] w-[75vmin] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
+          style={{ background: "radial-gradient(circle, rgba(214,226,237,0.18) 0%, transparent 62%)" }}
+          aria-hidden="true"
+        />
+
         <div className="relative z-10 grid h-full items-center gap-x-[clamp(2rem,5vw,6rem)] px-[clamp(1rem,3vw,3rem)] max-lg:grid-rows-[auto_1fr] max-lg:content-center lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.4fr)]">
           {/* IZQUIERDA — fija */}
           <div className="max-lg:pt-[clamp(4rem,10vh,7rem)]">

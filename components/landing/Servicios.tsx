@@ -24,7 +24,7 @@ const FRENTES: Frente[] = [
     id: "01",
     name: "Universo de marca",
     para: "Para empresas que necesitan definir o redefinir quiénes son",
-    desc: "Definimos qué es la marca y cómo se ve,\nse escucha y se comporta.",
+    desc: "Definir qué es la marca y cómo se ve,\nse escucha y se comporta.",
     items: [
       "Dirección estratégica de marca",
       "Arquitectura de portafolio",
@@ -48,7 +48,7 @@ const FRENTES: Frente[] = [
     id: "03",
     name: "Experiencia de cliente",
     para: "Para empresas donde lo que se promete y lo que se vive no coinciden",
-    desc: "Alineamos cada punto de contacto con lo que\n la marca dice ser.",
+    desc: "Alinear cada punto de contacto con lo que\n la marca dice ser.",
     items: [
       "Estrategia de experiencia B2B y B2C",
       "Mapeo de recorrido y puntos de contacto",
@@ -60,7 +60,7 @@ const FRENTES: Frente[] = [
     id: "04",
     name: "Universo digital",
     para: "Para marcas que necesitan operar en digital bajo un sistema\n sostenible y que la inversión no se pierda",
-    desc: "Diseñamos y construimos los productos digitales\n donde la marca vive.",
+    desc: "Diseñar y construir los productos digitales\n donde la marca vive.",
     items: [
       "Auditoría, estrategia digital y arquitectura de información",
       "Diseño UX/UI y sistemas de diseño",
@@ -106,7 +106,7 @@ export function Servicios() {
             className="h-px w-[clamp(1.5rem,4vw,3.5rem)] bg-ink-900/35"
           />
           <span className="font-mono text-xs uppercase tracking-[0.28em] text-ink-700">
-            Cómo trabajamos juntos
+            Cómo trabajar juntos
           </span>
         </span>
         <h2 className="mt-4 font-display text-[clamp(1.9rem,4.6vw,5rem)] font-normal leading-[0.9] tracking-[-0.04em] text-ink-900">
