@@ -101,6 +101,11 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
     const quieto = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const movil = window.matchMedia(CORTE_MOVIL);
 
+    // En celular NO se usa la caja 3D: la sección va oculta (hidden lg:block) y
+    // en su lugar se muestra una lista simple y clicable (PortafolioMovil). Así
+    // que acá no montamos nada del motor 3D —ni loop, ni listeners— en móvil.
+    if (movil.matches) return;
+
     let paso = 520;
     let tira = projects.length * paso;
     /** Recorrido total del carrusel, en px: del primer proyecto al último. */
@@ -249,10 +254,16 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
        Blanco (`bg-paper-bone`). Por eso las aristas van en slate y no en ice:
        el ice a 1 px sobre blanco no se leería.
        ═══════════════════════════════════════════════════════════════════════ */
-    <section
+    <div id={id}>
+      {/* CELULAR: la caja 3D no funciona bien en pantalla chica (piezas
+          plegadas, aristas cortando y solo la del frente clicable). Se
+          reemplaza por una lista simple donde TODAS las piezas se pueden tocar. */}
+      <PortafolioMovil className="lg:hidden" />
+
+      {/* ESCRITORIO: la caja 3D original, intacta. */}
+      <section
       ref={sectionRef}
-      id={id}
-      className="relative isolate w-full bg-paper-bone"
+      className="relative isolate hidden w-full bg-paper-bone lg:block"
       style={{
         height: `calc(100svh + ${(projects.length - 1) * PANTALLAS_POR_PIEZA * 100}svh)`,
       }}
@@ -314,7 +325,6 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
                     fill
                     sizes="(max-width: 1023px) 78vw, 1120px"
                     className="object-cover transition-[filter,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [filter:saturate(0.85)] group-hover:scale-[1.02] group-hover:[filter:saturate(1)]"
-                    priority={i < 2}
                   />
                   {/* Marco fino oscuro: define la lámina sobre el blanco. */}
                   <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink-900/20 transition-colors duration-300 group-hover:ring-ink-900/45 group-active:ring-ink-900/45" />
@@ -337,6 +347,66 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
           </div>
         </div>
       </div>
+      </section>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*  Portafolio en celular — lista simple, todo clicable                        */
+/*                                                                            */
+/*  Sin 3D ni scroll secuestrado: seis portadas apiladas, cada una un enlace   */
+/*  entero a su proyecto. Es lo que se ve en < 1024px.                         */
+/* -------------------------------------------------------------------------- */
+function PortafolioMovil({ className = "" }: { className?: string }) {
+  return (
+    <section
+      className={`bg-paper-bone px-[clamp(1rem,5vw,2rem)] pb-[clamp(3rem,10vw,5rem)] pt-[clamp(2rem,7vw,4rem)] ${className}`}
+    >
+      <span className="mb-[clamp(1.5rem,6vw,2.5rem)] flex items-center gap-3">
+        <span aria-hidden="true" className="h-px w-8 bg-ink-900/35" />
+        <span className="font-mono text-xs uppercase tracking-kicker text-ink-700">
+          Portafolio
+        </span>
+      </span>
+
+      <ol className="m-0 grid list-none gap-[clamp(2.5rem,9vw,3.5rem)] p-0">
+        {projects.map((p, i) => (
+          <li key={p.slug}>
+            <Link href={`/proyectos/${p.slug}`} className="group block">
+              <span className="relative block aspect-[4/3] overflow-hidden bg-ink-900/5">
+                <Image
+                  src={p.coverImage}
+                  alt={p.name}
+                  fill
+                  sizes="100vw"
+                  className="object-cover [filter:saturate(0.9)]"
+                />
+                <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink-900/15" />
+              </span>
+
+              <span className="mt-3 flex items-baseline justify-between gap-4">
+                <span className="font-mono text-[0.7rem] uppercase tracking-kicker tabular-nums text-ink-500">
+                  {String(i + 1).padStart(2, "0")} · {p.meta.year}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="font-mono text-base text-ink-500 transition-transform duration-300 group-active:translate-x-1"
+                >
+                  →
+                </span>
+              </span>
+
+              <span className="mt-1 block font-display text-[clamp(1.6rem,7vw,2.2rem)] font-normal leading-[1.05] tracking-[-0.03em] text-ink-900">
+                {p.name}
+              </span>
+              <span className="mt-1 block text-body-sm text-ink-700">
+                {p.meta.services}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
