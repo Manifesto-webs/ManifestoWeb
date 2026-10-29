@@ -1,13 +1,12 @@
 import type { Client } from "@/types/project";
 
 /**
- * 23 clientes activos que aparecen en la sección "Confían en el motivo."
+ * 22 clientes activos que aparecen en la sección "Confían en el motivo."
  * de la landing. Orden manual — mantener el orden salvo que el cliente
  * pida rearranque.
  */
 export const clients: Client[] = [
   { name: "Futeca Corporación" },
-  { name: "Boré" },
   { name: "Aruna" },
   { name: "Lando" },
   { name: "Habitek" },

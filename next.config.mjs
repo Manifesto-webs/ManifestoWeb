@@ -21,6 +21,16 @@ const nextConfig = {
   experimental: {
     // typedRoutes: true, // habilitar cuando esté estable en 15.x
   },
+  // Casos que se retiraron de la web. La redirección permanente lleva los
+  // links viejos (guardados o indexados) al portafolio en vez de a un 404,
+  // y le avisa a Google que esas páginas ya no existen.
+  async redirects() {
+    return ["bore", "decima"].map((slug) => ({
+      source: `/proyectos/${slug}`,
+      destination: "/proyectos",
+      permanent: true,
+    }));
+  },
 };
 
 export default nextConfig;
