@@ -1,6 +1,6 @@
 /**
  * Tipos para el sistema de proyectos.
- * Un proyecto es un case study (situa, bore, decima, etc.).
+ * Un proyecto es un case study (situa, el-barretal, ark, etc.).
  */
 
 export type StarburstId = "01" | "02" | "03" | "04" | "05";
@@ -35,7 +35,7 @@ export interface ProjectQuote {
 }
 
 export interface Project {
-  /** URL slug (situa, bore, etc.) */
+  /** URL slug (situa, ark, etc.) */
   slug: string;
   /** Nombre visible (con acentos, mayúsculas) */
   name: string;

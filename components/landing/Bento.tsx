@@ -3,12 +3,13 @@ import Image from "next/image";
 import { projects } from "@/data/projects";
 
 /**
- * Bento del homepage — 6 tiles con fotos reales.
- * Aritmética del grid: 6 cols × 4 rows = 24 celdas exactas.
- * Cada tile respeta la aritmética (a=8 + bb=4 + cc=3 + dd=3 + ee=3 + ff=3 = 24).
+ * Bento del homepage — 4 tiles con fotos reales.
+ * Aritmética del grid: 6 cols × 3 rows = 18 celdas exactas.
+ * Cada tile respeta la aritmética (a=8 + bb=4 + cc=3 + dd=3 = 18).
+ * En tablet (2 cols) el último va a lo ancho para no dejar un hueco.
  */
 
-// Los 6 tiles del bento en orden. Modificá acá si querés cambiar el layout
+// Los 4 tiles del bento en orden. Modificá acá si querés cambiar el layout
 // o los proyectos destacados.
 const TILE_LAYOUT: Array<{
   slug: string;
@@ -21,13 +22,8 @@ const TILE_LAYOUT: Array<{
     category: "2026 · identidad de evento",
   },
   {
-    slug: "bore",
-    span: "col-span-2 row-span-2 min-h-[580px] max-lg:col-span-1 max-lg:row-span-1 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
-    category: "2022 · identidad corporativa",
-  },
-  {
     slug: "el-barretal",
-    span: "col-span-3 row-span-1 min-h-[340px] max-lg:col-span-1 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
+    span: "col-span-2 row-span-2 min-h-[580px] max-lg:col-span-1 max-lg:row-span-1 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
     category: "2023 · sistema de marca",
   },
   {
@@ -36,13 +32,8 @@ const TILE_LAYOUT: Array<{
     category: "2023 · logotipo + sistema",
   },
   {
-    slug: "decima",
-    span: "col-span-3 row-span-1 min-h-[340px] max-lg:col-span-1 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
-    category: "2022 · identidad premium",
-  },
-  {
     slug: "lando",
-    span: "col-span-3 row-span-1 min-h-[340px] max-lg:col-span-1 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
+    span: "col-span-3 row-span-1 min-h-[340px] max-lg:col-span-2 max-lg:min-h-[320px] max-sm:col-span-1 max-sm:min-h-[280px]",
     category: "2023 · logotipo textil",
   },
 ];
