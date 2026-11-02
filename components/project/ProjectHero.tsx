@@ -70,7 +70,7 @@ export function ProjectHero({ project }: ProjectHeroProps) {
             fill
             priority
             sizes="(max-width: 1280px) 100vw, 1280px"
-            className="object-cover [filter:saturate(0.9)]"
+            className="object-cover"
           />
         </div>
 

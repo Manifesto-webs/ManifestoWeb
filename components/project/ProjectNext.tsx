@@ -23,7 +23,7 @@ export function ProjectNext({ project }: ProjectNextProps) {
             alt=""
             fill
             sizes="(max-width: 1280px) 100vw, 1280px"
-            className="object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [filter:saturate(0.68)_brightness(0.85)] group-hover:scale-[1.03] group-hover:[filter:saturate(0.9)_brightness(0.95)]"
+            className="object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="relative z-10 flex w-full flex-col gap-3 p-[clamp(1.5rem,3vw,3rem)] text-paper-bone">

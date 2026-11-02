@@ -324,7 +324,7 @@ export function CorredorProyectos({ id = "corredor" }: CorredorProyectosProps = 
                     alt={p.name}
                     fill
                     sizes="(max-width: 1023px) 78vw, 1120px"
-                    className="object-cover transition-[filter,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [filter:saturate(0.85)] group-hover:scale-[1.02] group-hover:[filter:saturate(1)]"
+                    className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02]"
                   />
                   {/* Marco fino oscuro: define la lámina sobre el blanco. */}
                   <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink-900/20 transition-colors duration-300 group-hover:ring-ink-900/45 group-active:ring-ink-900/45" />
@@ -380,7 +380,7 @@ function PortafolioMovil({ className = "" }: { className?: string }) {
                   alt={p.name}
                   fill
                   sizes="100vw"
-                  className="object-cover [filter:saturate(0.9)]"
+                  className="object-cover"
                 />
                 <span className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink-900/15" />
               </span>

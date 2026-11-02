@@ -191,7 +191,7 @@ function Ficha({ proyecto, indice }: FichaProps) {
             alt={proyecto.name}
             fill
             sizes="(max-width: 767px) 92vw, (max-width: 1279px) 46vw, 620px"
-            className="object-cover transition-[transform,filter] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] [filter:saturate(0.85)] group-hover:scale-[1.03] group-hover:[filter:saturate(1)]"
+            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
             priority={indice < 2}
           />
         </span>

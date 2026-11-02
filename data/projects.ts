@@ -43,17 +43,15 @@ export const projects: Project[] = [
       lines: ["Donde", "la búsqueda", "cobra", "sentido"],
     },
     gallery: [
-      { src: "/projects/situa/stand-01.jpg", label: "Stand · render", span: "lg" },
-      { src: "/projects/situa/banner.png", label: "Banner · web", span: "md", bg: "#2a25c6", position: "center top" },
-      { src: "/projects/situa/stand-02.jpg", label: "Stand · ángulo 2", span: "sm" },
-      { src: "/projects/situa/stand-03.jpg", label: "Stand · noche", span: "sm" },
-      { src: "/projects/situa/01.jpg", label: "Identidad · digital", span: "md" },
-      { src: "/projects/situa/stand-04.jpg", label: "Stand · detalle", span: "sm" },
-      { src: "/projects/situa/stand-05.jpg", label: "Stand · perfil", span: "sm" },
-      { src: "/projects/situa/02.jpg", label: "Flyer · pieza", span: "md" },
-      { src: "/projects/situa/stand-06.jpg", label: "Stand · interior", span: "sm" },
-      { src: "/projects/situa/05.jpg", label: "Detalle gráfico", span: "mh" },
-      { src: "/projects/situa/03.jpg", label: "Postal", span: "xs" },
+      // Ritmo parejo: una ancha (stand) y una pareja vertical, dos veces.
+      // Del stand van solo las dos vistas que de verdad se distinguen
+      // (frente y aérea); los otros renders eran casi el mismo ángulo.
+      { src: "/projects/situa/stand-01.jpg", label: "Stand · frente", span: "xl" },
+      { src: "/projects/situa/01.jpg", label: "Identidad · símbolo", span: "md" },
+      { src: "/projects/situa/02.jpg", label: "Pantalla · evento", span: "md" },
+      { src: "/projects/situa/stand-03.jpg", label: "Stand · vista aérea", span: "xl" },
+      { src: "/projects/situa/03.jpg", label: "Tote · merch", span: "md" },
+      { src: "/projects/situa/05.jpg", label: "Web · plataforma", span: "md" },
     ],
     quote: {
       text: "Sitúa tu historia. Tu hogar. Tu siguiente capítulo.",
@@ -164,9 +162,11 @@ export const projects: Project[] = [
       lines: ["Una marca", "que se viste"],
     },
     gallery: [
-      { src: "/projects/lando/01.png", label: "Logotipo · textura", span: "lg" },
+      { src: "/projects/lando/01.png", label: "Logotipo · textura", span: "xl" },
       { src: "/projects/lando/02.png", label: "Aplicación · etiqueta", span: "md" },
-      { src: "/projects/lando/03.png", label: "Sistema · detalle", span: "xl" },
+      // Recortada a propósito: el original traía una tarjeta con nombre y
+      // teléfono reales. El archivo ya no la contiene (ni al descargarlo).
+      { src: "/projects/lando/03-tarjeta.png", label: "Sistema · detalle", span: "md" },
     ],
     nextSlug: "situa",
   },
