@@ -17,6 +17,11 @@ import { GALLERY_SPAN_CLASSES } from "@/lib/utils";
 /*  Los tiles que ya están a la vista al cargar no se esconden (sin parpadeo)  */
 /*  y con "reducir movimiento" no se anima nada. Sin textos encima de la foto: */
 /*  el rótulo de cada pieza va en su alt.                                      */
+/*                                                                            */
+/*  Columnas: 6 en escritorio, 2 en tablet (< lg) y 1 en celular (< sm). El     */
+/*  corte de tablet tiene que ser `lg`, el mismo que usan los spans de         */
+/*  GALLERY_SPAN_CLASSES; si no, entre 768 y 1023 px los tiles quedaban en 1   */
+/*  de 6 columnas (tiras de ~110 px).                                          */
 /* -------------------------------------------------------------------------- */
 
 interface ProjectGalleryProps {
@@ -67,7 +72,7 @@ export function ProjectGallery({ project }: ProjectGalleryProps) {
 
         <div
           ref={gridRef}
-          className="grid auto-rows-[minmax(240px,auto)] grid-cols-6 gap-[clamp(0.5rem,0.8vw,1rem)] [grid-auto-flow:dense] max-md:grid-cols-2 max-sm:grid-cols-1"
+          className="grid auto-rows-[minmax(240px,auto)] grid-cols-6 gap-[clamp(0.5rem,0.8vw,1rem)] [grid-auto-flow:dense] max-lg:grid-cols-2 max-sm:grid-cols-1"
         >
           {project.gallery.map((img, i) => (
             <div

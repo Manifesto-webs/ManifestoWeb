@@ -1,7 +1,7 @@
 import type { Project } from "@/types/project";
 
 /**
- * Data de los 4 proyectos activos + template equinoccio.
+ * Data de los 6 proyectos activos + template equinoccio.
  *
  * Para agregar un proyecto nuevo:
  *   1. Copiá el object de otro similar (lando es un buen ejemplo compacto)
@@ -58,6 +58,83 @@ export const projects: Project[] = [
       attrName: "Tagline campaña",
       attrRole: "Expo Sitúa · primera edición",
     },
+    nextSlug: "bore",
+  },
+
+  {
+    slug: "bore",
+    name: "Boré",
+    lead:
+      "Un sistema corporativo que respeta el documento. Verde profundo + naranja como acento — la forma corporativa pensada como editorial.",
+    meta: {
+      client: "Boré",
+      year: "2022",
+      services: "Identidad corporativa · papelería",
+      role: "Diseño + sistema",
+    },
+    accent: "#1F4F4D",
+    coverImage: "/projects/bore/01.png",
+    context: {
+      title: "Corporativo\nno significa rígido.",
+      paragraphs: [
+        "Boré pidió una identidad que pudiera circular entre clientes, partners y reguladores sin perder presencia. La mayoría de competidores en su sector optan por azules genéricos y formas seguras.",
+        "Un verde profundo como color anclaje y un naranja terracota como acento puntual — suficiente para sostener jerarquía y respetar el documento. El sistema se aplica de la carpeta de archivo a la firma del PDF: misma malla, distinto rol.",
+      ],
+      aside: [
+        { label: "Sector", value: "Corporativo" },
+        { label: "Aplicaciones", value: "Carpeta · papelería · sello" },
+        { label: "Sistema", value: "2 colores · 1 tipografía display" },
+      ],
+    },
+    billboard: {
+      lines: ["Documentación", "con carácter"],
+    },
+    gallery: [
+      // Ritmo de la casa: una ancha y una pareja. Los nombres y datos que
+      // aparecen en la papelería (01) y las tarjetas (03-v2) son ficticios.
+      { src: "/projects/bore/01.png", label: "Papelería · sistema", span: "xl" },
+      { src: "/projects/bore/02.png", label: "Detalle · trazo", span: "md" },
+      { src: "/projects/bore/03-v2.webp", label: "Tarjetas de presentación", span: "md" },
+    ],
+    nextSlug: "decima",
+  },
+
+  {
+    slug: "decima",
+    name: "Décima Plaza",
+    lead:
+      "Identidad para una plaza con vocación premium. El sistema se construyó desde la sustracción: una D que se gana el silencio del papel.",
+    meta: {
+      client: "Décima Plaza",
+      year: "2022",
+      services: "Identidad · papelería · editorial",
+      role: "Diseño + sistema",
+    },
+    accent: "#1A1A1A",
+    // Mockup nuevo (01-v2): la tarjeta lleva nombre y datos ficticios.
+    coverImage: "/projects/decima/01-v2.webp",
+    context: {
+      title: "Menos signo,\nmás superficie.",
+      paragraphs: [
+        "Décima Plaza buscaba diferenciarse en un mercado saturado de logotipos opulentos. Construir una marca que parte del blanco y negro absolutos y deja que el material —papel, sobre, tarjeta— haga el trabajo restante.",
+        "La marca habita los espacios como un sello: discreta, repetida, reconocible. Cada pieza editorial respira con el mismo sistema tipográfico.",
+      ],
+      aside: [
+        { label: "Sector", value: "Bienes raíces · premium" },
+        { label: "Aplicaciones", value: "Papelería · sobre · tarjeta" },
+        { label: "Insight", value: "Una D que dice el resto" },
+      ],
+    },
+    billboard: {
+      lines: ["Lo escaso", "también es lujo"],
+    },
+    gallery: [
+      // Ritmo de la casa: una ancha y una pareja. La papelería (01-v2) lleva
+      // nombre y datos ficticios.
+      { src: "/projects/decima/01-v2.webp", label: "Papelería · sistema", span: "xl" },
+      { src: "/projects/decima/03.png", label: "Símbolo · la D", span: "md" },
+      { src: "/projects/decima/02.png", label: "Señalética · íconos", span: "md" },
+    ],
     nextSlug: "el-barretal",
   },
 
